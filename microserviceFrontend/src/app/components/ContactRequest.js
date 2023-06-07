@@ -1,4 +1,4 @@
-import React from 'react'; 
+import React, { useEffect } from "react";
 import PropTypes from 'prop-types';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
@@ -53,12 +53,19 @@ BootstrapDialogTitle.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
+let flag=0;
 export function ContactRequest(props) {
   const array=[1];
   const Dispatch = useDispatch();
   const [open, setOpen] = React.useState(false);
   const getUser = useSelector(state => state.getUser);
   const contacts = useSelector(state => state.contacts);
+
+  useEffect(() => {
+    if (flag==1){
+      setOpen(true);
+    }
+  }, [getUser]);
 
   const handleNotification= (message)=> {
     props.socket.emit('sendNotification', message);
@@ -88,6 +95,7 @@ export function ContactRequest(props) {
         handleNotification(id);
       }
       setOpen(false);
+      
   };
 
   return (

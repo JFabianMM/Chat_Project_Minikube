@@ -13,6 +13,10 @@ const groupNotificationSchema = new Schema({
             type: String, 
             trim: true,
         },
+        creator: { 
+            type: String, 
+            trim: true,
+        },
         members: [{
             id: { 
                 type: String, 

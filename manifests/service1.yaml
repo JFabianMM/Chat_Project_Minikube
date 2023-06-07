@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb1
+  labels:
+    app: mongodb1
+spec:
+  clusterIP: None
+  ports: 
+  - port: 27017
+    targetPort: 27017
+  selector: 
+    app: mongodb1 

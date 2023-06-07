@@ -36,9 +36,10 @@ export function ShowGroupNotifications(props) {
             }
             formattedMembers = formattedMembers.concat(member);
         });     
+        let creator=newGroup[0].creator;
         
         let input=formattedMembers;
-        Dispatch({type: 'CREATE_GROUP', room, input, name}); 
+        Dispatch({type: 'CREATE_GROUP', room, creator, input, name}); 
 
     }
     

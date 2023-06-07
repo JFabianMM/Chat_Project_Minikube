@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongodb3
+spec:
+  serviceName: mongodb3
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb3
+  template:
+    metadata:
+      labels:
+        app: mongodb3
+        selector: mongodb3
+    spec:
+      containers:
+      - name: mongodb3
+        image: mongo
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: pvc3
+          mountPath: /data/db
+        env:
+        - name: MONGO_INITDB_ROOT_USERNAME
+          value: 'fabian'
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          value: '12345'
+  volumeClaimTemplates:
+    - metadata:
+        name: pvc3
+      spec:
+        accessModes: 
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 512Mi

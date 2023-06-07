@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authorization
+  labels: 
+    app: mongodb3
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      role: authorization
+  template:
+    metadata:
+      labels:
+        role: authorization
+    spec:
+      containers:
+      - image: fabianmm34/chatapp:authorization333
+        name: authorization
+        ports:
+        - containerPort: 4002
+        env:
+        - name: JWT_SECRET
+          value: "thisisthechatproject"
+        - name: SERVER_PORT
+          value: "4002"
+        - name: MONGODB_URI
+          value: "mongodb://fabian:12345@mongodb3:27017/mydatabase?authSource=admin"  
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: authorization
+spec: 
+  ports: 
+  - port: 4002
+    targetPort: 4002
+  selector: 
+    role: authorization

@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongodb2
+spec:
+  serviceName: mongodb2
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb2
+  template:
+    metadata:
+      labels:
+        app: mongodb2
+        selector: mongodb2
+    spec:
+      containers:
+      - name: mongodb2
+        image: mongo
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: pvc2
+          mountPath: /data/db
+        env:
+        - name: MONGO_INITDB_ROOT_USERNAME
+          value: 'fabian'
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          value: '12345'
+  volumeClaimTemplates:
+    - metadata:
+        name: pvc2
+      spec:
+        accessModes: 
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 512Mi

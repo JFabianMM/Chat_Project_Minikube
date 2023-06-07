@@ -114,8 +114,11 @@ router.post('/notificationdeletion', async (req, res)=>{
 });
 
 router.post('/contact', async (req, res)=>{
+    
     try {
+        console.log('req.body.identification: ', req.body.identification);
         const contact = await findContact(req.body.identification);
+        console.log('contact: ', contact);
         res.send(contact);
     } catch (e){
         res.status(400).send(e)
@@ -123,19 +126,22 @@ router.post('/contact', async (req, res)=>{
 });
 
 router.post('/newcontact', async (req, res)=>{
-    let input = req.body.input;
+    let contactid=req.body.contactid;
+    let userid=req.body.userid;
     try{
-        const contact = await findContact(input.contactid);
-        const contact2 = await findContact(input.userid);
-        const room=input.userid+input.contactid;
-        const newContact ={id:input.userid, room};
-        const newContact2 ={id:input.contactid, room };
+        console.log('contactid: ', contactid);
+        console.log('userid: ', userid);
+        const contact = await findContact(contactid);
+        const contact2 = await findContact(userid);
+        const room=userid+contactid;
+        const newContact ={id:userid, room};
+        const newContact2 ={id:contactid, room };
         contact.contacts = contact.contacts.concat(newContact);
         contact2.contacts = contact2.contacts.concat(newContact2);
         contact.save(); 
         contact2.save(); 
-        const notification = await findNotification(input.userid);
-        const identification=input.contactid;
+        const notification = await findNotification(userid);
+        const identification=contactid;
         notification.notifications = notification.notifications.filter((el) => {
                 return el.id !== identification;
         });
@@ -162,18 +168,30 @@ router.post('/newgroup', async (req, res)=>{
     let input = req.body.input;
     try {  
         const group = await findGroup(input.id);
+
+        /// VALIDACION
+        let creator= input.group.creator;
+        const contact = await findContact(creator);     
+
         let members=[];
         input.group.members.forEach(element => {
-            let member={
-                id:element.id,
-                email:element.email,
-                firstName:element.firstName,
-                lastName:element.lastName
+            let memberFound = contact.contacts.filter(function (el){
+                return el.id == element.id;
+            });
+            let len = memberFound.length;
+            if (len==0 || element.id==creator){
+                let member={
+                    id:element.id,
+                    email:element.email,
+                    firstName:element.firstName,
+                    lastName:element.lastName
+                }
+                members=members.concat(member);
             }
-            members=members.concat(member);
         });
         let newgroup={
             room:input.group.room,
+            creator:input.group.creator,
             members:members,
             name:input.name
         }
@@ -217,39 +235,60 @@ router.post('/groupnotificationdeletion', async (req, res)=>{
 router.post('/groupandnotifications', async (req, res)=>{
     let input = req.body.input;
     try {  
-        const group = await findGroup(input.id);    
+        let creator= input.id;
+        const group = await findGroup(creator);
+
+        /// VALIDACION
+        const contact = await findContact(creator);
+        let tentativeMembers=input.group.members;
         let members=input.group.members;
-        let name=input.name;                       
-        let newGroup={room:'', members:members, name:name};  
+        tentativeMembers.forEach(function(member) { 
+            let memberFound = contact.contacts.filter(function (el){
+                return el.id == member.id;
+            });
+            let len = memberFound.length;
+            if (len==0 && member.id!=creator){
+                let newMembers = members.filter((value) => member.id !== value.id);
+                members=newMembers;
+            }
+        })
+        /// END VALIDATION
+
+        let name=input.name;                     
+        let newGroup={room:'', creator,  members, name};
+     
         group.groups = group.groups.concat(newGroup);
         let len= group.groups.length;
         room = JSON.stringify(group.groups[len-1]._id);
         room = room.replaceAll('"', '');
         group.groups[len-1].room=room; 
         group.save(); 
-        function saveNotifications(members, room, name) {
+
+        function saveNotifications(members, room, creator, name) {
             let result = new Array();
             members.forEach(function(member) {
+                // Aqui se valida que el member sea contacto del creator.
+                // Si lo es continua, Si no lo es no se prosigue. 
                 let identification=member.id;
                 GroupNotification.findOne({ identification }).lean().exec(function (err, groupNotification) {
-                    let newGroupNotification={room:room, members:members, name:name};
+                    let newGroupNotification={room, creator, members, name};
                     let gr=groupNotification.groupNotifications.concat(newGroupNotification);
-        
+
                     if (identification!=input.id){
                         result.push(groupNotification);
-                        GroupNotification.updateOne({ identification: identification }, { groupNotifications: gr }, function(
+                        GroupNotification.updateOne({ identification }, { groupNotifications: gr }, function(
                             err,
                             result
-                          ) {
+                        ) {
                             if (err) {
                                 res.send(err);
                             } 
-                          });
+                        });
                     }
                 });
             });
         }
-        saveNotifications(members,room, name)
+        saveNotifications(members,room, creator, name);
         const createdGroup=group.groups[len-1];
         const newMessageRoom = addNewGroupChat(createdGroup);
         let messages = await findMessages(input.id);

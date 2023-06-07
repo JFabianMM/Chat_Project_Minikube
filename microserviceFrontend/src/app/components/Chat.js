@@ -253,32 +253,35 @@ export function Chat (props) {
         Dispatch({type: 'QUERY_CONTACT'});
     })
 
-    return (
+return (
         <>
-        <Grid container style={{backgroundColor:'#8dc6ff', width: '100%', height: '100 px', padding: ''}}>
-            <MenuBar i18n={props.i18n} t={props.t} language={props.language} languageSet={props.languageSet} socket={socket}/>
-        </Grid>
-        <Grid container component={Paper} style={{width: '100%', height: '100%'}}>
-            <Grid item xs={4} style={{backgroundColor:'#34495e', borderRight: '1px solid #e0e0e0'}}>
-                <List>
-                <MainUserCard i18n={props.i18n} t={props.t} name={username}/>
+       
+        <Grid container>
+            <Grid container style={{backgroundColor:'#8dc6ff', width: '100%', height: '40px', padding: '', position: 'fixed', top: '0'}}>
+                <MenuBar i18n={props.i18n} t={props.t} language={props.language} languageSet={props.languageSet} socket={socket}/>
+            </Grid>
+            <Grid item xs={4} style={{backgroundColor:'#34495e', height: 'auto', width: '35%', borderRight: '1px solid #e0e0e0', position: 'fixed', top: '60px'}}>
+                
+                <List >
+                    <MainUserCard i18n={props.i18n} t={props.t} name={username}/>
                 </List>
                 <Divider sx={{ bgcolor: "secondary.light" }}/>
                 <Grid item xs={12} style={{padding: '5px'}}>
                     <InputSearch i18n={props.i18n} t={props.t} socket={socket} style={{background:'#34495e', color:'#FFFFFF'}} id="outlined-basic-email" fullWidth/>
                 </Grid>
-                <List style={{height: '80vh', overflowY: 'auto'}}>
+                
+                <List style={{height: '80vh', overflowY: 'scroll'}}>
                     {
                         contacts.map((element) =>{
                             return (
                                 <div key={element.id} id={element.room} >
-                                    <UserCard i18n={props.i18n} element={element} t={props.t} socket={socket} key={element.room} selected= {selected} alreadyread={element.alreadyread} name={element.firstName+' '+element.lastName} src={element.avatar} index={element.room}/>
+                                            <UserCard i18n={props.i18n} element={element} t={props.t} socket={socket} key={element.room} selected= {selected} alreadyread={element.alreadyread} name={element.firstName+' '+element.lastName} src={element.avatar} index={element.room}/>
                                 </div>
                             );
                         })
                     }
                     <Divider sx={{ bgcolor: "secondary.light" }}/>
-                    <Grid item xs={12} style={{padding: '0px', height: '10vh'}}>
+                    <Grid item xs={12} style={{padding: '0px', height: '50px'}}>
                         <AddGroupDialog i18n={props.i18n} t={props.t} socket={socket}/>
                     </Grid>
                     {
@@ -296,8 +299,9 @@ export function Chat (props) {
             </Grid>
 
             <Grid item xs={8}>
-                <List style={{height: '70vh', overflowY: 'auto'}}>
-                    {
+                <Grid item xs={8} container style={{position: 'fixed', right: '0px'}}>
+                <List style={{width:'66%', height: '75vh', overflowY: 'scroll', position: 'fixed', top: '60px', right: '0px'}}>
+                    { 
                         currentChat.map((element, index) =>{
                             let len=currentChat.length;
                             if (index<currentChat.length-1){
@@ -317,13 +321,13 @@ export function Chat (props) {
                         })
                     }
                 </List>
-
-                <Grid item xs={12} container style={{backgroundColor:'#f4f7f7', height: '0px'}}>
-                    <Grid item xs={12} style={{padding: '10px'}}>
+                </Grid>
+                
+                <Grid item xs={8} container style={{backgroundColor:'#f4f7f7', position: 'fixed', bottom: '0', right: '0px'}}>
+                    <Grid item xs={12} style={{padding: '4px'}}>
                         <InputMessage i18n={props.i18n} t={props.t} socket={socket} style={{background:'#34495e', color:'#FFFFFF'}} id="outlined-basic-email" fullWidth/>
                     </Grid>
                 </Grid>
-
             </Grid>
         </Grid>
         </>

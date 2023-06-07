@@ -48,7 +48,7 @@ export function ShowNotifications(props) {
         let userlastName= userData.lastName;
         let contactid=formData.id;
         
-        Dispatch({type: 'CREATE_CONTACT', userid, userfirstName, userlastName, contactid});
+        Dispatch({type: 'CREATE_CONTACT', contactid});
         let roomToSend={
             room_forNotification:contactid,
             id:userid,
@@ -58,7 +58,7 @@ export function ShowNotifications(props) {
         }
         setTimeout(() => {
             handleContact(roomToSend);
-        }, 500);
+        }, 2000);
         
     }
 
