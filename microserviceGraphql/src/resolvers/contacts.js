@@ -16,9 +16,12 @@ const contacts = {
                 } 
                 const user = await User.findOne({ _id: authResponse.identification});
                 const formData={identification: user._id}
+                console.log('formData: ', formData);
                 const contact= await fetchFunction(formData, process.env.CONTACT);
+                console.log('contact: ', contact);
                 if (contact){
                     const contactAvatar = await getContactAvatars(contact);
+                    console.log('contactAvatar: ', contactAvatar);
                     return contactAvatar;
                 }else{
                     throw new GraphQLError('Information not available');

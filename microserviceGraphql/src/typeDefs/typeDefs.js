@@ -51,6 +51,7 @@ const typeDefs = `
 
     type groupNotification {
         room: String
+        creator: String
         members: [member]
         name: String
     }
@@ -65,6 +66,7 @@ const typeDefs = `
     
     type group {
         room: String
+        creator: String
         members: [member]
         name: String
     }
@@ -117,7 +119,6 @@ const typeDefs = `
         token:String
     }
     input contactInput {
-        userid:String
         contactid: String
     }
     input groupInput {
@@ -126,6 +127,7 @@ const typeDefs = `
     }
     input newGroup {
         room: String
+        creator: String
         members: [newmember]
     }
     input newmember {

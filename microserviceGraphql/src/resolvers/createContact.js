@@ -1,4 +1,4 @@
-// const User = require('../models/user');
+const User = require('../models/user');
 const { GraphQLError } = require('graphql');
 const fetchFunction = require('../functions/fetchFunction');
 const getContactAvatars = require('../functions/getContactAvatars');
@@ -16,7 +16,11 @@ const createContact = {
                 if (!authResponse.identification){ 
                     throw new GraphQLError('Please Authenticate');
                 } 
-                const formData={input}
+                const user = await User.findOne({ _id: authResponse.identification});
+                const formData={
+                    userid:authResponse.identification,
+                    contactid:input.contactid
+                }
                 const newcontact= await fetchFunction(formData, process.env.NEW_CONTACT);
                 let CreateContactResponse=newcontact.CreateContactResponse;
                 const contactAvatar = await getContactAvatars(CreateContactResponse.user);
