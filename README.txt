@@ -91,3 +91,45 @@ minikube tunnel
 
 Access to the app at:
 http://chat-app.fabian/
+
+Some of the environment variables are:
+
+For the Graphql microservice
+    - name: LOGIN           
+        Request all the user information
+    - name: CONTACT
+        Request all the contacts of the user
+    - name: NOTIFICATION
+        Request the information of the notifications. These notifications are
+        the contact requests received. The information of these notifications are
+        the ID's of the requesters. 
+    - name: GROUP_NOTIFICATIONS
+        Request the information of the group notifications. These notifications are
+        the groups requests received. The information of these notifications are
+        the groups informations. The members, etc. 
+    - name: GROUPS
+        Request the information of all the groups that the user belongs.  
+    - name: REGISTER
+        Make the regustration. (Create a new user).
+    - name: NEW_NOTIFICATION
+        When a user receive a new contact request notification.    
+    - name: NEW_CONTACT
+        Create a new contact 
+    - name: NOTIFICATION_DELETION
+        Delete a notification
+    - name: NEW_GROUP
+        Create a new group
+    - name: GROUP_NOTIFICATION_DELETION
+        Delete a group notification
+    - name: GROUP_AND_NOTIFICATIONS
+        Create a new group and create new group notification for each member.
+    - name: NEW_MESSAGE
+        Create a new message
+    - name: NEW_STATUS
+        The satus is the notification of a new message that has not been read. This create a new status   
+    - name: AUTHORIZATION
+        Validate the credentials
+    - name: AUTHORIZATION_LOGIN
+        Create the credentials for this new login  
+    - name: AUTHORIZATION_REGISTER
+        When is created the user, this create a new user registration on the Authorizartion microservice.
