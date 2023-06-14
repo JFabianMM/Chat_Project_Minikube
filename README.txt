@@ -72,13 +72,17 @@ minikube start
 minikube addons enable ingress-dns
 
 # Apply the next manifests:
-kubectl apply -f mongodb1-pod.yaml
-kubectl apply -f mongodb2-pod.yaml
-kubectl apply -f mongodb3-pod.yaml
-kubectl apply -f authorization-pod.yaml
-kubectl apply -f backend-pod.yaml 
-kubectl apply -f frontend-pod.yaml
-kubectl apply -f graphql-pod.yaml
+kubectl create -f secret.yaml
+kubectl apply -f service1.yaml
+kubectl apply -f service2.yaml
+kubectl apply -f service3.yaml
+kubectl apply -f mongodb1.yaml
+kubectl apply -f mongodb2.yaml
+kubectl apply -f mongodb3.yaml
+kubectl apply -f authorization.yaml
+kubectl apply -f backend.yaml 
+kubectl apply -f frontend.yaml
+kubectl apply -f graphql.yaml
 kubectl apply -f ingress.yaml
 
 # Add the following line to the bottom of the /etc/hosts file on your computer (you will need administrator access):
