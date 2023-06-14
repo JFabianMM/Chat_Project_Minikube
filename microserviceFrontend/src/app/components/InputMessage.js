@@ -6,18 +6,23 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import SendIcon from '@mui/icons-material/Send';
 import {useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
+
+
 
 export function InputMessage(props) {
   const [inputmessage, setInputmessage] = useState('');
   const userData = useSelector(state => state.userData);
   const currentRoom = useSelector(state => state.currentRoom);
   const element = document.getElementById("inputMessage");
+
+  const Dispatch = useDispatch();
   
-    const handleChange = (event) => {
-        event.preventDefault();
+  const handleChange = (event) => {
+      event.preventDefault();
         
-        setInputmessage(event.target.value);
-    };
+      setInputmessage(event.target.value);
+  };
 
     const handleNewMessage= (event)=> {
       if (event){
@@ -29,10 +34,10 @@ export function InputMessage(props) {
           let item={
             room:room,
             id:userData._id,
-            firstName: userData.firstName,
-            lastName: userData.lastName,
             message:inputmessage
           }
+          
+          Dispatch({type: 'CREATE_NEW_MESSAGE', room, inputmessage});
           if (inputmessage!=''){
               props.socket.emit('sendMessage', item);
           }

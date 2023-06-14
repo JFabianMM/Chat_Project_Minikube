@@ -25,7 +25,6 @@ function SimpleDialog(props) {
     const groupName = useSelector(state => state.groupName); 
 
     const Dispatch = useDispatch();
-
     const handleClose = () => {
         onClose(selectedValue);
     };

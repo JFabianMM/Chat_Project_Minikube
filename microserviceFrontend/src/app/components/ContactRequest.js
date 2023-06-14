@@ -14,6 +14,7 @@ import Avatar from '@mui/material/Avatar';
 import Grid from '@mui/material/Grid';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
+import { updateReceivedStatus } from "../../redux/slice/receivedStatusSlice";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -60,12 +61,7 @@ export function ContactRequest(props) {
   const [open, setOpen] = React.useState(false);
   const getUser = useSelector(state => state.getUser);
   const contacts = useSelector(state => state.contacts);
-
-  useEffect(() => {
-    if (flag==1){
-      setOpen(true);
-    }
-  }, [getUser]);
+  const receivedStatus = useSelector(state => state.receivedStatus);
 
   const handleNotification= (message)=> {
     props.socket.emit('sendNotification', message);
@@ -79,8 +75,10 @@ export function ContactRequest(props) {
         }
         setOpen(true);
   };
+
   const handleClose = () => {
       setOpen(false);
+      Dispatch(updateReceivedStatus(''));
   };
 
   const handleRequestAndClose = (ident) => {
@@ -95,73 +93,93 @@ export function ContactRequest(props) {
         handleNotification(id);
       }
       setOpen(false);
-      
+      Dispatch(updateReceivedStatus(''));
   };
 
   return (
       <div>
           <SearchIcon variant="outlined" onClick={handleClickOpen}/> 
           <BootstrapDialog onClose={handleClose} open={open} aria-labelledby="customized-dialog-title" allign="center">
-            {
-                        array.map((element) =>{
-                          if (`${getUser.firstName}`!='undefined') {
-                            return (
-                              <BootstrapDialogTitle key={array.indexOf(element)} onClose={handleClose} id="customized-dialog-title" >
-                                    {`${getUser.firstName} `}{`${getUser.lastName }`}
-                              </BootstrapDialogTitle>
-                            )
+              {    
+                  array.map((element) =>{
+                      if (`${getUser.firstName}`!='undefined' && `${getUser.email}`!='**') {
+                          if (receivedStatus=='Loaded'){
+                              return (
+                                <BootstrapDialogTitle key={array.indexOf(element)} onClose={handleClose} id="customized-dialog-title" >
+                                      {`${getUser.firstName} `}{`${getUser.lastName }`}{`${receivedStatus}`}
+                                </BootstrapDialogTitle>
+                              )
                           }
-                        })
                       }
+                  })
+              }
               <DialogContent allign='center' dividers>
                   <Grid style={{borderRight: '1px solid #e0e0e0'}}>
-                      <Grid item xs={12} style={{padding: '10px'}}>
-                      {
-                        array.map((element) =>{
-                          if (`${getUser.email}`!='') {
-                            return (
-                              <Avatar key={array.indexOf(element)} alt="" srcSet={`${getUser.avatar}`}/>
-                            )
-                          }
-                        })
-                      }  
+                      <Grid item xs={12} style={{padding: '10px'}}>    
+                        {
+                            array.map((element) =>{
+                                if (`${getUser.email}`!='' && `${getUser.email}`!='**' ) {
+                                    if (receivedStatus=='Loaded'){
+                                        return (
+                                          <Avatar key={array.indexOf(element)} alt={getUser.name} srcSet={getUser.avatar}/>
+                                        )
+                                    }
+                                }
+                            })
+                        }  
                       </Grid>
                       <Grid item xs={12} style={{padding: '10px'}}>
-                      {
-                        array.map((element) =>{
-                          if (`${getUser.email}`!='') {
-                            return (
-                              <Typography key={array.indexOf(element)} gutterBottom>
-                              {props.t('contact.email')}:  {`${getUser.email}`}
-                              </Typography>
-                            )
-                          }else{
-                            return (
-                              <Typography key={array.indexOf(element)} gutterBottom>
-                                 {props.t('contact.result')}
-                              </Typography>
-                            )
-                          }
-                        })
-                      }  
-                         
+                        {
+                            array.map((element) =>{
+                                if (`${getUser.email}`!='' && `${getUser.email}`!='**') {
+                                  if (receivedStatus=='Loaded'){
+                                    return (
+                                        <Typography key={array.indexOf(element)} gutterBottom>
+                                          {props.t('contact.email')}:  {`${getUser.email}`}
+                                        </Typography>
+                                    )
+                                  }
+                                }else{
+                                  if (`${getUser.email}`=='' && `${getUser.email}`!='**'){
+                                    if (receivedStatus=='Loaded'){
+                                      return (
+                                        <Typography key={array.indexOf(element)} gutterBottom>
+                                           {props.t('contact.result')}
+                                         </Typography>
+                                      )
+                                    }
+                                  }
+                                    
+                                }
+                            })
+                        }   
                       </Grid>
                   </Grid>
               </DialogContent>
-              <DialogActions>
-              {
-                        array.map((element) =>{
-                          if (`${getUser.email}`!='') {
+              <DialogActions>     
+                {
+                    array.map((element) =>{
+                        if (`${getUser.email}`!='' && `${getUser.email}`!='**') {
+                          if (receivedStatus=='Loaded'){
                             return (
-                              <Button key={array.indexOf(element)} onClick={()=> handleRequestAndClose(getUser._id, getUser.email)} autoFocus>
+                                <Button key={array.indexOf(element)} onClick={()=> handleRequestAndClose(getUser._id, getUser.email)} autoFocus>
                                   {props.t('contact.request')}
-                              </Button>
+                                </Button>
                             )
                           }
-                        })
-              }
+                        }
+                    })
+                } 
               </DialogActions>
           </BootstrapDialog>
       </div>
   );
 }
+
+
+
+
+  
+
+
+

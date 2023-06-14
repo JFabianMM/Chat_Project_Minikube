@@ -154,7 +154,7 @@ export function MenuBar(props) {
 
   return (
       <Box sx={{ flexGrow: 1 }}>
-          <AppBar position="static">
+          <AppBar position="static" style={{height: '60px'}}>
               <Toolbar>
                   <Typography variant="h6" noWrap component="div" sx={{ display: { xs: 'none', sm: 'block' } }}>
                       Chat Project

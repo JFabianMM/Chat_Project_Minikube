@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const User = require('../models/user');
 const Notification = require('../models/notification');
 const GroupNotification = require('../models/groupNotification');
 const Contact = require('../models/contact');
@@ -17,7 +18,11 @@ const addNewGroupChat = require('../utilities/addNewGroupChat');
 
 router.post('/register', async (req, res)=>{ 
     const identification= req.body.identification;
-    let { email } = req.body.input;
+    let { email, firstName, lastName } = req.body.input;
+    const user = new User({identification});
+    user.firstName=firstName;
+    user.lastName=lastName;
+    user.save();
     const notification = new Notification({identification,email});
     const contact = new Contact({identification,email});
     const group = new Group({identification,email});
@@ -34,6 +39,15 @@ router.post('/register', async (req, res)=>{
     } catch (e){
         res.status(400).send(e)
     }  
+});
+router.post('/userInformation', async (req, res)=>{ 
+    try{
+        const identification = req.body.identification;
+        const user = await User.findOne({ identification });
+        res.send(user);
+    }catch(e){
+        res.status(400).send(e)
+    }    
 });
 
 router.post('/login', async (req, res)=>{ 
@@ -116,9 +130,7 @@ router.post('/notificationdeletion', async (req, res)=>{
 router.post('/contact', async (req, res)=>{
     
     try {
-        console.log('req.body.identification: ', req.body.identification);
         const contact = await findContact(req.body.identification);
-        console.log('contact: ', contact);
         res.send(contact);
     } catch (e){
         res.status(400).send(e)
@@ -129,8 +141,6 @@ router.post('/newcontact', async (req, res)=>{
     let contactid=req.body.contactid;
     let userid=req.body.userid;
     try{
-        console.log('contactid: ', contactid);
-        console.log('userid: ', userid);
         const contact = await findContact(contactid);
         const contact2 = await findContact(userid);
         const room=userid+contactid;
@@ -238,7 +248,6 @@ router.post('/groupandnotifications', async (req, res)=>{
         let creator= input.id;
         const group = await findGroup(creator);
 
-        /// VALIDACION
         const contact = await findContact(creator);
         let tentativeMembers=input.group.members;
         let members=input.group.members;
@@ -252,7 +261,6 @@ router.post('/groupandnotifications', async (req, res)=>{
                 members=newMembers;
             }
         })
-        /// END VALIDATION
 
         let name=input.name;                     
         let newGroup={room:'', creator,  members, name};
@@ -267,8 +275,6 @@ router.post('/groupandnotifications', async (req, res)=>{
         function saveNotifications(members, room, creator, name) {
             let result = new Array();
             members.forEach(function(member) {
-                // Aqui se valida que el member sea contacto del creator.
-                // Si lo es continua, Si no lo es no se prosigue. 
                 let identification=member.id;
                 GroupNotification.findOne({ identification }).lean().exec(function (err, groupNotification) {
                     let newGroupNotification={room, creator, members, name};
@@ -303,17 +309,30 @@ router.post('/groupandnotifications', async (req, res)=>{
 router.post('/newmessage', async (req, res)=>{
     let input = req.body.input;
     try {  
+        let date = new Date();
+        let current_time = date.getHours()+':'+date.getMinutes();    
         let messages = await findMessages(input.id);
         let index=-1; 
         index = messages.messagesInformation.findIndex(function (el){
             return el.room == input.room;
         });
+
+        const NewMessageResponse = {
+            id:input.id,
+            room: input.room,
+            idNumber: input.id,
+            origin: input.id,
+            firstName: input.firstName, 
+            lastName:  input.lastName,
+            position: 'rigth', 
+            message: input.message,
+            time: current_time 
+        };
         if (index>=0){
             let users=messages.messagesInformation[index].users;
-            saveNewMessage(input, users);
+            const saveMessage = await saveNewMessage(NewMessageResponse, users);
         }
-        let result=  {result: input.room}
-        return result;
+        return NewMessageResponse;
     } catch (e){
         res.status(400).send(e)
     }

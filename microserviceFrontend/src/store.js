@@ -22,6 +22,7 @@ import avatarReducer from "./redux/slice/avatarSlice";
 
 import createSagaMiddleware from "redux-saga";
 import rootSaga from './redux/sagas/sagas';
+import receivedStatusSlice from "./redux/slice/receivedStatusSlice";
 
 const sagaMiddleware = createSagaMiddleware();
 const middlewares = [sagaMiddleware];
@@ -47,7 +48,8 @@ export const store =configureStore({
          groupName: groupNameReducer,                
          language: languageReducer,
          file: fileReducer,
-         avatar: avatarReducer
+         avatar: avatarReducer,
+         receivedStatus: receivedStatusSlice
      },
         middleware: (getDefaultMiddleware) => {
             const middleware = [
