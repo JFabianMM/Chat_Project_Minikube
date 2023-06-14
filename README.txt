@@ -94,42 +94,42 @@ http://chat-app.fabian/
 
 Some of the environment variables are:
 
-For the Graphql microservice
-    - name: LOGIN           
-        Request all the user information
-    - name: CONTACT
-        Request all the contacts of the user
-    - name: NOTIFICATION
-        Request the information of the notifications. These notifications are
+API description:
+    - URL: process.env.BACKEND_MICROSERVICE+'login'           
+      Description: Request all the user information
+    - URL: process.env.BACKEND_MICROSERVICE+'contact'
+      Description: Request all the contacts of the user
+    - URL: process.env.BACKEND_MICROSERVICE+'notification'
+      Description: Request the information of the notifications. These notifications are
         the contact requests received. The information of these notifications are
         the ID's of the requesters. 
-    - name: GROUP_NOTIFICATIONS
-        Request the information of the group notifications. These notifications are
+    - URL: process.env.BACKEND_MICROSERVICE+'groupnotifications'
+      Description: Request the information of the group notifications. These notifications are
         the groups requests received. The information of these notifications are
         the groups informations. The members, etc. 
-    - name: GROUPS
-        Request the information of all the groups that the user belongs.  
-    - name: REGISTER
-        Make the regustration. (Create a new user).
-    - name: NEW_NOTIFICATION
-        When a user receive a new contact request notification.    
-    - name: NEW_CONTACT
-        Create a new contact 
-    - name: NOTIFICATION_DELETION
-        Delete a notification
-    - name: NEW_GROUP
-        Create a new group
-    - name: GROUP_NOTIFICATION_DELETION
-        Delete a group notification
-    - name: GROUP_AND_NOTIFICATIONS
-        Create a new group and create new group notification for each member.
-    - name: NEW_MESSAGE
-        Create a new message
-    - name: NEW_STATUS
-        The satus is the notification of a new message that has not been read. This create a new status   
-    - name: AUTHORIZATION
-        Validate the credentials
-    - name: AUTHORIZATION_LOGIN
-        Create the credentials for this new login  
-    - name: AUTHORIZATION_REGISTER
-        When is created the user, this create a new user registration on the Authorizartion microservice.
+    - URL: process.env.BACKEND_MICROSERVICE+'groups'
+      Description: Request the information of all the groups that the user belongs.  
+    - URL: process.env.BACKEND_MICROSERVICE+'register'
+      Description: Make the regustration. (Create a new user).
+    - URL: process.env.BACKEND_MICROSERVICE+'newnotification'
+      Description: When a user receive a new contact request notification.    
+    - URL: process.env.BACKEND_MICROSERVICE+'newcontact'
+      Description: Create a new contact 
+    - URL: process.env.BACKEND_MICROSERVICE+'notificationdeletion'
+      Description: Delete a notification
+    - URL: process.env.BACKEND_MICROSERVICE+'newgroup'
+      Description: Create a new group
+    - URL: process.env.BACKEND_MICROSERVICE+'groupnotificationdeletion'
+      Description: Delete a group notification
+    - URL: process.env.BACKEND_MICROSERVICE+'groupandnotifications'
+      Description: Create a new group and create new group notification for each member.
+    - URL: process.env.BACKEND_MICROSERVICE+'newmessage'
+      Description: Create a new message
+    - URL: process.env.BACKEND_MICROSERVICE+'newstatus'
+      Description: The satus is the notification of a new message that has not been read. This create a new status   
+    - URL: process.env.AUTHORIZATION_MICROSERVICE+'validation'
+      Description: Validate the credentials
+    - URL: process.env.AUTHORIZATION_MICROSERVICE+'login'
+      Description: Create the credentials for this new login  
+    - URL: process.env.AUTHORIZATION_MICROSERVICE+'register' 
+      Description: When is created the user, this create a new user registration on the Authorizartion microservice.

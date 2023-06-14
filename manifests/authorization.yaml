@@ -15,20 +15,25 @@ spec:
         role: authorization
     spec:
       containers:
-      - image: fabianmm34/chatapp:authorization333
+      - image: fabianmm34/chatapp:authorization356
         name: authorization
         ports:
         - containerPort: 4002
         env:
         - name: JWT_SECRET
-          value: "thisisthechatproject"
+          valueFrom:
+            secretKeyRef:
+              name: mysecret
+              key: jwtsecret
         - name: SERVER_PORT
           value: "4002"
         - name: MONGODB_URI
-          value: "mongodb://fabian:12345@mongodb3:27017/mydatabase?authSource=admin"  
+          valueFrom:
+            secretKeyRef:
+              name: mysecret
+              key: mongoDB3URI
 
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
@@ -38,4 +43,4 @@ spec:
   - port: 4002
     targetPort: 4002
   selector: 
-    role: authorization
+    role: authorization    

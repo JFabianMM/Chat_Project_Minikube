@@ -10,18 +10,15 @@ const contacts = {
                 let req=context.headers.authorization;
                 const token = req.replace('Bearer ','');
                 const authFormData={token}
-                const authResponse= await fetchFunction(authFormData, process.env.AUTHORIZATION ); 
+                const authResponse= await fetchFunction(authFormData, process.env.AUTHORIZATION_MICROSERVICE+'validation'); 
                 if (!authResponse.identification){ 
                     throw new GraphQLError('Please Authenticate');
                 } 
                 const user = await User.findOne({ _id: authResponse.identification});
                 const formData={identification: user._id}
-                console.log('formData: ', formData);
-                const contact= await fetchFunction(formData, process.env.CONTACT);
-                console.log('contact: ', contact);
+                const contact= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'contact');    
                 if (contact){
                     const contactAvatar = await getContactAvatars(contact);
-                    console.log('contactAvatar: ', contactAvatar);
                     return contactAvatar;
                 }else{
                     throw new GraphQLError('Information not available');
@@ -30,10 +27,7 @@ const contacts = {
                 throw new GraphQLError(e); 
             }  
         },
-
     },
-    // Mutation: {
-    // }
 };
 
 module.exports = contacts;

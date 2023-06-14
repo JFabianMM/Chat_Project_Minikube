@@ -144,15 +144,8 @@ const typeDefs = `
         lastName: String
     }
     input newMessageInput {
-        id: String
-        room: String
-        idNumber: Int
-        origin: String
-        firstName: String 
-        lastName: String 
-        position: String 
-        message: String
-        time: String 
+        room: String 
+        message: String 
     }
     input newStatusInput {
         id: String
@@ -162,6 +155,17 @@ const typeDefs = `
     type statusResult {
         room: String
         status: String
+    }
+    type NewMessageResponse {
+        id: String
+        room: String
+        idNumber: String
+        origin: String
+        firstName: String 
+        lastName: String
+        position: String 
+        message: String
+        time: String 
     }
 
     type Query {
@@ -183,7 +187,7 @@ const typeDefs = `
         createGroupAndNotifications(input: groupInput): [group]
         singleUpload(file: String!): result
         updateUserData(input: updateInput): user
-        createNewMessage(input: newMessageInput): result
+        createNewMessage(input: newMessageInput): NewMessageResponse
         createNewStatus(input: newStatusInput): statusResult
     }
 `;

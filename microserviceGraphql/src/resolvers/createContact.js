@@ -4,15 +4,13 @@ const fetchFunction = require('../functions/fetchFunction');
 const getContactAvatars = require('../functions/getContactAvatars');
 
 const createContact = {
-    // Query: { 
-    // },
     Mutation: { 
         async createContact(context, {input}){
             try{
                 let req=context.headers.authorization;
                 const token = req.replace('Bearer ','');
                 const authFormData={token}
-                const authResponse= await fetchFunction(authFormData, process.env.AUTHORIZATION ); 
+                const authResponse= await fetchFunction(authFormData, process.env.AUTHORIZATION_MICROSERVICE+'validation' ); 
                 if (!authResponse.identification){ 
                     throw new GraphQLError('Please Authenticate');
                 } 
@@ -21,7 +19,7 @@ const createContact = {
                     userid:authResponse.identification,
                     contactid:input.contactid
                 }
-                const newcontact= await fetchFunction(formData, process.env.NEW_CONTACT);
+                const newcontact= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'newcontact');
                 let CreateContactResponse=newcontact.CreateContactResponse;
                 const contactAvatar = await getContactAvatars(CreateContactResponse.user);
                 CreateContactResponse.user=contactAvatar;

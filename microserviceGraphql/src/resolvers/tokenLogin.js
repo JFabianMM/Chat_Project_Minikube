@@ -10,7 +10,7 @@ const tokenLogin = {
             let req=context.headers.authorization; 
             const token = req.replace('Bearer ','');
             const authFormData={token}
-            const authResponse= await fetchFunction(authFormData, process.env.AUTHORIZATION ); 
+            const authResponse= await fetchFunction(authFormData, process.env.AUTHORIZATION_MICROSERVICE+'validation' ); 
             if (!authResponse.identification){
                 throw new GraphQLError('Please Authenticate');
             } 
@@ -22,7 +22,7 @@ const tokenLogin = {
                         password: 'password',
                         identification: user._id
                     }
-                    const data= await fetchFunction(formData, process.env.LOGIN);
+                    const data= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'login');
                     const contactAvatar = await getContactAvatars(data.loginResponse.contact);
                     const groupAvatar = await getGroupAvatars(data.loginResponse.group);
                     let loginResponse = {
@@ -44,8 +44,6 @@ const tokenLogin = {
             }
         },
     },
-    // Mutation: { 
-    // }
 };
 
 module.exports = tokenLogin;

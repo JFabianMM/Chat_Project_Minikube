@@ -10,13 +10,13 @@ const groupNotifications = {
                 let req=context.headers.authorization;
                 const token = req.replace('Bearer ','');
                 const authFormData={token}
-                const authResponse= await fetchFunction(authFormData, process.env.AUTHORIZATION ); 
+                const authResponse= await fetchFunction(authFormData, process.env.AUTHORIZATION_MICROSERVICE+'validation' ); 
                 if (!authResponse.identification){
                     throw new GraphQLError('Please Authenticate');
                 } 
                 const user = await User.findOne({ _id: authResponse.identification});
                 const formData={identification: user._id}
-                const groupNotification= await fetchFunction(formData, process.env.GROUP_NOTIFICATIONS);
+                const groupNotification= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'groupnotifications');
                 const groupNotificationAvatar = await getGroupNotificationsAvatars(groupNotification);
                 return groupNotificationAvatar.groupNotifications;
             }catch(e){
@@ -24,8 +24,6 @@ const groupNotifications = {
             }            
         }
     },
-    // Mutation: { 
-    // }
 };
 
 module.exports = groupNotifications;

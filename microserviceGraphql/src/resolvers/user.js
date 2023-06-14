@@ -9,7 +9,7 @@ const user = {
                 let req=context.headers.authorization; 
                 const token = req.replace('Bearer ','');
                 const authFormData={token};
-                const authResponse= await fetchFunction(authFormData, process.env.AUTHORIZATION ); 
+                const authResponse= await fetchFunction(authFormData, process.env.AUTHORIZATION_MICROSERVICE+'validation' ); 
                 if (!authResponse.identification){
                     throw new GraphQLError('Please Authenticate');
                 } 
@@ -24,8 +24,6 @@ const user = {
             }
         }, 
     },
-    // Mutation: { 
-    // }
 };
 
 module.exports = user;

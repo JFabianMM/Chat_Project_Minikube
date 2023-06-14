@@ -10,13 +10,13 @@ const notification = {
                 let req=context.headers.authorization;
                 const token = req.replace('Bearer ','');
                 const authFormData={token};
-                const authResponse= await fetchFunction(authFormData, process.env.AUTHORIZATION ); 
+                const authResponse= await fetchFunction(authFormData, process.env.AUTHORIZATION_MICROSERVICE+'validation' ); 
                 if (!authResponse.identification){
                     throw new GraphQLError('Please Authenticate');
                 } 
                 const user = await User.findOne({ _id: authResponse.identification});
                 const formData={identification: user._id}
-                const notification= await fetchFunction(formData, process.env.NOTIFICATION);
+                const notification= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'notification');
                 const notificationAvatar = await getNotificationsAvatars(notification);
                 return notificationAvatar;
             }catch(e){
@@ -24,8 +24,6 @@ const notification = {
             }
         }
     },
-    // Mutation: { 
-    // }
 };
 
 module.exports = notification;

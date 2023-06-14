@@ -3,8 +3,6 @@ const { GraphQLError } = require('graphql');
 const fetchFunction = require('../functions/fetchFunction');
 
 const createUser = {
-    // Query: { 
-    // },
     Mutation: {
         async createUser(context, {input}){
             try{
@@ -19,8 +17,9 @@ const createUser = {
                         identification
                     }
                     user.save();
-                    const authResponse= fetchFunction(formData, process.env.AUTHORIZATION_REGISTER );
-                    const userResponse= fetchFunction(formData, process.env.REGISTER);
+
+                    const authResponse= fetchFunction(formData, process.env.AUTHORIZATION_MICROSERVICE+'register' );
+                    const userResponse= fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'register');
                     return user;  
                 }else{
                     throw new GraphQLError('User already exist'); 

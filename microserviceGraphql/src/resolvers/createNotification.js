@@ -3,15 +3,13 @@ const { GraphQLError } = require('graphql');
 const fetchFunction = require('../functions/fetchFunction');
 
 const createNotification = {
-    // Query: { 
-    // },
     Mutation: {    
         async createNotification(context, args){
             try{
                 let req=context.headers.authorization;
                 const token = req.replace('Bearer ',''); 
                 const authFormData={token}
-                const authResponse= await fetchFunction(authFormData, process.env.AUTHORIZATION ); 
+                const authResponse= await fetchFunction(authFormData, process.env.AUTHORIZATION_MICROSERVICE+'validation' ); 
                 if (!authResponse.identification){
                     throw new GraphQLError('Please Authenticate');
                 }  
@@ -20,7 +18,7 @@ const createNotification = {
                     id: args.id,
                     userId: user._id
                 }
-                const notification= await fetchFunction(formData, process.env.NEW_NOTIFICATION);
+                const notification= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'newnotification');
                 return notification;
             }catch(e){
                 throw new GraphQLError(e);

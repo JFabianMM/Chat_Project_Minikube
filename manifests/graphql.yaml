@@ -15,52 +15,27 @@ spec:
         role: graphql
     spec:
       containers:
-      - image: fabianmm34/chatapp:graphql333
+      - image: fabianmm34/chatapp:graphql356
         name: graphql
         ports:
         - containerPort: 4000
         env:
         - name: JWT_SECRET
-          value: "thisisthechatproject"
+          valueFrom:
+            secretKeyRef:
+              name: mysecret
+              key: jwtsecret
         - name: MONGODB_URI
-          value: "mongodb://fabian:12345@mongodb1:27017/mydatabase?authSource=admin"
+          valueFrom:
+            secretKeyRef:
+              name: mysecret
+              key: mongoDB1URI 
         - name: SERVER_PORT
           value: "4000"
-        - name: LOGIN
-          value: "http://backend:4001/api/users/login"  
-        - name: CONTACT
-          value: "http://backend:4001/api/users/contact" 
-        - name: NOTIFICATION
-          value: "http://backend:4001/api/users/notification"  
-        - name: GROUP_NOTIFICATIONS
-          value: "http://backend:4001/api/users/groupnotifications"
-        - name: GROUPS
-          value: "http://backend:4001/api/users/groups"  
-        - name: REGISTER
-          value: "http://backend:4001/api/users/register"  
-        - name: NEW_NOTIFICATION
-          value: "http://backend:4001/api/users/newnotification"   
-        - name: NEW_CONTACT
-          value: "http://backend:4001/api/users/newcontact" 
-        - name: NOTIFICATION_DELETION
-          value: "http://backend:4001/api/users/notificationdeletion" 
-        - name: NEW_GROUP
-          value: "http://backend:4001/api/users/newgroup"
-        - name: GROUP_NOTIFICATION_DELETION
-          value: "http://backend:4001/api/users/groupnotificationdeletion" 
-        - name: GROUP_AND_NOTIFICATIONS
-          value: "http://backend:4001/api/users/groupandnotifications" 
-        - name: NEW_MESSAGE
-          value: "http://backend:4001/api/users/newmessage"  
-        - name: NEW_STATUS
-          value: "http://backend:4001/api/users/newstatus"    
-        - name: AUTHORIZATION
-          value: "http://authorization:4002/api/users/validation" 
-        - name: AUTHORIZATION_LOGIN
-          value: "http://authorization:4002/api/users/login"  
-        - name: AUTHORIZATION_REGISTER
-          value: "http://authorization:4002/api/users/register"         
-
+        - name: BACKEND_MICROSERVICE
+          value: "http://backend:4001/api/users/"                
+        - name: AUTHORIZATION_MICROSERVICE
+          value: "http://authorization:4002/api/users/"
 ---
 
 apiVersion: v1
