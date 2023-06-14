@@ -33,7 +33,7 @@ io.on( 'connection', function( socket ) {
         const formData={
             identification:it.id
         }
-        const user= await fetchFunction(formData, "http://backend:4001/api/users/userInformation");
+        const user= await fetchFunction(formData, BACKEND_MICROSERVICE+'userInformation');
         let date = new Date();
         let current_time = date.getHours()+':'+date.getMinutes();
         let item={
