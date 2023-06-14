@@ -22,6 +22,8 @@ spec:
         env:
         - name: SERVER_PORT
           value: "3000"
+        - name: BACKEND_MICROSERVICE
+          value: "http://backend:4001/api/users/"   
 
 ---
 
