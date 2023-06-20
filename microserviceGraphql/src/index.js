@@ -12,7 +12,7 @@ const schema = require('./schema');
 const bodyParser = require('body-parser');
 
 
-app.use("/", bodyParser.json({ limit: '50mb' }), (request, response)=>{ 
+app.use("/", bodyParser.json({ limit: '50mb' }), (request, response)=>{
     return graphqlHTTP({
         schema: schema,
         graphiql : true,

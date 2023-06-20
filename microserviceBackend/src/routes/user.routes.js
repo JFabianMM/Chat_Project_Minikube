@@ -15,6 +15,7 @@ const findMessages = require('../utilities/findMessages');
 const saveNewMessage = require('../utilities/saveNewMessage');
 const addNewChat = require('../utilities/addNewChat');
 const addNewGroupChat = require('../utilities/addNewGroupChat');
+const getUniqueListBy = require('../utilities/getUniqueListBy');
 
 router.post('/register', async (req, res)=>{ 
     const identification= req.body.identification;
@@ -146,24 +147,34 @@ router.post('/newcontact', async (req, res)=>{
         const room=userid+contactid;
         const newContact ={id:userid, room};
         const newContact2 ={id:contactid, room };
-        contact.contacts = contact.contacts.concat(newContact);
-        contact2.contacts = contact2.contacts.concat(newContact2);
-        contact.save(); 
-        contact2.save(); 
+        
+        
         const notification = await findNotification(userid);
         const identification=contactid;
+
+        const found = notification.notifications.find(element => element.id == identification);  
+
         notification.notifications = notification.notifications.filter((el) => {
                 return el.id !== identification;
-        });
+        })
+        
         notification.save();
         let newMessageRoom = addNewChat(newContact2,newContact, room);
         let messages = await findMessages(newContact.id);
         messages.messagesInformation=messages.messagesInformation.concat(newMessageRoom);
-        messages.save();
+        
         let newMessageRoom2 = addNewChat(newContact,newContact2, room);
         let messages2 = await findMessages(newContact2.id);
         messages2.messagesInformation=messages2.messagesInformation.concat(newMessageRoom2);
-        messages2.save();
+    
+        if (found){
+            contact.contacts = contact.contacts.concat(newContact);
+            contact2.contacts = contact2.contacts.concat(newContact2);
+            contact.save(); 
+            contact2.save(); 
+            messages.save();
+            messages2.save();
+        }
         let CreateContactResponse = {
             user: contact2,
             contactId: contact.identification,
@@ -179,9 +190,13 @@ router.post('/newgroup', async (req, res)=>{
     try {  
         const group = await findGroup(input.id);
 
-        /// VALIDACION
         let creator= input.group.creator;
-        const contact = await findContact(creator);     
+        const contact = await findContact(creator);
+        let groupNotification = await findGroupNotification(input.id);
+        let messages = await findMessages(input.id);
+
+        const contactFound = contact.contacts.find(element => element.id == input.id);  
+        const notificationFound = groupNotification.groupNotifications.find(element => element.id == input.group.room); 
 
         let members=[];
         input.group.members.forEach(element => {
@@ -199,24 +214,26 @@ router.post('/newgroup', async (req, res)=>{
                 members=members.concat(member);
             }
         });
+        let membersUnique = getUniqueListBy(members, 'id');
         let newgroup={
             room:input.group.room,
             creator:input.group.creator,
-            members:members,
+            members:membersUnique,
             name:input.name
         }
-        group.groups = group.groups.concat(newgroup);
-        group.save(); 
-        let groupNotification = await findGroupNotification(input.id);
         groupNotification.groupNotifications = groupNotification.groupNotifications.filter((el) => {
             return el.room !== input.group.room;
         });
         groupNotification.save();
-        let len= group.groups.length;
-        const createdGroup=group.groups[len-1];
-        const newMessageRoom = addNewGroupChat(createdGroup);
-        let messages = await findMessages(input.id);
-        messages.messagesInformation=messages.messagesInformation.concat(newMessageRoom);
+
+        if (contactFound && notificationFound){
+            group.groups = group.groups.concat(newgroup);
+            let len= group.groups.length;
+            const createdGroup=group.groups[len-1];
+            const newMessageRoom = addNewGroupChat(createdGroup);
+            messages.messagesInformation=messages.messagesInformation.concat(newMessageRoom);
+        }
+        group.save();         
         messages.save();
         res.send(group);
     } catch (e){
@@ -249,8 +266,10 @@ router.post('/groupandnotifications', async (req, res)=>{
         const group = await findGroup(creator);
 
         const contact = await findContact(creator);
-        let tentativeMembers=input.group.members;
-        let members=input.group.members;
+
+        let members = getUniqueListBy(input.group.members, 'id');
+        let tentativeMembers=members;
+
         tentativeMembers.forEach(function(member) { 
             let memberFound = contact.contacts.filter(function (el){
                 return el.id == member.id;
