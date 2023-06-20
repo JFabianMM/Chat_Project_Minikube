@@ -15,7 +15,7 @@ spec:
         role: authorization
     spec:
       containers:
-      - image: fabianmm34/chatapp:authorization356
+      - image: fabianmm34/chatapp:authorization369
         name: authorization
         ports:
         - containerPort: 4002
@@ -27,7 +27,7 @@ spec:
               key: jwtsecret
         - name: SERVER_PORT
           value: "4002"
-        - name: MONGODB_URI
+        - name: MONGODB3_URI
           valueFrom:
             secretKeyRef:
               name: mysecret

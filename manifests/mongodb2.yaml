@@ -21,18 +21,12 @@ spec:
         - containerPort: 27017
         volumeMounts:
         - name: pvc2
-          mountPath: /data/db
+          mountPath: /data/db2
         env:
         - name: MONGO_INITDB_ROOT_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: mysecret
-              key: mongoDB2UserName
+          value: 'fabian'
         - name: MONGO_INITDB_ROOT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: mysecret
-              key: mongoDB2Password
+          value: '12345'
   volumeClaimTemplates:
     - metadata:
         name: pvc2

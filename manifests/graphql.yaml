@@ -15,7 +15,7 @@ spec:
         role: graphql
     spec:
       containers:
-      - image: fabianmm34/chatapp:graphql356
+      - image: fabianmm34/chatapp:graphql369
         name: graphql
         ports:
         - containerPort: 4000
@@ -25,17 +25,18 @@ spec:
             secretKeyRef:
               name: mysecret
               key: jwtsecret
-        - name: MONGODB_URI
+        - name: MONGODB1_URI
           valueFrom:
             secretKeyRef:
               name: mysecret
-              key: mongoDB1URI 
+              key: mongoDB1URI
         - name: SERVER_PORT
           value: "4000"
         - name: BACKEND_MICROSERVICE
-          value: "http://backend:4001/api/users/"                
+          value: "http://backend:4001/api/users/"              
         - name: AUTHORIZATION_MICROSERVICE
           value: "http://authorization:4002/api/users/"
+
 ---
 
 apiVersion: v1

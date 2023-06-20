@@ -15,7 +15,7 @@ spec:
         role: frontend
     spec:
       containers:
-      - image: fabianmm34/chatapp:frontend356
+      - image: fabianmm34/chatapp:frontend367
         name: frontend
         ports:
         - containerPort: 3000
@@ -23,7 +23,7 @@ spec:
         - name: SERVER_PORT
           value: "3000"
         - name: BACKEND_MICROSERVICE
-          value: "http://backend:4001/api/users/"   
+          value: "http://backend:4001/api/users/ " 
 
 ---
 
