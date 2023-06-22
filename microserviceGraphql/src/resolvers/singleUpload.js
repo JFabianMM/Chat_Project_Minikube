@@ -3,8 +3,6 @@ const { GraphQLError } = require('graphql');
 const fetchFunction = require('../functions/fetchFunction');
 
 const singleUpload = {
-    // Query: { 
-    // },
     Mutation: {  
         async singleUpload(context,{file}){
             try{

@@ -15,7 +15,7 @@ spec:
         role: authorization
     spec:
       containers:
-      - image: fabianmm34/chatapp:authorization369
+      - image: fabianmm34/chatapp:authorization376
         name: authorization
         ports:
         - containerPort: 4002

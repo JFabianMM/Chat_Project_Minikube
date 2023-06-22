@@ -1,4 +1,3 @@
-// const User = require('../models/user');
 const { GraphQLError } = require('graphql');
 const fetchFunction = require('../functions/fetchFunction');
 

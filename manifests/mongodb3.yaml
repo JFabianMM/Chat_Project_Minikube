@@ -24,9 +24,15 @@ spec:
           mountPath: /data/db2
         env:
         - name: MONGO_INITDB_ROOT_USERNAME
-          value: 'fabian'
+          valueFrom:
+            secretKeyRef:
+              name: mysecret
+              key: mongoDB3UserName
         - name: MONGO_INITDB_ROOT_PASSWORD
-          value: '12345'
+          valueFrom:
+            secretKeyRef:
+              name: mysecret
+              key: mongoDB3Password
   volumeClaimTemplates:
     - metadata:
         name: pvc3

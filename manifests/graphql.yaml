@@ -15,7 +15,7 @@ spec:
         role: graphql
     spec:
       containers:
-      - image: fabianmm34/chatapp:graphql369
+      - image: fabianmm34/chatapp:graphql376
         name: graphql
         ports:
         - containerPort: 4000

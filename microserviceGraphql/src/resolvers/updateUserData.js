@@ -3,8 +3,6 @@ const { GraphQLError } = require('graphql');
 const fetchFunction = require('../functions/fetchFunction');
 
 const updateUserData = {
-    // Query: { 
-    // },
     Mutation: {
         async updateUserData(context, {input}){
             let req=context.headers.authorization;
