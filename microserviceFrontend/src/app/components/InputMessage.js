@@ -20,7 +20,6 @@ export function InputMessage(props) {
   
   const handleChange = (event) => {
       event.preventDefault();
-        
       setInputmessage(event.target.value);
   };
 
@@ -36,7 +35,6 @@ export function InputMessage(props) {
             id:userData._id,
             message:inputmessage
           }
-          
           Dispatch({type: 'CREATE_NEW_MESSAGE', room, inputmessage});
           if (inputmessage!=''){
               props.socket.emit('sendMessage', item);

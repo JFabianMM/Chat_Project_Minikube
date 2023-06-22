@@ -427,8 +427,6 @@ function* mutationSignUp(){
 }  
 
 // ----------------------------------------------- 
-// ----------------------------------------------- 
-
 
 const Get_Notification = gql`
 query notification($id: String){
@@ -668,7 +666,6 @@ function* mutationCreateContactFunction(action) {
       yield put(addRooms(addedRoom));
       yield put(updateContacts(contactData));
       yield put(addNewContactMessage(addNewChat(newRoom[0])));
-      console.log('data.createContact.number: ', data.createContact.number);
       yield put(updateNotifications(data.createContact.number));
   }catch(e){
   }  
@@ -783,7 +780,6 @@ function* mutationCreateGroupFunction(action) {
       yield put(addRooms(newRoom));
       yield put(eliminateGroupNotification());
   
-  
       function addNewGroupChat(group){
           let room=group.room;
           let users=group.members;
@@ -876,8 +872,7 @@ function* mutationUpdateUserData(){
   yield takeEvery('MUTATION_UPDATE_USER_DATA', mutationUpdateUserDataFunction)
 }  
 
-
-  // ----------------------------------------------- 
+// ----------------------------------------------- 
 
 const Put_CreateNewMessage = gql`
 mutation createNewMessage($room: String, $message: String) {
@@ -935,7 +930,6 @@ function putCreateNewMessageFunction (room, message){
             yield put(updateContacts(cont));
         }  
            
-  
         const getGroups = (state) => state.groups;
         let groups = yield select(getGroups);
         index=-1;

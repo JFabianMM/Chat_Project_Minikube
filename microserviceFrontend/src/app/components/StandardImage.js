@@ -6,13 +6,11 @@ export function StandardImage(props) {
   const avatar = useSelector(state => state.avatar);
 
   let preview; 
-
   if (file!= {}){
      preview=file;
   }else{
     preview=avatar
   }
-
 
   return (
     <div style={{padding: "10px"}}>

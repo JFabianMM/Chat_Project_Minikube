@@ -80,7 +80,6 @@ export function GroupCard(props){
             let status='true';
             Dispatch({type: 'CREATE_NEW_STATUS', id, room, status});
         }
-
     };
 
     if (props.alreadyread==false){

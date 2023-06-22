@@ -3,7 +3,6 @@ import Avatar from '@mui/material/Avatar';
 import AvatarGroup from '@mui/material/AvatarGroup';
 
 export function GroupAvatars(props) {
-  
   return (
     <AvatarGroup max={5}>
       {

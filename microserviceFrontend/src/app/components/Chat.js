@@ -235,7 +235,6 @@ export function Chat (props) {
         Dispatch(updateMessages(messages.concat(chat)));
         Dispatch({type: 'QUERY_CONTACT'});
     })
-
     const elem = document.getElementById("chatElement");
 
 return (
@@ -275,18 +274,12 @@ return (
                         );
                     })
                 }
-            
             </List>
-            
         </Grid>
-
         <Grid item xs={8}>
-            <Grid item xs={8} container style={{position: 'fixed', right: '0px'}}>
-            
+            <Grid item xs={8} container style={{position: 'fixed', right: '0px'}}>       
             <List id="chatElement" style={{width:'66%', height:`calc(100vh - 120px)`, overflowY: 'scroll', position: 'fixed', top: '60px', right: '0px'}}>
-                
                 { 
-
                     currentChat.map((element, index) =>{
                         if (index<currentChat.length-1){
                             return (
@@ -318,17 +311,11 @@ return (
                                     </ul>              
                                 );
                             }
-                            
-                            
                         }
-                        
                     })
                 }
-                
             </List>
-        
             </Grid>
-            
             <Grid item xs={8} container style={{backgroundColor:'#f4f7f7', position: 'fixed', bottom: '0', right: '0px'}}>
                 <Grid item xs={12} style={{padding: '4px'}}>
                     <InputMessage i18n={props.i18n} t={props.t} socket={socket} style={{background:'#34495e', color:'#FFFFFF'}} id="outlined-basic-email" fullWidth/>
@@ -338,7 +325,6 @@ return (
     </Grid>
     </>
 );
-
 }
 
 

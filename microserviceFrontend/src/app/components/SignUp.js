@@ -22,7 +22,8 @@ function Copyright(props) {
     return (
         <Typography variant="body2" color="text.secondary" align="center" {...props}>
             {'Copyright © '}
-            <Link color="inherit" href="https://mui.com/">
+            {/* <Link color="inherit" href="https://mui.com/"> */}
+            <Link color="inherit" href="#">
                 ChatProject
             </Link>{' '}
             {new Date().getFullYear()}
@@ -53,7 +54,6 @@ export function SignUp(props) {
             errorFlag=1;
             Dispatch(updateErrorNotification('characters'));
         }
-    
         if(!validator.isEmail(email)){
             errorFlag=1;
             Dispatch(updateErrorNotification('invalid'));
@@ -67,7 +67,6 @@ export function SignUp(props) {
             errorFlag=1;
             Dispatch(updateErrorNotification('fill'));
         }
-          
         if (errorFlag==0){
             Dispatch(updateErrorNotification(''));
             Dispatch({type: 'MUTATION_SIGNUP', email, password, firstName, lastName});

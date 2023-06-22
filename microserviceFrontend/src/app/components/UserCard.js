@@ -54,7 +54,7 @@ export function UserCard(props){
                 element.classList.remove("selected");
         });
 
-        localStorage.setItem('elementId', props.index);
+        // localStorage.setItem('elementId', props.index);
         const element = document.getElementById(props.index);
         element.classList.add("selected");
 
@@ -106,6 +106,5 @@ export function UserCard(props){
                 <ListItemText onClick={handleClickUserCard} id={props.index} style={{color:'#FFFFFF'}} primary={props.name}></ListItemText>
             </ListItem>
     )
-    }
-       
+    } 
   }

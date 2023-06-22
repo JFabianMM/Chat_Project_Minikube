@@ -13,14 +13,11 @@ export function UploadButton(props) {
 
   const Dispatch = useDispatch();
 
-  
   const changeHandler = (event) => {
       event.preventDefault();
     	setSelectedFile(event.target.files[0]);
     	setIsFilePicked(true);
       setFileName(event.target.files[0].name);
-        
-
       const file2 = event.target.files[0];
       const reader = new FileReader();
       
@@ -30,8 +27,7 @@ export function UploadButton(props) {
           Dispatch(updateFile(reader.result));
         },
         false
-      );
-      
+      ); 
       if (file2) {
         reader.readAsDataURL(file2);
       }

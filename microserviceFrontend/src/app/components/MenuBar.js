@@ -20,7 +20,6 @@ import { updatePage } from '../../redux/slice/pageSlice';
 import { setCookie } from '../functions/setCookie';
 import { ShowProfileInformation } from './ShowProfileInformation';
 import { ShowProfile2 } from './ShowProfile2';
-// import { AddGroupDialog } from './AddGroupDialog';
 
 export function MenuBar(props) {
 
@@ -34,7 +33,6 @@ export function MenuBar(props) {
     const groupNotifications = useSelector(state => state.groupNotifications);
 
     const Dispatch= useDispatch();
-
     const onClose = () => {
       
     };
@@ -53,7 +51,6 @@ export function MenuBar(props) {
         setSelectedValue('2');
         setSelectedValueGroup(true)
         
-        
         let ban=0;
         if (selectedValueGroup==true){
             setSelectedValueGroup(false)
@@ -65,7 +62,6 @@ export function MenuBar(props) {
         }
     }
     const showNotifications= (event) => {
-        let id=userData._id;
         Dispatch({type: 'QUERY_NOTIFICATION'});
 
         if (!event.target.id){

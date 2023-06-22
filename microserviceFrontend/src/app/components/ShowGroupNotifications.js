@@ -37,10 +37,8 @@ export function ShowGroupNotifications(props) {
             formattedMembers = formattedMembers.concat(member);
         });     
         let creator=newGroup[0].creator;
-        
         let input=formattedMembers;
         Dispatch({type: 'CREATE_GROUP', room, creator, input, name}); 
-
     }
     
     const handleRejectedListItem = (value)=>{
@@ -62,7 +60,6 @@ export function ShowGroupNotifications(props) {
             <Button style={{marginLeft: '10px'}} onClick={() => handleRejectedListItem([requester.room])} variant="contained">{props.t('request.reject')}</Button>
           </ListItem>
         ))}
-
       </List>
     </Dialog>
   );

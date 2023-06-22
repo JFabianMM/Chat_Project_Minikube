@@ -149,7 +149,6 @@ export function ContactRequest(props) {
                                       )
                                     }
                                   }
-                                    
                                 }
                             })
                         }   
@@ -175,11 +174,3 @@ export function ContactRequest(props) {
       </div>
   );
 }
-
-
-
-
-  
-
-
-

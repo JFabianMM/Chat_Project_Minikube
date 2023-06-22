@@ -32,7 +32,6 @@ const saveNewMessage= async function(input, users) {
             }
             messages.messagesInformation[index].messages=messages.messagesInformation[index].messages.concat(newMessage);
         }
-        //await messages.save();
         messages.save();
     }
 };

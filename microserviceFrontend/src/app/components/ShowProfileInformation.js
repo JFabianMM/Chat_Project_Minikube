@@ -60,11 +60,6 @@ function SimpleDialog(props) {
         onClose(selectedValue);
     };
 
-    // const handleSaveAndClose =(e)=>{
-    //     e.preventDefault();
-    //     onClose(selectedValue);
-    // }
-
   return (
     <Dialog style={{width: '100%', height: '100%'}} onClose={handleClose} open={open}>
       <DialogTitle>{props.t('menu.bar.information.profile')}</DialogTitle>

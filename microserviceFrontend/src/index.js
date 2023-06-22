@@ -26,7 +26,6 @@ io.on( 'connection', function( socket ) {
         socket.join(room);
     })
 
-
     socket.on('sendMessage', async (it)=>{
     // We can see the number of clients connections.
     //console.log('io.sockets.server.engine.clientsCount: ', io.sockets.server.engine.clientsCount);
@@ -45,9 +44,7 @@ io.on( 'connection', function( socket ) {
                 time:current_time
               }
             let room=it.room;
-            io.to(room).emit('sendMessage', item)
-
-        
+            io.to(room).emit('sendMessage', item) 
     })
 
     socket.on('sendNotification', (room)=>{

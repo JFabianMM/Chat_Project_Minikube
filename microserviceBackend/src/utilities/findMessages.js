@@ -6,5 +6,3 @@ const findMessages= async function(identification) {
 };
 
 module.exports = findMessages;
-
-

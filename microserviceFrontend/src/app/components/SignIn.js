@@ -21,7 +21,8 @@ function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
+      {/* <Link color="inherit" href="https://mui.com/"> */}
+      <Link color="inherit" href="#">
         ChatProject
       </Link>{' '}
       {new Date().getFullYear()}
@@ -37,7 +38,6 @@ export function SignIn(props) {
 
     let array= ['1'];
     const Dispatch = useDispatch();            
-    
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
@@ -45,10 +45,8 @@ export function SignIn(props) {
             email: data.get('email'),
             password: data.get('password')
         }
-
         let email=formData.email;
         let password=formData.password;
- 
         if (email != "" && password != "")  {
             Dispatch(updateErrorNotification(''));
             Dispatch({type: 'QUERY_LOGIN', email, password});

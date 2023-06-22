@@ -3,7 +3,6 @@ const { Schema } = mongoose;
 const validator = require('validator');
 const bcrypt = require ('bcryptjs');
 
-
 const userSchema = new Schema({
     email: { 
         type: String,
@@ -53,7 +52,6 @@ const userSchema = new Schema({
 });
 
 
-// Hash the plain password before saving
 userSchema.pre('save', async function(next){
     const user = this;
     if (user.isModified('password')){

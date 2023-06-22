@@ -7,7 +7,6 @@ import { useSelector } from 'react-redux';
 
 export function MainUserCard(props){
     const avatar = useSelector(state => state.avatar);
-    
     return (
             <ListItem style={{allign:'center'}} id={props.index} >
                 <ListItemIcon>
