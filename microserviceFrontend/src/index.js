@@ -29,22 +29,26 @@ io.on( 'connection', function( socket ) {
     socket.on('sendMessage', async (it)=>{
     // We can see the number of clients connections.
     //console.log('io.sockets.server.engine.clientsCount: ', io.sockets.server.engine.clientsCount);
-            const formData={
-                identification:it.id
-            } 
-            const user= await fetchFunction(formData, "http://backend:4001/api/users/userInformation");
-            let date = new Date();
-            let current_time = date.getHours()+':'+date.getMinutes();
-            let item={
-                room:it.room,
-                id:it.id,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                message:it.message,
-                time:current_time
-              }
-            let room=it.room;
-            io.to(room).emit('sendMessage', item) 
+    try{
+        const formData={
+            identification:it.id
+        } 
+        const user= await fetchFunction(formData, "http://backend:4001/api/users/userInformation");
+        let date = new Date();
+        let current_time = date.getHours()+':'+date.getMinutes();
+        let item={
+            room:it.room,
+            id:it.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            message:it.message,
+            time:current_time
+          }
+        let room=it.room;
+        io.to(room).emit('sendMessage', item)
+    }catch(e){
+        console.log(e);
+    } 
     })
 
     socket.on('sendNotification', (room)=>{
