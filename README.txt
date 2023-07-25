@@ -11,10 +11,6 @@ docker build -t authorization290:1 .
 # push the image to a repository, if is dockerhub, then: 
 docker tag authorization290:1 fabianmm34/chatapp:authorization290
 docker push fabianmm34/chatapp:authorization290
-# if is AWS ECR, then 
-create the repository on ECR called authorization2 
-docker tag authorization2:1 121503602521.dkr.ecr.us-east-2.amazonaws.com/authorization2:1
-docker push 121503602521.dkr.ecr.us-east-2.amazonaws.com/authorization2:1
 
 # ------------------------------------
 # Enter to folder BackEnd-microservice
@@ -26,10 +22,6 @@ docker build -t backend2:1 .
 # push the image to a repository, if is dockerhub, then: 
 docker tag backend2:1 fabianmm34/chatapp:backend2
 docker push fabianmm34/chatapp:backend2
-# if is AWS ECR, then 
-create the repository on ECR called backend2 
-docker tag backend2:1 121503602521.dkr.ecr.us-east-2.amazonaws.com/backend2:1
-docker push 121503602521.dkr.ecr.us-east-2.amazonaws.com/backend2:1
 
 # ------------------------------------
 # Enter to folder UI-microservice-back
@@ -41,10 +33,6 @@ docker build -t graphql2:1 .
 # push the image to a repository, if is dockerhub, then: 
 docker tag graphql2:1 fabianmm34/chatapp:graphql2
 docker push fabianmm34/chatapp:graphql2   
-# if is AWS ECR, then 
-create the repository on ECR called graphql2 
-docker tag graphql2:1 121503602521.dkr.ecr.us-east-2.amazonaws.com/graphql2:1
-docker push 121503602521.dkr.ecr.us-east-2.amazonaws.com/graphql2:1
 
 # ------------------------------------
 # Enter to the file UI-microservice-front
@@ -56,14 +44,8 @@ docker build -t frontend2:1 .
 # push the image to a repository, if is dockerhub, then: 
 docker tag frontend2:1 fabianmm34/chatapp:frontend2
 docker push fabianmm34/chatapp:frontend2  
-# if is AWS ECR, then 
-create the repository on ECR called graphql2 
-docker tag frontend2:1 121503602521.dkr.ecr.us-east-2.amazonaws.com/frontend2:1
-docker push 121503602521.dkr.ecr.us-east-2.amazonaws.com/frontend2:1 
 
 # ------------------------------------
-
-The next part is only for minikube
 
 # start minikube
 minikube start 
@@ -91,7 +73,6 @@ kubectl apply -f ingress.yaml
 
 # Run a tunnel
 minikube tunnel
-
 
 Access to the app at:
 http://chat-app.fabian/
