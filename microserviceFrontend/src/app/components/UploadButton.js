@@ -43,7 +43,6 @@ export function UploadButton(props) {
         </Button>
       </div>
           {
-
               array.map((element) =>{
                   if (isFilePicked==true) {
                       return (
@@ -53,7 +52,6 @@ export function UploadButton(props) {
                       );
                   }
               })
-
           }                         
     </Stack>
   );

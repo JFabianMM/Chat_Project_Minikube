@@ -10,7 +10,7 @@ const login = {
             async login(_, {input}){
             let { email, password} = input;    
             try {
-                const user = await findByCredentials(email, password);
+                let user = await findByCredentials(email, password);
                 if (user!='Do not exist' && user!='Do not match'){
                     let idnumber= JSON.stringify(user._id);
                     const identification = idnumber.replaceAll('"', '');
@@ -28,6 +28,7 @@ const login = {
                     let loginResponse = {
                         user,       
                         token,
+                        language: data.loginResponse.language,
                         contact: contactAvatar,
                         notification: data.loginResponse.notification,
                         groupNotification: data.loginResponse.groupNotification,

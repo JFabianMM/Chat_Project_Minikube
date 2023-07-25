@@ -3,21 +3,20 @@ import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Box from '@mui/material/Box';
 import { useDispatch } from 'react-redux';
+import { updateLanguage } from '../../redux/slice/languageSlice';
 
-export function LanguageButton() {
-  const Dispatch = useDispatch();  
+export function LanguageButtonPrev() {
+  const Dispatch = useDispatch(); 
+   
   const onChangeLanguageES = () =>{
-      let language='es';
-      Dispatch({type: 'NEW_LANGUAGE', language});
+      Dispatch(updateLanguage('es'));
   }
   const onChangeLanguageEN = () =>{
-      let language='en';
-      Dispatch({type: 'NEW_LANGUAGE', language});
+      Dispatch(updateLanguage('en'));
   }
   const onChangeLanguageFR = () =>{
-    let language='fr';
-    Dispatch({type: 'NEW_LANGUAGE', language});
-}
+    Dispatch(updateLanguage('fr'));
+    }
 
 return (
   <Box

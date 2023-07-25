@@ -27,4 +27,3 @@ const createNewStatus = {
 };
 
 module.exports = createNewStatus;
-        

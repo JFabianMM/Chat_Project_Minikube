@@ -62,6 +62,7 @@ export function ContactRequest(props) {
   const getUser = useSelector(state => state.getUser);
   const contacts = useSelector(state => state.contacts);
   const receivedStatus = useSelector(state => state.receivedStatus);
+  const userData = useSelector(state => state.userData);
 
   const handleNotification= (message)=> {
     props.socket.emit('sendNotification', message);
@@ -70,10 +71,15 @@ export function ContactRequest(props) {
   const handleClickOpen = () => {
         let email=props.searchmessage;
         try {
-          Dispatch({type: 'QUERY_USER', email});
-        } catch (error) {
+            if (email!=userData.email){
+                Dispatch({type: 'QUERY_USER', email});
+            }
+        } 
+        catch (error) {
         }
-        setOpen(true);
+        if (email!=userData.email){
+            setOpen(true);
+        }
   };
 
   const handleClose = () => {

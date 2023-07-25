@@ -48,28 +48,28 @@ export function UserCard(props){
 
     function handleClickUserCard(e) {
         e.preventDefault();   
-    
         const elements = document.querySelectorAll(".selected");
         if (elements.length>0) elements.forEach(element => {
                 element.classList.remove("selected");
         });
 
-        // localStorage.setItem('elementId', props.index);
         const element = document.getElementById(props.index);
         element.classList.add("selected");
 
         updateChatRooms(e.target.parentNode.id);
-
+  
         let index=-1;
         index = contacts.findIndex(function (el){
                 return el.room == props.index;
         });
+
         if (index>=0){
             let cont=[];
             contacts.map((contact) =>{ 
                 let newContact={
                     id:contact.id,
                     room:contact.room,
+                    status:contact.status,
                     email:contact.email,
                     firstName:contact.firstName,
                     lastName:contact.lastName,
@@ -78,7 +78,8 @@ export function UserCard(props){
                 }
                 cont= cont.concat(newContact);
             })
-            cont[index].alreadyread = true;
+
+            cont[index].alreadyread = 'true';
             Dispatch(updateContacts(cont));
             let id= userData._id;
             let room= props.index;
@@ -87,24 +88,84 @@ export function UserCard(props){
         }
     };
     
-    if (props.alreadyread==false){
+    if (props.element.status=='pending'){
         return (
-            <ListItem style={{allign:'center'}} id={props.index} button onClick={handleClickUserCard} >
-                <ListItemIcon id={props.index} onClick={handleClickUserCard}>
+            <ListItem style={{allign:'center'}} id={props.index}  >
+                <ListItemIcon id={props.index} >
                     <Avatar  id={props.index}   alt={props.name} srcSet={props.src} />
                 </ListItemIcon>
-                <ListItemText onClick={handleClickUserCard} id={props.index} style={{color:'#FFFFFF'}} primary={props.name}></ListItemText>
-                <ListItemText secondary={<Typography variant="caption" style={{ color: 'green' }}>{props.t('chat.new')}</Typography>} ></ListItemText>
+                <ListItemText id={props.index} style={{color:'#FFFFFF'}} primary={props.name}></ListItemText>
+                <ListItemText secondary={<Typography variant="caption" style={{ color: 'green' }}>{props.t('chat.pending')}</Typography>} ></ListItemText>
             </ListItem>
         )
     }else{
-        return (
-            <ListItem style={{allign:'center'}} id={props.index} button onClick={handleClickUserCard} >
-                <ListItemIcon id={props.index} onClick={handleClickUserCard}>
-                    <Avatar  id={props.index}   alt={props.name} srcSet={props.src} />
-                </ListItemIcon>
-                <ListItemText onClick={handleClickUserCard} id={props.index} style={{color:'#FFFFFF'}} primary={props.name}></ListItemText>
-            </ListItem>
-    )
-    } 
+        if (props.alreadyread=='false'){
+            return (
+                <ListItem style={{allign:'center'}} id={props.index} button onClick={handleClickUserCard} >
+                    <ListItemIcon id={props.index} onClick={handleClickUserCard}>
+                        <Avatar  id={props.index}   alt={props.name} srcSet={props.src} />
+                    </ListItemIcon>
+                    <ListItemText onClick={handleClickUserCard} id={props.index} style={{color:'#FFFFFF'}} primary={props.name}></ListItemText>
+                    <ListItemText secondary={<Typography variant="caption" style={{ color: 'green' }}>{props.t('chat.new')}</Typography>} ></ListItemText>
+                </ListItem>
+            )
+        }else{
+            return (
+                <ListItem style={{allign:'center'}} id={props.index} button onClick={handleClickUserCard} >
+                    <ListItemIcon id={props.index} onClick={handleClickUserCard}>
+                        <Avatar  id={props.index}   alt={props.name} srcSet={props.src} />
+                    </ListItemIcon>
+                    <ListItemText onClick={handleClickUserCard} id={props.index} style={{color:'#FFFFFF'}} primary={props.name}></ListItemText>
+                </ListItem>
+            )    
+        }
+    }
   }
+
+
+
+
+
+
+
+
+
+
+// export function UserCard(props){
+//     if (props.element.status=='pending'){
+//         console.log('props.element.status: ', props.element.status);
+//         return (
+//             <ListItem style={{allign:'center'}} id={props.index}  >
+//                 <ListItemIcon id={props.index} >
+//                     <Avatar  id={props.index}   alt={props.name} srcSet={props.src} />
+//                 </ListItemIcon>
+//                 <ListItemText id={props.index} style={{color:'#FFFFFF'}} primary={props.name}></ListItemText>
+//                 <ListItemText secondary={<Typography variant="caption" style={{ color: 'green' }}>{props.t('chat.pending')}</Typography>} ></ListItemText>
+//             </ListItem>
+//         )
+//     }else{
+//         console.log('props.element.status: ', props.element.status);
+//         console.log('props.alreadyread: ', props.alreadyread);
+//         if (props.alreadyread=='false'){
+//             return (
+//                 <ListItem style={{allign:'center'}} id={props.index} button onClick={handleClickUserCard} >
+//                     <ListItemIcon id={props.index} onClick={handleClickUserCard}>
+//                         <Avatar  id={props.index}   alt={props.name} srcSet={props.src} />
+//                     </ListItemIcon>
+//                     <ListItemText onClick={handleClickUserCard} id={props.index} style={{color:'#FFFFFF'}} primary={props.name}></ListItemText>
+//                     <ListItemText secondary={<Typography variant="caption" style={{ color: 'green' }}>{props.t('chat.new')}</Typography>} ></ListItemText>
+//                 </ListItem>
+//             )
+//         }else{
+//             console.log('props.alreadyread: ', props.alreadyread);
+//             return (
+//                 <ListItem style={{allign:'center'}} id={props.index} button onClick={handleClickUserCard} >
+//                     <ListItemIcon id={props.index} onClick={handleClickUserCard}>
+//                         <Avatar  id={props.index}   alt={props.name} srcSet={props.src} />
+//                     </ListItemIcon>
+//                     <ListItemText onClick={handleClickUserCard} id={props.index} style={{color:'#FFFFFF'}} primary={props.name}></ListItemText>
+//                 </ListItem>
+//             )    
+//         }
+//     }       
+//   }

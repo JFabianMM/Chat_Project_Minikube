@@ -1,5 +1,6 @@
 const { GraphQLError } = require('graphql');
 const fetchFunction = require('../functions/fetchFunction');
+const getGroupAvatars = require('../functions/getGroupAvatars');
 
 const groups = {
     Query: { 
@@ -12,9 +13,10 @@ const groups = {
                 if (!authResponse.identification){
                     throw new GraphQLError('Please Authenticate');
                 }            
-                const formData={identification: args.id}
+                const formData={identification: authResponse.identification}
                 const group= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'groups');
-                return group.groups;
+                const groupAvatar = await getGroupAvatars(group);
+                return groupAvatar.groups
             }catch(e){
                 throw new GraphQLError(e);
             }

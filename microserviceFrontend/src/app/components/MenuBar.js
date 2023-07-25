@@ -28,7 +28,6 @@ export function MenuBar(props) {
     const [selectedValueContact, setSelectedValueContact] = React.useState(false)
     const [selectedValue, setSelectedValue] = React.useState('1')
 
-    const userData = useSelector(state => state.userData);
     const notifications = useSelector(state => state.notifications);
     const groupNotifications = useSelector(state => state.groupNotifications);
 

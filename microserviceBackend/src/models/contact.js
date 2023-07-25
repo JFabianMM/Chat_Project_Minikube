@@ -16,10 +16,12 @@ const contactSchema = new Schema({
         room: { 
             type: String, 
             trim: true,
+        },
+        status: { 
+            type: String, 
+            trim: true,
         }
     }]
 });
 
 module.exports = mongoose.model('Contact', contactSchema);
-
-

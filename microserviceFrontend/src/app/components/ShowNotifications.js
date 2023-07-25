@@ -65,6 +65,12 @@ export function ShowNotifications(props) {
     const handleRejectedListItem = (id)=>{
         let contactid=id;
         Dispatch({type: 'DELETE_NOTIFICATION', contactid});
+        let roomToSend={
+          room_forNotification:contactid,
+        }
+        setTimeout(() => {
+            handleContact(roomToSend);
+        }, 2000);
     }
 
   return (

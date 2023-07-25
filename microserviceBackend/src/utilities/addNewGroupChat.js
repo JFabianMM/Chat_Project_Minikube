@@ -13,7 +13,7 @@ const addNewGroupChat= function(group){
     let messages=[];
     let name=group.name;        
     let contactRoom={
-        alreadyread:false,
+        alreadyread:'false',
         room:room, 
         users:users,
         name:name,

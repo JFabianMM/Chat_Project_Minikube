@@ -2,24 +2,26 @@ const User = require('../models/user');
 const { GraphQLError } = require('graphql');
 const fetchFunction = require('../functions/fetchFunction');
 
-const deleteNotification = {
+const newLanguage = {
     Mutation: {
-        async deleteNotification(context, args){
+        async newLanguage(context,args){ 
             try{
                 let req=context.headers.authorization;
                 const token = req.replace('Bearer ','');
                 const authFormData={token}
                 const authResponse= await fetchFunction(authFormData, process.env.AUTHORIZATION_MICROSERVICE+'validation' ); 
-                if (!authResponse.identification){
+                if (!authResponse.identification){ 
                     throw new GraphQLError('Please Authenticate');
-                } 
-                const user = await User.findOne({ _id: authResponse.identification});
+                }
                 const formData={
-                    contactid: args.contactid,
-                    userId: user._id
-                } 
-                const response= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'notificationdeletion');
-                return response.DeleteNotificationResponse;
+                    language: args.language,
+                    identification: authResponse.identification
+                }    
+                const result= fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'language');
+                let languageResult=  {
+                    language: args.language
+                }
+                return languageResult;
             }catch(e){
                 throw new GraphQLError(e); 
             }
@@ -27,6 +29,4 @@ const deleteNotification = {
     }
 };
 
-module.exports = deleteNotification;
-        
-    
+module.exports = newLanguage;

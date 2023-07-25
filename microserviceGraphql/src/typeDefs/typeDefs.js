@@ -2,6 +2,7 @@ const typeDefs = `
     type loginResponse {
         user: user
         token: String
+        language: String
         contact: userContact
         notification: userNotification
         groupNotification: [groupNotification]
@@ -32,6 +33,11 @@ const typeDefs = `
     type createContactResponse {
         user: userContact
         contactId: String
+        number: Int
+    }
+    type createNotificationResponse {
+        user: userContact
+        contact: userContact
         number: Int
     }
     type deleteNotificationResponse {
@@ -99,6 +105,7 @@ const typeDefs = `
     type contact {
         id: String
         room: String
+        status: String
         email: String
         firstName: String
         lastName: String
@@ -166,6 +173,18 @@ const typeDefs = `
         position: String 
         message: String
         time: String 
+    }  
+
+    input editGroupInput {
+        group: newEditGroup
+        name: String
+    } 
+    input newEditGroup {
+        room: String
+        members: [newmember]
+    }
+    type languageResult {
+        language: String
     }
 
     type Query {
@@ -175,11 +194,11 @@ const typeDefs = `
         contacts(id: String): userContact
         notification(id: String): resultNotification
         groupNotifications(id: String): [groupNotification]
-        groups(id: String!): [group]
+        groups(id: String): [group]
     }
     type Mutation {
         createUser(input: userInput): user
-        createNotification(id: String!): userNotification
+        createNotification(id: String!): createContactResponse
         deleteNotification(contactid: String!): deleteNotificationResponse
         deleteGroupNotification(room: String!): deleteNotificationResponse
         createContact(input: contactInput): createContactResponse 
@@ -187,8 +206,10 @@ const typeDefs = `
         createGroupAndNotifications(input: groupInput): [group]
         singleUpload(file: String!): result
         updateUserData(input: updateInput): user
-        createNewMessage(input: newMessageInput): NewMessageResponse
+        newMessage(input: newMessageInput): NewMessageResponse
         createNewStatus(input: newStatusInput): statusResult
+        editGroup(input: editGroupInput): [group]
+        newLanguage(language: String!): languageResult
     }
 `;
 

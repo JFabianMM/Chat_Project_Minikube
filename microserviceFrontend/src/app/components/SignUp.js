@@ -22,7 +22,6 @@ function Copyright(props) {
     return (
         <Typography variant="body2" color="text.secondary" align="center" {...props}>
             {'Copyright © '}
-            {/* <Link color="inherit" href="https://mui.com/"> */}
             <Link color="inherit" href="#">
                 ChatProject
             </Link>{' '}
@@ -49,12 +48,33 @@ export function SignUp(props) {
         let lastName=data.get('lastName');
 
         let errorFlag=0;
-        const result = /^(?=.*[0-9])(?=.*[A-Z])(?!.* ).{6,12}$/.test(password);
-        if (result===false){
+        const result = /^(?=.*[0-9])(?=.*[A-Z])(?!.* ).{6,80}$/.test(password);
+
+        if (confirmpassword == "")  {
+            errorFlag=1;
+            Dispatch(updateErrorNotification('fillConfirmPassword'));
+        }
+        if (password == "")  {
+            errorFlag=1;
+            Dispatch(updateErrorNotification('fillPassword'));
+        }
+        if (email == "")  {
+            errorFlag=1;
+            Dispatch(updateErrorNotification('fillEmail'));
+        }
+        if (lastName == "")  {
+            errorFlag=1;
+            Dispatch(updateErrorNotification('fillLastName'));
+        }
+        if (firstName == "")  {
+            errorFlag=1;
+            Dispatch(updateErrorNotification('fillFirstName'));
+        }
+        if (result===false && password != ""){
             errorFlag=1;
             Dispatch(updateErrorNotification('characters'));
         }
-        if(!validator.isEmail(email)){
+        if(!validator.isEmail(email) && email != ""){
             errorFlag=1;
             Dispatch(updateErrorNotification('invalid'));
         }
@@ -63,16 +83,14 @@ export function SignUp(props) {
                 errorFlag=1;
                 Dispatch(updateErrorNotification('match'));
             }
-        }else{
-            errorFlag=1;
-            Dispatch(updateErrorNotification('fill'));
         }
+          
         if (errorFlag==0){
             Dispatch(updateErrorNotification(''));
             Dispatch({type: 'MUTATION_SIGNUP', email, password, firstName, lastName});
         }
     };
-
+        
     return (
         <ThemeProvider theme={theme}>
             <Container component="main" maxWidth="xs">
@@ -89,37 +107,47 @@ export function SignUp(props) {
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
                                 <TextField autoComplete="given-name" name="firstName" required fullWidth id="firstName" label={props.t('signup.first.name')} autoFocus/>
-                            </Grid>
-                            <Grid item xs={12} sm={6}>
-                                <TextField required fullWidth id="lastName" label={props.t('signup.last.name')} name="lastName" autoComplete="family-name"/>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField required fullWidth id="email" label={props.t('signup.email')} name="email" autoComplete="email"/>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField required fullWidth name="password" label={props.t('signup.password')} type="password" id="password" autoComplete="new-password"/>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField required fullWidth name="confirmpassword" label={props.t('signup.confirm.password')} type="password" id="confirmpassword" autoComplete="new-password"/>
-                            </Grid>
-                        </Grid>
-                        <List>
+                               
                                 {
                                     array.map((element) =>{
-                                        if (errorNotification=='match') {
+                                        if (errorNotification=='fillFirstName') {
                                             return (
                                                 <Typography key={element.indexOf} style={{color:'red'}}>
-                                                    {props.t('signup.error.match')}
+                                                    {props.t('signup.error.fillFirstName')}
                                                 </Typography>
                                             );
                                         }
-                                            
-                                        if (errorNotification=='fill') {
-                                                return (
-                                                    <Typography key={element.indexOf} style={{color:'red'}}>
-                                                        {props.t('signup.error.fill')}
-                                                    </Typography>
-                                                );
+                                    })
+                                    }
+                               
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <TextField required fullWidth id="lastName" label={props.t('signup.last.name')} name="lastName" autoComplete="family-name"/>
+                                
+                                {
+                                    array.map((element) =>{
+                                        if (errorNotification=='fillLastName') {
+                                            return (
+                                                <Typography key={element.indexOf} style={{color:'red'}}>
+                                                    {props.t('signup.error.fillLastName')}
+                                                </Typography>
+                                            );
+                                        }
+                                    })
+                                    }
+                               
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField required fullWidth id="email" label={props.t('signup.email')} name="email" autoComplete="email"/>
+                              
+                                {
+                                    array.map((element) =>{
+                                        if (errorNotification=='fillEmail') {
+                                            return (
+                                                <Typography key={element.indexOf} style={{color:'red'}}>
+                                                    {props.t('signup.error.fillEmail')}
+                                                </Typography>
+                                            );
                                         }
                                         if (errorNotification=='invalid') {
                                             return (
@@ -135,6 +163,21 @@ export function SignUp(props) {
                                                 </Typography>
                                             );
                                         }
+                                    })
+                                    }
+                               
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField required fullWidth name="password" label={props.t('signup.password')} type="password" id="password" autoComplete="new-password"/>          
+                                {
+                                    array.map((element) =>{
+                                        if (errorNotification=='fillPassword') {
+                                            return (
+                                                <Typography key={element.indexOf} style={{color:'red'}}>
+                                                    {props.t('signup.error.fillPassword')}
+                                                </Typography>
+                                            );
+                                        }
                                         if (errorNotification=='characters') {
                                             return (
                                                 <Typography key={element.indexOf} style={{color:'red'}}>
@@ -143,9 +186,35 @@ export function SignUp(props) {
                                             );
                                         }
                                     })
+                                    }
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField required fullWidth name="confirmpassword" label={props.t('signup.confirm.password')} type="password" id="confirmpassword" autoComplete="new-password"/>
+                                {
+                                    array.map((element) =>{
+                                        if (errorNotification=='fillConfirmPassword') {
+                                            return (
+                                                <Typography key={element.indexOf} style={{color:'red'}}>
+                                                    {props.t('signup.error.fillConfirmPassword')}
+                                                </Typography>
+                                            );
+                                        }
+                                    })
+                                    }
+                              
+                            </Grid>
+                        </Grid>
+                                {
+                                    array.map((element) =>{
+                                        if (errorNotification=='match') {
+                                            return (
+                                                <Typography key={element.indexOf} style={{color:'red'}}>
+                                                    {props.t('signup.error.match')}
+                                                </Typography>
+                                            );
+                                        }    
+                                    })
                                 }
-                            </List>
-                       
                         <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
                             {props.t('signup.signup.button')}
                         </Button>
@@ -166,3 +235,8 @@ export function SignUp(props) {
         </ThemeProvider>
   );
 }
+
+
+
+
+

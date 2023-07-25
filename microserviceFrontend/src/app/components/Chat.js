@@ -1,5 +1,4 @@
 import React, { useRef, useEffect } from "react";
-import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import Divider from '@mui/material/Divider';
 import List from '@mui/material/List';
@@ -15,7 +14,6 @@ import {useSelector} from 'react-redux';
 import {useDispatch} from 'react-redux';
 import { updateNotifications } from '../../redux/slice/notificationsSlice';
 import { updateGroupNotifications } from '../../redux/slice/groupNotificationsSlice';
-import { updateRooms } from '../../redux/slice/roomsSlice';
 import { updateMessages } from '../../redux/slice/messagesSlice';
 import { updateCurrentChat } from '../../redux/slice/currentChatSlice';
 import { updateContacts } from '../../redux/slice/contactsSlice';
@@ -39,19 +37,19 @@ export function Chat (props) {
     const Dispatch = useDispatch();
     let selected= localStorage.getItem('elementId');
 
-    function addNewChat(contact,data){
-        let room=contact.room;
-        let users=[{id:data._id, firstName:data.firstName, lastName: data.lastName},{id:contact.id, firstName:contact.firstName, lastName: contact.lastName}];
-        let messages=[];
-        let contactRoom={
-            new:false,
-            room:room, 
-            users:users,
-            name:'',
-            messages:messages
-        }
-        return contactRoom;
-    }
+    // function addNewChat(contact,data){
+    //     let room=contact.room;
+    //     let users=[{id:data._id, firstName:data.firstName, lastName: data.lastName},{id:contact.id, firstName:contact.firstName, lastName: contact.lastName}];
+    //     let messages=[];
+    //     let contactRoom={
+    //         new:false,
+    //         room:room, 
+    //         users:users,
+    //         name:'',
+    //         messages:messages
+    //     }
+    //     return contactRoom;
+    // }
 
     let username = userData.firstName + ' ' + userData.lastName;
     let room = userData._id;
@@ -72,7 +70,6 @@ export function Chat (props) {
         }
     }, [rooms]);
 
-    
     useEffect(() => {
         messsa=messages;
     }, [messages]);
@@ -225,15 +222,10 @@ export function Chat (props) {
     });
 
     socket.on('sendContact', (item)=>{
-        let addedRoom={
-            id:item.id,
-            room:item.room
-        }
-        Dispatch(updateRooms(rooms.concat(addedRoom)));
-        let chat=[];
-        chat= chat.concat(addNewChat(item,userData));  
-        Dispatch(updateMessages(messages.concat(chat)));
         Dispatch({type: 'QUERY_CONTACT'});
+    })
+    socket.on('sendUpdateNotification', (item)=>{
+        Dispatch({type: 'QUERY_GROUPS'});
     })
     const elem = document.getElementById("chatElement");
 
@@ -270,7 +262,7 @@ return (
                         return (
                             <div key={element.room} id={element.room}>
                                 <GroupCard i18n={props.i18n} t={props.t} key={element.room} element={element} selected= {selected} group={element} alreadyread={element.alreadyread} id={element.room} socket={socket} index={element._id}/>
-                            </div>
+                            </div>            
                         );
                     })
                 }
@@ -285,8 +277,7 @@ return (
                             return (
                                 <MessageCard key={element.id} element={element}/>                    
                             );
-                        }else{
-                            
+                        }else{   
                             let lev= Math.abs(elem.scrollHeight - elem.scrollTop - elem.clientHeight);
                             if (element.position=='left'){
                                 if (lev<10){

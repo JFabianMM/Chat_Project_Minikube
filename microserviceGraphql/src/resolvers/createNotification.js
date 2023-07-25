@@ -1,6 +1,8 @@
 const User = require('../models/user');
 const { GraphQLError } = require('graphql');
 const fetchFunction = require('../functions/fetchFunction');
+const getContactAvatars = require('../functions/getContactAvatars');
+
 
 const createNotification = {
     Mutation: {    
@@ -18,8 +20,11 @@ const createNotification = {
                     id: args.id,
                     userId: user._id
                 }
-                const notification= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'newnotification');
-                return notification;
+                const newcontact= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'newnotification');
+                let CreateContactResponse=newcontact.CreateContactResponse;
+                const contactAvatar = await getContactAvatars(CreateContactResponse.user);
+                CreateContactResponse.user=contactAvatar;
+                return CreateContactResponse
             }catch(e){
                 throw new GraphQLError(e);
             }
@@ -28,4 +33,5 @@ const createNotification = {
 };
 
 module.exports = createNotification;
+        
         

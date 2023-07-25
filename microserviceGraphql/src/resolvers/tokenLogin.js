@@ -28,6 +28,7 @@ const tokenLogin = {
                     let loginResponse = {
                         user,
                         token,
+                        language: data.loginResponse.language,
                         contact:contactAvatar,
                         notification: data.loginResponse.notification,
                         groupNotification: data.loginResponse.groupNotification,

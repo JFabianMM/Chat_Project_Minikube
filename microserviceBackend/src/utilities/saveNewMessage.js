@@ -16,9 +16,9 @@ const saveNewMessage= async function(input, users) {
         }
         if (index>=0){
             if (pos == 'left'){
-                messages.messagesInformation[index].alreadyread=false;
+                messages.messagesInformation[index].alreadyread='false';
             }else{
-                messages.messagesInformation[index].alreadyread=true;
+                messages.messagesInformation[index].alreadyread='true';
             }
             let len= messages.messagesInformation[index].messages.length;
             let newMessage={

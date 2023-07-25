@@ -1,8 +1,8 @@
-const addNewChat= function(contact,user){
-    let users=[{id:user.id, firstName: user.firstName, lastName: user.lastName},{id:contact.id, firstName:contact.firstName, lastName: contact.lastName}];
+const addNewChat= function(contact,user, alreadyread="true"){
+    let users=[{id:user.id},{id:contact.id}];
     let messages=[];
     let contactRoom={
-        alreadyread:false,
+        alreadyread: alreadyread,
         room:contact.room, 
         users:users,
         name:'',

@@ -25,6 +25,7 @@ function SimpleDialog(props) {
     const groupName = useSelector(state => state.groupName); 
 
     const Dispatch = useDispatch();
+
     const handleClose = () => {
         onClose(selectedValue);
     };
@@ -35,20 +36,32 @@ function SimpleDialog(props) {
 
     const handleListItemClick = (value) => {
         let contact=[];
-        contact= newGroup.filter((el) => {
-          return el.id == value.id;
-        });
-        if (contact.length==0){
-            newGroup=newGroup.concat(value);     
+        const element = document.getElementById(value.id);
+        let hasClass= element.classList.contains('contactSelected');
+        
+        if (hasClass){
+            element.classList.remove('contactSelected');
+            newGroup= newGroup.filter((el) => {
+                return el.id != value.id;
+            });
+        }else{
+            contact= newGroup.filter((el) => {
+                return el.id == value.id;
+            });
+            if (contact.length==0){
+                newGroup=newGroup.concat(value);     
+            }  
+            element.classList.add('contactSelected');
         }
     };
-    
+
     const handleRequestAndClose =()=>{
         let formattedMembers = [];
         let notificationMembers= [];
         let data={
              id:userData._id
         }
+
         formattedMembers=formattedMembers.concat(data);
         
         newGroup.forEach(element => {
@@ -67,7 +80,7 @@ function SimpleDialog(props) {
         handleGroupNotification(notificationMembers);
         newGroup=[];
         onClose(selectedValue);
-}   
+}  
 
   return (
     <Dialog style={{width: '100%', height: '100%'}} onClose={handleClose} open={open}>
@@ -76,14 +89,16 @@ function SimpleDialog(props) {
       <List  sx={{ pt: 0, overflow: 'auto', maxHeight: 400, maxWidth: 400}}>
         <ListItem>{props.t('add.group.select')}</ListItem>
         {contacts.map((item) => (
-          <ListItem button onClick={() => handleListItemClick(item)} key={item.id}>
-            <ListItemAvatar>
-              <Avatar srcSet={item.avatar} sx={{ bgcolor: blue[100], color: blue[600] }}>
-                <PersonIcon />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary={item.firstName + ' ' + item.lastName}/>
-          </ListItem>
+          <div key={item.id} id={item.id}>
+              <ListItem button onClick={() => handleListItemClick(item)} key={item.id}>
+                  <ListItemAvatar>
+                      <Avatar srcSet={item.avatar} sx={{ bgcolor: blue[100], color: blue[600] }}>
+                          <PersonIcon />
+                      </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText primary={item.firstName + ' ' + item.lastName}/>
+              </ListItem>
+          </div>
         ))}
         <Divider sx={{ height: 0, m: 0.5 }} orientation="horizontal" />
         <InputGroupName i18n={props.i18n} t={props.t}/>

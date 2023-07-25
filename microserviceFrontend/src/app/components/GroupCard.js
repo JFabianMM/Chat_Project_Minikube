@@ -12,6 +12,9 @@ import { updateGroups } from '../../redux/slice/groupsSlice';
 import { useEffect } from 'react';
 import { Typography } from '@mui/material';
 
+import { EditDialog } from './EditDialog';                  
+import {socket} from '../functions/socket';               
+
 export function GroupCard(props){
     const rooms = useSelector(state => state.rooms);
     const messages = useSelector(state => state.messages);
@@ -28,11 +31,9 @@ export function GroupCard(props){
          Dispatch(updateCurrentRoom(newCurrentroom));
          Dispatch(updateMessages(messages));
  
- 
          let index = messages.findIndex(function (el){
              return el.room == newCurrentroom[0].room;
          });
- 
          Dispatch(updateCurrentChat(messages[index].messages));
     }
 
@@ -73,7 +74,7 @@ export function GroupCard(props){
                 }
                 gro= gro.concat(newGroup);
             })
-            gro[index].alreadyread = true;
+            gro[index].alreadyread = true;      
             Dispatch(updateGroups(gro));
             let id= userData._id;
             let room= props.id;
@@ -82,7 +83,7 @@ export function GroupCard(props){
         }
     };
 
-    if (props.alreadyread==false){
+    if (props.alreadyread==false){     
     return (
             <ListItem style={{allign:'center'}} id={props.index} button onClick={handleClickGroupCard} >
                 <ListItemIcon>
@@ -90,6 +91,7 @@ export function GroupCard(props){
                 </ListItemIcon>
                 <ListItemText id={props.index} style={{color:'#FFFFFF', padding: "10px"}} primary={props.group.name}></ListItemText>
                 <ListItemText secondary={<Typography variant="caption" style={{ color: 'green' }}>{props.t('chat.new')}</Typography>} ></ListItemText>
+                <EditDialog element={props.element} room={props.id} i18n={props.i18n} t={props.t} socket={socket}/>
             </ListItem>
     )
     }else{
@@ -99,6 +101,7 @@ export function GroupCard(props){
                     <GroupAvatars id={props.index} group={props.group} />
                 </ListItemIcon>
                 <ListItemText id={props.index} style={{color:'#FFFFFF', padding: "10px"}} primary={props.group.name}></ListItemText>
+                <EditDialog element={props.element} room={props.id} i18n={props.i18n} t={props.t} socket={socket}/>
             </ListItem>
     )
     }   

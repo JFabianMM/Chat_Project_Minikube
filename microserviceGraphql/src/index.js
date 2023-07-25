@@ -22,7 +22,6 @@ app.use("/", bodyParser.json({ limit: '50mb' }), (request, response)=>{
         }
     })(request, response);
 });
-// ---------------------------------------------------------
 
 // Settings
 app.set('port', process.env.SERVER_PORT);
