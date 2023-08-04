@@ -6,8 +6,10 @@ const typeDefs = require('./typeDefs/typeDefs');
 const contacts = require('./resolvers/contacts');
 const createContact = require('./resolvers/createContact');
 const createGroup = require('./resolvers/createGroup');
+const editGroup = require('./resolvers/editGroup');
 const createGroupAndNotifications = require('./resolvers/createGroupAndNotifications');
-const createNewMessage = require('./resolvers/createNewMessage');
+const newMessage = require('./resolvers/newMessage');
+const newLanguage = require('./resolvers/newLanguage');
 const createNewStatus = require('./resolvers/createNewStatus');
 const createNotification = require('./resolvers/createNotification');
 const createUser = require('./resolvers/createUser');
@@ -24,7 +26,7 @@ const user = require('./resolvers/user');
 
 const schema= makeExecutableSchema({
     typeDefs: [typeDefs],
-    resolvers: merge(contacts,createContact,createGroup,createGroupAndNotifications,createNewMessage,createNewStatus,createNotification,createUser,deleteGroupNotification,deleteNotification,groupNotifications,groups,login,notification,singleUpload,tokenLogin,updateUserData,user),
+    resolvers: merge(contacts,createContact,createGroup,editGroup, createGroupAndNotifications,newMessage,newLanguage, createNewStatus,createNotification,createUser,deleteGroupNotification,deleteNotification,groupNotifications,groups,login,notification,singleUpload,tokenLogin,updateUserData,user),
 });
 
 

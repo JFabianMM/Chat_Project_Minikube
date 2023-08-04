@@ -21,7 +21,7 @@ const findByCredentials = async function (identification, password) {
 const generateAuthToken = async function (user){
     const token =jwt.sign({_id: user.identification }, process.env.JWT_SECRET);
     user.tokens = user.tokens.concat({ token });
-    await user.save(); 
+    user.save(); 
     return token;
 }
 

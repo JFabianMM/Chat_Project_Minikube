@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
+const logger = require("./logger");
 
 mongoose.connect(process.env.MONGODB3_URI)
-    .then(db => console.log('DB is connected'))
-    .catch(err => console.error(err));
+    .then(db => logger.log("info", 'DB is connected'))
+    .catch(err => logger.log("error", err));
 
 module.exports = mongoose;
