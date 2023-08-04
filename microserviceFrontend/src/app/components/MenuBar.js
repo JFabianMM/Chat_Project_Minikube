@@ -33,9 +33,7 @@ export function MenuBar(props) {
 
     const Dispatch= useDispatch();
     const onClose = () => {
-      
     };
-
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 

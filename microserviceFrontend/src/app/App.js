@@ -23,7 +23,6 @@ export function App() {
          Dispatch({type: 'QUERY_TOKEN_LOGIN'});
          flag=1;
     }
-    
     if (page=='signIn' || page=='' && flag==0){
         return (
             <div>

@@ -22,12 +22,10 @@ const typeDefs = `
         lastName: String
     }
     type messagesByUser {
-        id: Int
         origin: String
         firstName: String
         lastName: String
         message: String
-        position: String
         time: String
     }
     type createContactResponse {
@@ -132,6 +130,14 @@ const typeDefs = `
         group: newGroup
         name: String
     }
+    input createGroupInput {
+        group: newGroupInput
+        name: String
+    }
+    input newGroupInput {
+        room: String
+        members: [newmember]
+    }
     input newGroup {
         room: String
         creator: String
@@ -166,11 +172,9 @@ const typeDefs = `
     type NewMessageResponse {
         id: String
         room: String
-        idNumber: String
         origin: String
         firstName: String 
         lastName: String
-        position: String 
         message: String
         time: String 
     }  
@@ -202,7 +206,7 @@ const typeDefs = `
         deleteNotification(contactid: String!): deleteNotificationResponse
         deleteGroupNotification(room: String!): deleteNotificationResponse
         createContact(input: contactInput): createContactResponse 
-        createGroup(input: groupInput): [group]    
+        createGroup(input: createGroupInput): [group]    
         createGroupAndNotifications(input: groupInput): [group]
         singleUpload(file: String!): result
         updateUserData(input: updateInput): user

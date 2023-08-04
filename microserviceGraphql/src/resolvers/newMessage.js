@@ -1,18 +1,20 @@
 const User = require('../models/user');
 const { GraphQLError } = require('graphql');
 const fetchFunction = require('../functions/fetchFunction');
+const logger = require("../logger");
 
 const newMessage = {
     Mutation: {
         async newMessage(context,{input}){ 
             try{ 
+                let req=context.headers.cookie;
+                const token = req.replace('token=','');
                 let date = new Date();
                 let current_time = date.getHours()+':'+date.getMinutes();
-                let req=context.headers.authorization;
-                const token = req.replace('Bearer ','');
                 const authFormData={token}
                 const authResponse= await fetchFunction(authFormData, process.env.AUTHORIZATION_MICROSERVICE+'validation' ); 
                 if (!authResponse.identification){ 
+                    logger.log("error", 'Please Authenticate');
                     throw new GraphQLError('Please Authenticate');
                 }
                 const user = await User.findOne({ _id: authResponse.identification });
@@ -24,16 +26,15 @@ const newMessage = {
                 const NewMessageResponse = {
                     id:authResponse.identification,
                     room: input.room,
-                    idNumber: authResponse.identification,
                     origin: authResponse.identification,
                     firstName: input.firstName, 
                     lastName:  input.lastName,
-                    position: 'rigth', 
                     message: input.message,
                     time: current_time 
                 };
                 return NewMessageResponse;
             }catch(e){
+                logger.log("error", e);
                 throw new GraphQLError(e);
             }
         } 

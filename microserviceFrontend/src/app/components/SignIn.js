@@ -16,12 +16,12 @@ import { useSelector } from 'react-redux';
 import { updatePage } from '../../redux/slice/pageSlice';
 import { updateErrorNotification } from '../../redux/slice/errorNotificationSlice';
 
-
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="#">
+      {/* <Link color="inherit" href="#"> */}
+      <Link color="inherit">
         ChatProject
       </Link>{' '}
       {new Date().getFullYear()}
@@ -130,7 +130,8 @@ export function SignIn(props) {
                                     Dispatch(updateErrorNotification(''));
                                     Dispatch(updatePage('signUp'));
                                 }
-                                } href="#" variant="body2">
+                                //} href="#" variant="body2">
+                                } variant="body2">
                                     {props.t('signin.dont.have.account')}
                                 </Link>
                             </Grid>

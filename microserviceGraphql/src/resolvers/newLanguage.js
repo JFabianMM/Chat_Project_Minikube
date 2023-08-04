@@ -1,16 +1,18 @@
 const User = require('../models/user');
 const { GraphQLError } = require('graphql');
 const fetchFunction = require('../functions/fetchFunction');
+const logger = require("../logger");
 
 const newLanguage = {
     Mutation: {
         async newLanguage(context,args){ 
             try{
-                let req=context.headers.authorization;
-                const token = req.replace('Bearer ','');
+                let req=context.headers.cookie;
+                const token = req.replace('token=','');
                 const authFormData={token}
                 const authResponse= await fetchFunction(authFormData, process.env.AUTHORIZATION_MICROSERVICE+'validation' ); 
                 if (!authResponse.identification){ 
+                    logger.log("error", 'Please Authenticate');
                     throw new GraphQLError('Please Authenticate');
                 }
                 const formData={
@@ -23,6 +25,7 @@ const newLanguage = {
                 }
                 return languageResult;
             }catch(e){
+                logger.log("error", e);
                 throw new GraphQLError(e); 
             }
         } 

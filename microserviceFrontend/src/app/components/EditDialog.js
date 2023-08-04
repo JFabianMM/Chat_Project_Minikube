@@ -26,9 +26,7 @@ function SimpleDialog(props) {
         return el.room == props.room;
     }); 
     const members=selectedGroup[0].members;
-
     let contactLen=contacts.length;
-
     let newContacts=[];
     for(let i=0; i<contactLen; i++){
         let cont={
@@ -44,7 +42,6 @@ function SimpleDialog(props) {
         }
         newContacts=newContacts.concat(cont);
     }
- 
     let len = members.length;
     if (len>0){
         for (let i=0; i<len; i++){
@@ -153,8 +150,7 @@ function SimpleDialog(props) {
                 if (!found){
                         added=added.concat(newMembers[i]);
                 }
-        }
-        
+        }   
         let notificationMembers= [];
         if (added.length>0){
             added.forEach(element => {
@@ -176,9 +172,8 @@ function SimpleDialog(props) {
             });
             setTimeout(() => {
                 handleUpdateNotification(eliminatedMembers);
-            }, 10000); 
+            }, 2000); 
         }
-
         let stayMembers= [];
         if (stay.length>0){
             stay.forEach(element => {
@@ -189,7 +184,7 @@ function SimpleDialog(props) {
             });
             setTimeout(() => {
                 handleUpdateNotification(stayMembers);
-            }, 10000);
+            }, 2000);
         }
         newGroup=[];
         onClose(selectedValue);
@@ -264,12 +259,11 @@ export function EditDialog(props) {
     if (props.element.members[0].id == userData._id){
         return (
             <div key={props.room}>
-                <ListItem style={{width: '10px', height: '10px'}} >
-                    <button onClick={() => handleClickOpen(props.room)} style={{width: '10px', height: '10px'}}></button>
+                <ListItem style={{width: '80px', height: '20px'}} >
+                    <button onClick={() => handleClickOpen(props.room)} style={{width: '80px', height: '20px', fontSize:8}}>{props.t('update.group.edit')}</button>
                 </ListItem>
                 <SimpleDialog room={props.room} i18n={props.i18n} t={props.t} selectedValue={selectedValue} open={open} onClose={handleClose} socket={props.socket}/>
             </div>
         );
     }
 }
-

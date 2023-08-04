@@ -6,7 +6,6 @@ import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink} from '@apo
 import { setContext } from '@apollo/client/link/context';
 import { Provider } from "react-redux";
 import {store} from "../store";
-import { getCookie } from './functions/getCookie';
 
 const defaultOptions= {
   query: {
@@ -20,11 +19,9 @@ const httpLink = createHttpLink({
 });
 
 const authLink = setContext((_, { headers }) => {
-  const token = getCookie("token");
   return {
     headers: {
       ...headers,
-      authorization: token ? `Bearer ${token}` : "",
     }
   }
 });

@@ -37,20 +37,6 @@ export function Chat (props) {
     const Dispatch = useDispatch();
     let selected= localStorage.getItem('elementId');
 
-    // function addNewChat(contact,data){
-    //     let room=contact.room;
-    //     let users=[{id:data._id, firstName:data.firstName, lastName: data.lastName},{id:contact.id, firstName:contact.firstName, lastName: contact.lastName}];
-    //     let messages=[];
-    //     let contactRoom={
-    //         new:false,
-    //         room:room, 
-    //         users:users,
-    //         name:'',
-    //         messages:messages
-    //     }
-    //     return contactRoom;
-    // }
-
     let username = userData.firstName + ' ' + userData.lastName;
     let room = userData._id;
 
@@ -108,11 +94,9 @@ export function Chat (props) {
         let pos='left';
         if (item.id == userData._id){pos='right';}
         let newMessage={
-            id:tempMessages[index].messages.length+1,
             origin: item.id,
             firstName: item.firstName,
             lastName: item.lastName,
-            position:pos,
             message:item.message,
             time:item.time
         }
@@ -275,29 +259,29 @@ return (
                     currentChat.map((element, index) =>{
                         if (index<currentChat.length-1){
                             return (
-                                <MessageCard key={element.id} element={element}/>                    
+                                <MessageCard key={index} element={element}/>                    
                             );
                         }else{   
                             let lev= Math.abs(elem.scrollHeight - elem.scrollTop - elem.clientHeight);
-                            if (element.position=='left'){
+                            if (element.origin!=userData._id){
                                 if (lev<10){
                                     return (
                                         <ul key={'-1'}>
-                                            <MessageCard key={element.id} element={element}/> 
+                                            <MessageCard key={index} element={element}/> 
                                             <li key={'-2'} ref={scrollRef} />
                                         </ul>              
                                     );
                                 }else{
                                     return (
                                         <ul>
-                                            <MessageCard key={element.id} element={element}/> 
+                                            <MessageCard key={index} element={element}/> 
                                         </ul>
                                     );
                                 }
                             }else{
                                 return (
                                     <ul key={'-1'}>
-                                        <MessageCard key={element.id} element={element}/> 
+                                        <MessageCard key={index} element={element}/> 
                                         <li key={'-2'} ref={scrollRef} />
                                     </ul>              
                                 );

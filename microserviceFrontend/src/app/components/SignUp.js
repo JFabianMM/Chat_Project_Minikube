@@ -6,7 +6,6 @@ import TextField from '@mui/material/TextField';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import List from '@mui/material/List';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
@@ -30,14 +29,12 @@ function Copyright(props) {
         </Typography>
     );
 }
-
 const theme = createTheme();
 
 export function SignUp(props) {
     const errorNotification = useSelector(state => state.errorNotification);
     const Dispatch = useDispatch();
     let array= ['1'];
-
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
@@ -84,13 +81,11 @@ export function SignUp(props) {
                 Dispatch(updateErrorNotification('match'));
             }
         }
-          
         if (errorFlag==0){
             Dispatch(updateErrorNotification(''));
             Dispatch({type: 'MUTATION_SIGNUP', email, password, firstName, lastName});
         }
-    };
-        
+    };  
     return (
         <ThemeProvider theme={theme}>
             <Container component="main" maxWidth="xs">
@@ -107,7 +102,6 @@ export function SignUp(props) {
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
                                 <TextField autoComplete="given-name" name="firstName" required fullWidth id="firstName" label={props.t('signup.first.name')} autoFocus/>
-                               
                                 {
                                     array.map((element) =>{
                                         if (errorNotification=='fillFirstName') {
@@ -119,11 +113,9 @@ export function SignUp(props) {
                                         }
                                     })
                                     }
-                               
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField required fullWidth id="lastName" label={props.t('signup.last.name')} name="lastName" autoComplete="family-name"/>
-                                
                                 {
                                     array.map((element) =>{
                                         if (errorNotification=='fillLastName') {
@@ -135,11 +127,9 @@ export function SignUp(props) {
                                         }
                                     })
                                     }
-                               
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField required fullWidth id="email" label={props.t('signup.email')} name="email" autoComplete="email"/>
-                              
                                 {
                                     array.map((element) =>{
                                         if (errorNotification=='fillEmail') {
@@ -223,7 +213,8 @@ export function SignUp(props) {
                                 <Link onClick={() => {
                                     Dispatch(updateErrorNotification(''));
                                     Dispatch(updatePage('signIn'));
-                            }} href="#" variant="body2">
+                            //}} href="#" variant="body2">
+                            }} variant="body2">    
                                     {props.t('signup.have.account')}
                                 </Link>
                             </Grid>

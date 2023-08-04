@@ -26,10 +26,6 @@ const messagesSchema = new Schema({
             trim: true,
         },
         messages: [{
-            id: { 
-                type: Number, 
-                trim: true,
-                },
             origin: { 
                 type: String,
                 trim: true,
@@ -45,10 +41,6 @@ const messagesSchema = new Schema({
                 trim: true
             },
             message: { 
-                type: String, 
-                trim: true
-            },
-            position: { 
                 type: String, 
                 trim: true
             },

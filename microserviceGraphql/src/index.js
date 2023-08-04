@@ -1,6 +1,7 @@
 const express = require('express')
 const morgan = require('morgan');
 const http = require ('http');
+const logger = require("./logger");
 
 const { mongoose } = require('./database');
 const app = express();
@@ -31,6 +32,6 @@ app.use(morgan('dev'));
 app.use(express.json());
 
 // Starting the server
-server.listen(app.get('port'), ()=>{   
-    console.log(`Server on port ${app.get('port')}`);
+server.listen(app.get('port'), ()=>{
+    logger.log("info", `Server on port ${app.get('port')}`);  
 });

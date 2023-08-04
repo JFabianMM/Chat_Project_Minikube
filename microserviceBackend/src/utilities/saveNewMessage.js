@@ -20,14 +20,12 @@ const saveNewMessage= async function(input, users) {
             }else{
                 messages.messagesInformation[index].alreadyread='true';
             }
-            let len= messages.messagesInformation[index].messages.length;
+            // let len= messages.messagesInformation[index].messages.length;
             let newMessage={
-                id: len, 
                 origin: input.origin,
                 firstName: input.firstName, 
                 lastName: input.lastName,
                 message: input.message, 
-                position: pos,
                 time: input.time
             }
             messages.messagesInformation[index].messages=messages.messagesInformation[index].messages.concat(newMessage);

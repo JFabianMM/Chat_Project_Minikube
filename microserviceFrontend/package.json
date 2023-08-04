@@ -25,6 +25,7 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-graphql": "^0.12.0",
+    "express-winston": "^4.2.0",
     "graphql": "^16.6.0",
     "graphql-tools": "^8.3.14",
     "i18next": "^22.4.8",
@@ -36,6 +37,7 @@
     "react-redux": "^8.0.5",
     "redux-saga": "^1.2.2",
     "socket.io": "^4.5.4",
+    "util": "^0.12.5",
     "validator": "^13.7.0"
   },
   "devDependencies": {
@@ -44,10 +46,17 @@
     "@babel/preset-env": "^7.20.2",
     "@babel/preset-react": "^7.18.6",
     "babel-loader": "^9.1.0",
+    "node-polyfill-webpack-plugin": "^2.0.1",
     "nodemon": "^2.0.20",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "webpack": "^5.75.0",
     "webpack-cli": "^5.0.0"
+  },
+  "browser": {
+    "util": false,
+    "fs": false,
+    "os": false,
+    "path": false
   }
 }

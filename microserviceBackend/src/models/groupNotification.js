@@ -26,8 +26,7 @@ const groupNotificationSchema = new Schema({
         name: { 
             type: String,
             trim: true,
-            maxlength: 30,
-            lowercase: true,
+            maxlength: 20,
         }
     }]
 });

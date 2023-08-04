@@ -3,15 +3,17 @@ const { GraphQLError } = require('graphql');
 const fetchFunction = require('../functions/fetchFunction');
 const getContactAvatars = require('../functions/getContactAvatars');
 const getGroupAvatars = require('../functions/getGroupAvatars');
+const logger = require("../logger");
 
 const tokenLogin = {
     Query: { 
         async tokenLogin(context, args){
-            let req=context.headers.authorization; 
-            const token = req.replace('Bearer ','');
+            let req=context.headers.cookie;
+            const token = req.replace('token=','');
             const authFormData={token}
             const authResponse= await fetchFunction(authFormData, process.env.AUTHORIZATION_MICROSERVICE+'validation' ); 
             if (!authResponse.identification){
+                logger.log("error", 'Please Authenticate');
                 throw new GraphQLError('Please Authenticate');
             } 
             const user = await User.findOne({ _id: authResponse.identification});
@@ -23,8 +25,7 @@ const tokenLogin = {
                         identification: user._id
                     }
                     const data= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'login');
-                    const contactAvatar = await getContactAvatars(data.loginResponse.contact);
-                    const groupAvatar = await getGroupAvatars(data.loginResponse.group);
+                    const [contactAvatar, groupAvatar] = await Promise.all([getContactAvatars(data.loginResponse.contact),getGroupAvatars(data.loginResponse.group)]);
                     let loginResponse = {
                         user,
                         token,
@@ -38,9 +39,11 @@ const tokenLogin = {
                     return loginResponse;
                 }   
                 if (!user){
+                    logger.log("error", 'User does not exist');
                     throw new GraphQLError('Do not exist');
                 }
             }catch(e){
+                logger.log("error", e);
                 throw new GraphQLError(e);
             }
         },

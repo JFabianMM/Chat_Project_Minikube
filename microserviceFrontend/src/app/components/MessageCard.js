@@ -2,24 +2,40 @@ import * as React from 'react';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Grid from '@mui/material/Grid';
+import { useSelector } from 'react-redux';
 
 export function MessageCard(props){
-let a=[0];    
+    const userData = useSelector(state => state.userData);
+
+    if (props.element.origin!=userData._id){     
         return (
             <ListItem>
                 <Grid container>
                     <Grid item xs={12}>
-                        <ListItemText align={props.element.position} primary={props.element.message}></ListItemText>
+                        <ListItemText align={'left'} primary={props.element.message}></ListItemText>
                     </Grid>
                     <Grid item xs={12}>
-                    {a.map((el, index) =>{
-                            if (props.element.position=='left'){
-                                return <ListItemText key={index} align={props.element.position} secondary={props.element.firstName + ' ' + props.element.lastName + ',   ' + props.element.time}></ListItemText>;
-                            }else{
-                                return <ListItemText key={index} align={props.element.position} secondary={props.element.time}></ListItemText>;
-                                }})}
+                        <ListItemText align={'left'} secondary={props.element.firstName + ' ' + props.element.lastName + ',   ' + props.element.time}></ListItemText>
+                    </Grid>
+                </Grid>
+               
+            </ListItem>
+        )
+    }else{
+        return (
+            <ListItem>
+                <Grid container>
+                    <Grid item xs={12}>
+                        <ListItemText align={'right'} primary={props.element.message}></ListItemText>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <ListItemText align={'right'} secondary={props.element.time}></ListItemText>
                     </Grid>
                 </Grid>
             </ListItem>
         )
+    }
+       
   }
+
+

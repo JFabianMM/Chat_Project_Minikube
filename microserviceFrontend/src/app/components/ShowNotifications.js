@@ -59,7 +59,6 @@ export function ShowNotifications(props) {
         setTimeout(() => {
             handleContact(roomToSend);
         }, 2000);
-        
     }
 
     const handleRejectedListItem = (id)=>{

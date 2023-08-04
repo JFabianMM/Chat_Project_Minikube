@@ -7,6 +7,7 @@ const Contact = require('../models/contact');
 const Group = require('../models/group');
 const Messages = require('../models/messages');
 const Settings = require('../models/settings');
+const logger = require("../logger");
 
 const findContact = require('../utilities/findContact');
 const findNotification = require('../utilities/findNotification') 
@@ -33,6 +34,7 @@ router.post('/register', async (req, res)=>{
     const groupNotification = new GroupNotification({identification});
     const messages = new Messages({identification});
     const settings = new Settings({identification}); 
+    const logger = require("../logger");
  
     try {
         notification.save();
@@ -43,6 +45,7 @@ router.post('/register', async (req, res)=>{
         settings.save(); 
         res.send({notification, contact, group, groupNotification, messages});
     } catch (e){
+        logger.log("error", e);
         res.status(400).send(e)
     }  
 });
@@ -52,6 +55,7 @@ router.post('/userInformation', async (req, res)=>{
         const user = await User.findOne({ identification });
         res.send(user);
     }catch(e){
+        logger.log("error", e);
         res.status(400).send(e)
     }    
 });
@@ -59,24 +63,18 @@ router.post('/userInformation', async (req, res)=>{
 router.post('/login', async (req, res)=>{ 
     try{
         const identification = req.body.identification;
-        const contact = await findContact(identification);
-        const notification = await findNotification(identification);
-        const groupNotification = await findGroupNotification(identification);
-        const group = await findGroup(identification);
-        const messages = await findMessages(identification);
-        const settings = await findSettings(identification);
-        const language = settings.language;
-
+        const [contact, notification, groupNotification, group, messages, settings] = await Promise.all([findContact(identification),findNotification(identification), findGroupNotification(identification), findGroup(identification), findMessages(identification), findSettings(identification)]);
         let loginResponse = {
             contact,
             notification,
             groupNotification: groupNotification.groupNotifications,
             group,      
             messages: messages.messagesInformation,
-            language: language
+            language: settings.language
         }
         res.send({loginResponse});
     }catch(e){
+        logger.log("error", e);
         res.status(400).send(e)
     }    
 });
@@ -86,6 +84,7 @@ router.post('/notification', async (req, res)=>{
         const notification = await findNotification(req.body.identification);
         if (notification){res.send(notification)}else{res.send()}  
     }catch(e){
+        logger.log("error", e);
         res.status(400).send(e)
     }    
 });
@@ -95,6 +94,7 @@ router.post('/groupnotifications', async (req, res)=>{
         const groupNotification = await findGroupNotification(req.body.identification);
         res.send(groupNotification)
     }catch(e){
+        logger.log("error", e);
         res.status(400).send(e)
     }    
 });
@@ -104,6 +104,7 @@ router.post('/groups', async (req, res)=>{
         const group = await findGroup(req.body.identification);
         res.send(group)
     }catch(e){
+        logger.log("error", e);
         res.status(400).send(e)
     }    
 });
@@ -111,25 +112,20 @@ router.post('/groups', async (req, res)=>{
 router.post('/newnotification', async (req, res)=>{ 
     try{
         let userId=req.body.userId;                     
-        let id=req.body.id;                              
-        let notification = await findNotification(id); 
+        let id=req.body.id;  
+        const [notification, contact,contactRequested, messages] = await Promise.all([findNotification(id),findContact(userId), findContact(id), findMessages(userId)]);                            
         let newNotification ={id:userId};              
         notification.notifications = notification.notifications.concat(newNotification);
         notification.save(); 
-
-        let contact = await findContact(userId);
         const room=userId+id;
         let newContact ={id:id, room:room , status: 'pending'};
         contact.contacts = contact.contacts.concat(newContact);
         contact.save(); 
-
-        let contactRequested = await findContact(id);
         let newContactRequested ={id:userId, room:room , status: 'normal'};
         contactRequested.contacts = contactRequested.contacts.concat(newContactRequested);
         
         /// For messages
         let newMessageRoom = addNewChat(newContactRequested,newContact, "false");
-        let messages = await findMessages(userId);
         messages.messagesInformation=messages.messagesInformation.concat(newMessageRoom);
         messages.save();
 
@@ -140,6 +136,7 @@ router.post('/newnotification', async (req, res)=>{
         }
         res.send({CreateContactResponse});
     }catch(e){
+        logger.log("error", e);
         res.status(400).send(e) 
     }
 });
@@ -148,31 +145,27 @@ router.post('/notificationdeletion', async (req, res)=>{
     const userId=req.body.userId;
     const contactId=req.body.contactid;
     try{
-        const notification = await findNotification(userId);
+        const [notification, contact,messages] = await Promise.all([findNotification(userId),findContact(contactId), findMessages(contactId)]);
         let identification=contactId;
         notification.notifications = notification.notifications.filter((el) => {
             return el.id !== identification;
         });
         notification.save();
-
-        const contact = await findContact(contactId);  
         contact.contacts = contact.contacts.filter((el) => {
             return el.id !== userId;
         });
-        await contact.save();
-
+        contact.save();
         const room=contactId+userId;
-        let messages = await findMessages(contactId);
         messages.messagesInformation = messages.messagesInformation.filter((el) => {
             return el.room !== room;
         });
         messages.save();
-
         let DeleteNotificationResponse ={
             number: notification.notifications.length
         }
         res.send({DeleteNotificationResponse});
     }catch(e){
+        logger.log("error", e);
         res.status(400).send(e)
     }
 });
@@ -182,6 +175,7 @@ router.post('/contact', async (req, res)=>{
         const contact = await findContact(req.body.identification);
         res.send(contact);
     } catch (e){
+        logger.log("error", e);
         res.status(400).send(e)
     }
 });
@@ -190,29 +184,25 @@ router.post('/newcontact', async (req, res)=>{
     let contactid=req.body.contactid;         
     let userid=req.body.userid;                  
     try{
-        let contact = await findContact(contactid); 
-        let contact2 = await findContact(userid);   
+        const [contact, contact2, notification] = await Promise.all([findContact(contactid),findContact(userid), findNotification(userid)]);   
         const room=contactid+userid;
         let newContact ={id:userid, room:room , status: 'normal'};
         let newContact2 ={id:contactid, room:room , status: 'normal'};
         let foundContact = contact.contacts.findIndex(element => element.room == room);
         contact.contacts[foundContact].status='normal';
-        let notification = await findNotification(userid);
         let identification=contactid;
         const found = notification.notifications.find(element => element.id == identification);  
         notification.notifications = notification.notifications.filter((el) => {
                 return el.id !== identification;
         })
         notification.save();
-
         let newMessageRoom = addNewChat(newContact2,newContact, "false");
         let messages = await findMessages(newContact.id);
         messages.messagesInformation=messages.messagesInformation.concat(newMessageRoom);
-        
         if (found){
-            await contact.save(); 
+            contact.save(); 
             contact2.contacts = contact2.contacts.concat(newContact2);
-            await contact2.save(); 
+            contact2.save(); 
             messages.save();
         }
         let CreateContactResponse = {
@@ -222,6 +212,7 @@ router.post('/newcontact', async (req, res)=>{
         }
         res.send({CreateContactResponse});
     }catch(e){
+        logger.log("error", e);
         res.status(400).send(e)
     }
 });
@@ -229,13 +220,10 @@ router.post('/newcontact', async (req, res)=>{
 router.post('/newgroup', async (req, res)=>{
     let input = req.body.input;
     try {  
-        const group = await findGroup(input.id);
-        let creator= input.group.creator;
-        const contact = await findContact(creator);
-        let groupNotification = await findGroupNotification(input.id);
-        let messages = await findMessages(input.id);
+        const [group, groupNotification, messages, contact] = await Promise.all([findGroup(input.id),findGroupNotification(input.id), findMessages(input.id), findContact(input.group.members[0].id)]);
+        const creator= input.group.members[0].id;
+        const room= input.group.room;
         const contactFound = contact.contacts.find(element => element.id == input.id);  
-
         let members=[];
         input.group.members.forEach(element => {
                 let member={
@@ -243,20 +231,17 @@ router.post('/newgroup', async (req, res)=>{
                 }
                 members=members.concat(member);
         });
-
         let membersUnique = getUniqueListBy(members, 'id');
         const notificationFound = groupNotification.groupNotifications.find(element => element.room == input.group.room); 
-
         let newgroup={
-            room:input.group.room,
-            creator:input.group.creator,
+            room:room,
+            creator:creator,
             members:membersUnique,
             name:input.name
         }
         groupNotification.groupNotifications = groupNotification.groupNotifications.filter((el) => {
-            return el.room !== input.group.room;
+            return el.room !== room;
         });
-        
         groupNotification.save();
         if (notificationFound && contactFound){
             group.groups = group.groups.concat(newgroup);
@@ -269,6 +254,7 @@ router.post('/newgroup', async (req, res)=>{
         messages.save();
         res.send(group);
     } catch (e){
+        logger.log("error", e);
         res.status(400).send(e)
     }
 });
@@ -318,7 +304,7 @@ router.post('/editgroup', async (req, res)=>{
             group.groups=group.groups.filter((el) => {
                 return el.room != room;
             });
-            await group.save();
+            group.save();
         }
 
         let stayLen=stay.length;
@@ -330,7 +316,7 @@ router.post('/editgroup', async (req, res)=>{
             if (index>=0){
                 group.groups[index].members=newMembers;
                 group.groups[index].name=name;
-                await group.save();
+                group.save();
             }
         }   
         
@@ -360,6 +346,7 @@ router.post('/editgroup', async (req, res)=>{
         const newGroup = await findGroup(input.id); 
         res.send(newGroup);
     } catch (e){
+        logger.log("error", e);
         res.status(400).send(e)
     }
 });
@@ -378,6 +365,7 @@ router.post('/groupnotificationdeletion', async (req, res)=>{
         } 
         res.send({DeleteNotificationResponse});
     } catch (e){
+        logger.log("error", e);
         res.status(400).send(e)
     }
 });
@@ -386,10 +374,10 @@ router.post('/groupandnotifications', async (req, res)=>{
     let input = req.body.input;
     try {  
         let creator= input.id;
-        const group = await findGroup(creator);
-        const contact = await findContact(creator);
+        const [group, contact, messages] = await Promise.all([findGroup(creator),findContact(creator), findMessages(input.id)]);
         let members = getUniqueListBy(input.group.members, 'id');
         let tentativeMembers=members;
+
         tentativeMembers.forEach(function(member) { 
             let memberFound = contact.contacts.filter(function (el){
                 return el.id == member.id;
@@ -417,7 +405,6 @@ router.post('/groupandnotifications', async (req, res)=>{
                 GroupNotification.findOne({ identification }).lean().exec(function (err, groupNotification) {
                     let newGroupNotification={room, creator, members, name};
                     let gr=groupNotification.groupNotifications.concat(newGroupNotification);
-
                     if (identification!=input.id){
                         result.push(groupNotification);
                         GroupNotification.updateOne({ identification }, { groupNotifications: gr }, function(
@@ -435,11 +422,11 @@ router.post('/groupandnotifications', async (req, res)=>{
         saveNotifications(members,room, creator, name);
         const createdGroup=group.groups[len-1];
         const newMessageRoom = addNewGroupChat(createdGroup);
-        let messages = await findMessages(input.id);
         messages.messagesInformation=messages.messagesInformation.concat(newMessageRoom);
         messages.save();
         res.send(group);
     } catch (e){
+        logger.log("error", e);
         res.status(400).send(e)
     }
 });
@@ -454,24 +441,22 @@ router.post('/newmessage', async (req, res)=>{
         index = messages.messagesInformation.findIndex(function (el){
             return el.room == input.room;
         });
-
         const NewMessageResponse = {
             id:input.id,
             room: input.room,
-            idNumber: input.id,
             origin: input.id,
             firstName: input.firstName, 
             lastName:  input.lastName,
-            position: 'rigth', 
             message: input.message,
             time: current_time 
         };
         if (index>=0){
             let users=messages.messagesInformation[index].users;
-            const saveMessage = await saveNewMessage(NewMessageResponse, users);
+            const saveMessage = saveNewMessage(NewMessageResponse, users);
         }
         res.send(NewMessageResponse);
     } catch (e){
+        logger.log("error", e);
         res.status(400).send(e)
     }
 });
@@ -496,6 +481,7 @@ router.post('/newstatus', async (req, res)=>{
         let result=  {result: input.room}
         res.send(result);
     } catch (e){
+        logger.log("error", e);
         res.status(400).send(e)
     }
 });
@@ -506,9 +492,10 @@ router.post('/language', async (req, res)=>{
     try {  
         let settings = await findSettings(identification);
         settings.language=language;
-        await settings.save();
+        settings.save();
         res.send({language});
     } catch (e){
+        logger.log("error", e);
         res.status(400).send(e)
     }
 });

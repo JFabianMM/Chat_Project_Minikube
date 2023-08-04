@@ -33,7 +33,6 @@ export function InputMessage(props) {
             id:userData._id,
             message:inputmessage
           }
-          // Dispatch({type: 'CREATE_NEW_MESSAGE', room, inputmessage});
           Dispatch({type: 'NEW_MESSAGE', room, inputmessage});
           if (inputmessage!=''){
               props.socket.emit('sendMessage', item);

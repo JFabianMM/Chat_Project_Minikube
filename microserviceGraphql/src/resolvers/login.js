@@ -4,6 +4,7 @@ const findByCredentials = require('../functions/findByCredentials');
 const fetchFunction = require('../functions/fetchFunction');
 const getContactAvatars = require('../functions/getContactAvatars');
 const getGroupAvatars = require('../functions/getGroupAvatars');
+const logger = require("../logger");
 
 const login = {
     Query: {
@@ -38,12 +39,15 @@ const login = {
                     return loginResponse;
                 }
                 if (user=='Do not exist'){
+                    logger.log("error", 'User does not exist');
                     throw new GraphQLError('Do not exist');
                 }
                 if (user=='Do not match'){
+                    logger.log("error", 'User does not match');
                     throw new GraphQLError('Do not match');
                 }
             } catch (e){
+                logger.log("error", e);
                 throw new GraphQLError(e);
             }  
         },
