@@ -2,6 +2,7 @@ const User = require('../models/user');
 const { GraphQLError } = require('graphql');
 const fetchFunction = require('../functions/fetchFunction');
 const logger = require("../logger");
+const fetchDeleteFunction= require('../functions/fetchDeleteFunction');
 
 const deleteGroupNotification = {
     Mutation: {
@@ -15,12 +16,12 @@ const deleteGroupNotification = {
                     logger.log("error", 'Please Authenticate');
                     throw new GraphQLError('Please Authenticate');
                 } 
-                const formData={
-                    room: args.room,
-                    userId: authResponse.identification
-                } 
-                const response= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'groupnotificationdeletion'); 
-                return response.DeleteNotificationResponse;
+
+                const url = new URL(process.env.BACKEND_MICROSERVICE+'groupnotification');
+                url.searchParams.set('room', args.room);
+                url.searchParams.set('userId', authResponse.identification);
+                const response= await fetchDeleteFunction(url.href);
+                return response.deleteNotificationResponse;
             }catch(e){
                 logger.log("error", e);
                 throw new GraphQLError(e);
@@ -28,6 +29,4 @@ const deleteGroupNotification = {
         }
     }
 };
-
 module.exports = deleteGroupNotification;
-        

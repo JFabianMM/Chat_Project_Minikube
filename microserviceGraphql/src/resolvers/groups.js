@@ -1,5 +1,6 @@
 const { GraphQLError } = require('graphql');
 const fetchFunction = require('../functions/fetchFunction');
+const fetchGetFunction = require('../functions/fetchGetFunction');
 const getGroupAvatars = require('../functions/getGroupAvatars');
 const logger = require("../logger");
 
@@ -14,9 +15,11 @@ const groups = {
                 if (!authResponse.identification){
                     logger.log("error", 'Please Authenticate');
                     throw new GraphQLError('Please Authenticate');
-                }            
-                const formData={identification: authResponse.identification}
-                const group= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'groups');
+                }         
+                
+                const url = new URL(process.env.BACKEND_MICROSERVICE+'groups');
+                url.searchParams.set('identification', authResponse.identification);
+                const group= await fetchGetFunction(url.href);
                 const groupAvatar = await getGroupAvatars(group);
                 return groupAvatar.groups
             }catch(e){

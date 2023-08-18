@@ -41,6 +41,7 @@ const typeDefs = `
     type deleteNotificationResponse {
         number: Int
     }
+
     type user {
         _id: ID
         email:String
@@ -49,6 +50,7 @@ const typeDefs = `
         tokens: [token]
         avatar: String
     }
+
     type token {
         token:String
     }
@@ -115,7 +117,7 @@ const typeDefs = `
         firstName: String!
         lastName: String!
     }
-    
+
     input loginInput {
         email:String!
         password: String!
@@ -186,6 +188,10 @@ const typeDefs = `
     input newEditGroup {
         room: String
         members: [newmember]
+    }
+    
+    input deleteGroupNotificationInput {
+        room: String
     }
     type languageResult {
         language: String

@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const { GraphQLError } = require('graphql');
 const fetchFunction = require('../functions/fetchFunction');
+const fetchDeleteFunction= require('../functions/fetchDeleteFunction');
 const logger = require("../logger");
 
 const deleteNotification = {
@@ -15,11 +16,12 @@ const deleteNotification = {
                     logger.log("error", 'Please Authenticate');
                     throw new GraphQLError('Please Authenticate');
                 } 
-                const formData={
-                    contactid: args.contactid,
-                    userId: authResponse.identification
-                } 
-                const response= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'notificationdeletion');
+
+                const url = new URL(process.env.BACKEND_MICROSERVICE+'notification');
+                url.searchParams.set('contactid', args.contactid);
+                url.searchParams.set('userId', authResponse.identification);
+                const response= await fetchDeleteFunction(url.href);
+
                 return response.DeleteNotificationResponse;
             }catch(e){
                 logger.log("error", e);
