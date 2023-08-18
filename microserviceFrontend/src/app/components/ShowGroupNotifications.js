@@ -41,8 +41,8 @@ export function ShowGroupNotifications(props) {
     }
     
     const handleRejectedListItem = (value)=>{
-        let room=value;
-        Dispatch({type: 'DELETE_GROUP_NOTIFICATION', room});    
+        let [room]=value;
+        Dispatch({type: 'DELETE_GROUP_NOTIFICATION', room});
     }
 
   return (

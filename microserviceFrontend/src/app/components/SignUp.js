@@ -213,7 +213,6 @@ export function SignUp(props) {
                                 <Link onClick={() => {
                                     Dispatch(updateErrorNotification(''));
                                     Dispatch(updatePage('signIn'));
-                            //}} href="#" variant="body2">
                             }} variant="body2">    
                                     {props.t('signup.have.account')}
                                 </Link>

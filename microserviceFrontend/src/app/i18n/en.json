@@ -32,6 +32,7 @@
     "chat.add.group":"Add Group",
     "chat.input.message":"Write a message",
     "chat.input.search":"Search contact by email",
+    "chat.input.disabled":"Select contact or group",
     "chat.online":"online",
     "chat.new": "new",
     "chat.pending": "pending",

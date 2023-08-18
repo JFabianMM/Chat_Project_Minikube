@@ -21,7 +21,6 @@ import { updateGroups } from '../../redux/slice/groupsSlice';
 import { socket } from '../functions/socket';
 
 let messsa;
-let messageComparizon=-1;
 export function Chat (props) {
     const userData = useSelector(state => state.userData);
     const contacts = useSelector(state => state.contacts);
@@ -261,28 +260,33 @@ return (
                             return (
                                 <MessageCard key={index} element={element}/>                    
                             );
-                        }else{   
-                            let lev= Math.abs(elem.scrollHeight - elem.scrollTop - elem.clientHeight);
+                        }else{ 
+                            let lev; 
+	                        if (elem){                
+		                        lev= Math.abs(elem.scrollHeight - elem.scrollTop - elem.clientHeight);    
+                            }else{
+                                lev=0;
+                            }
                             if (element.origin!=userData._id){
                                 if (lev<10){
                                     return (
-                                        <ul key={'-1'}>
+                                        <ul key={index}>
                                             <MessageCard key={index} element={element}/> 
-                                            <li key={'-2'} ref={scrollRef} />
+                                            <li ref={scrollRef} />
                                         </ul>              
                                     );
                                 }else{
                                     return (
-                                        <ul>
+                                        <ul key={index}>
                                             <MessageCard key={index} element={element}/> 
                                         </ul>
                                     );
                                 }
                             }else{
                                 return (
-                                    <ul key={'-1'}>
+                                    <ul key={index}>
                                         <MessageCard key={index} element={element}/> 
-                                        <li key={'-2'} ref={scrollRef} />
+                                        <li ref={scrollRef} />
                                     </ul>              
                                 );
                             }

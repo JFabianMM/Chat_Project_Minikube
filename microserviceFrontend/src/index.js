@@ -8,6 +8,7 @@ const app = express();
 const server = http.createServer(app);
 const io= socketio(server);
 const fetchFunction = require('./app/functions/fetchFunction');
+const logger = require("./logger");
 
 // Settings
 app.set('port', process.env.SERVER_PORT);
@@ -20,15 +21,12 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname,'public')));
 
 io.on( 'connection', function( socket ) {
-    console.log( 'User Connected' );
-
+    logger.log("info", 'User Connected');
     socket.on('join', ({username, room})=>{
         socket.join(room);
     })
 
     socket.on('sendMessage', async (it)=>{
-    // We can see the number of clients connections.
-    //console.log('io.sockets.server.engine.clientsCount: ', io.sockets.server.engine.clientsCount);
     try{
         const formData={
             identification:it.id
@@ -47,7 +45,7 @@ io.on( 'connection', function( socket ) {
         let room=it.room;
         io.to(room).emit('sendMessage', item)
     }catch(e){
-        console.log(e);
+        logger.log("error", e);
     } 
     })
 
@@ -62,6 +60,14 @@ io.on( 'connection', function( socket ) {
             io.to(room).emit('sendGroupnotification');
         });
     })
+            
+    socket.on('sendUpdateNotification', (members)=>{
+        let message='New Update';
+        members.forEach(element => {
+            let room=element.id;
+            io.to(room).emit('sendUpdateNotification', message);
+        });
+    })
 
     socket.on('sendContact', (item)=>{
         let room=item.room_forNotification;
@@ -69,11 +75,11 @@ io.on( 'connection', function( socket ) {
     })
 
     socket.on( 'disconnect', function() {
-        console.log( 'User disconnected' );
+        logger.log("info", 'User disconnected');
     });
 })
 
 server.listen(app.get('port'), ()=>{   
-    console.log(`Server on port ${app.get('port')}`);
+    logger.log("info", `Server on port ${app.get('port')}`);
 });
 

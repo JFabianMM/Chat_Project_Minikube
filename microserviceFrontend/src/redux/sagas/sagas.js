@@ -19,6 +19,7 @@ import { updateErrorNotification } from '../slice/errorNotificationSlice';
 import { updateAvatar } from '../slice/avatarSlice';
 import { updateReceivedStatus } from '../slice/receivedStatusSlice';
 import { select } from 'redux-saga/effects';   
+import { updateLanguage } from '../slice/languageSlice';
 
 const Get_User = gql`
   query user($email: String!){
@@ -42,16 +43,19 @@ async function getUserFunction (email){
 }
 
 function* queryUserFunction(action) {
-  let { errors, data } = yield call(getUserFunction, action.email);
-  if (data.user){
-    yield put({ type: 'GET_USER_UPDATE', data })
-    yield put(updateReceivedStatus('Loaded'));
-  }
-  if (errors){
-    let data={user:{email:''}};
-    yield put({ type: 'GET_USER_UPDATE', data })
-    yield put(updateReceivedStatus('Loaded'));
-  }
+  try{
+    let { errors, data } = yield call(getUserFunction, action.email);
+    if (data.user){
+      yield put({ type: 'GET_USER_UPDATE', data })
+      yield put(updateReceivedStatus('Loaded'));
+    }
+    if (errors){
+      let data={user:{email:''}};
+      yield put({ type: 'GET_USER_UPDATE', data })
+      yield put(updateReceivedStatus('Loaded'));
+    }
+  }catch(e){
+  }  
 }  
 
 function* queryUser(){
@@ -83,16 +87,55 @@ function getContactFunction (){
 }
 
 function* queryContactFunction() {
-  const { data } = yield call(getContactFunction);
-  if (data.contacts.contacts){
-    yield put(updateContacts(data.contacts.contacts));
-  }
+  try{
+    const { data } = yield call(getContactFunction);
+    if (data.contacts.contacts){
+        yield put(updateContacts(data.contacts.contacts));
+    }
+  }catch(e){
+  }  
 }  
 
 function* queryContact(){
   yield takeEvery('QUERY_CONTACT', queryContactFunction)
 }  
- 
+
+// -----------------------------------------------
+
+const Get_Groups = gql`
+  query groups ($id: String){
+    groups( id: $id) {
+      room
+      members{
+          id
+          email
+          firstName
+          lastName
+          avatar
+      }
+      name
+     }
+}
+`;
+
+function getGroupsFunction (){
+  const result = client.query({
+    query: Get_Groups
+  })
+  return result
+}
+
+function* queryGroupsFunction() {
+  try{
+    const { data } = yield call(getGroupsFunction);
+    yield put(updateGroups(data.groups));
+  }catch(e){
+  }
+}  
+
+function* queryGroups(action){
+  yield takeEvery('QUERY_GROUPS', queryGroupsFunction)
+}  
 // ----------------------------------------------- 
 
 const Get_LogIn = gql`
@@ -109,6 +152,7 @@ query login ($email: String!, $password: String!){
           avatar
       }
       token
+      language
       contact {
         identification
         contacts {
@@ -152,12 +196,10 @@ query login ($email: String!, $password: String!){
         }
         name
         messages {
-          id
           origin
           firstName
           lastName
           message
-          position
           time
         }
       }
@@ -173,54 +215,64 @@ function getLogInFunction (email, password){
   return result
 }
 
-  function* queryLogInFunction(action) {
-    const { errors, data } = yield call(getLogInFunction, action.email, action.password);
-    if (data.login){
-        yield put(updateUserData(data.login.user))
-        yield put(updateToken(data.login.token));
-        yield put(updateAvatar(data.login.user.avatar));
-        yield put(updateContacts(data.login.contact.contacts));
+function* queryLogInFunction(action) {
+    try{
+      const { errors, data } = yield call(getLogInFunction, action.email, action.password);
+      if (data.login){
+          let lan;
+          if (data.login.language){
+              lan=data.login.language;
+          }else{
+              lan='es';
+          }
+          yield put(updateLanguage(lan));
+          yield put(updateUserData(data.login.user))
+          yield put(updateToken(data.login.token));
+          yield put(updateAvatar(data.login.user.avatar));
+          yield put(updateContacts(data.login.contact.contacts));
             
-        let addedRooms=[];
-        let newRoom={};
-        let contacts=data.login.contact.contacts;
-        contacts.map((contact) =>{ 
-            newRoom={
-                id:contact.id,
-                room:contact.room
-            }
-            addedRooms = addedRooms.concat(newRoom);
-        })
+          let addedRooms=[];
+          let newRoom={};
+          let contacts=data.login.contact.contacts;
+          contacts.map((contact) =>{ 
+              newRoom={
+                  id:contact.id,
+                  room:contact.room
+              }
+              addedRooms = addedRooms.concat(newRoom);
+          })
     
-        yield put(updateNotifications(data.login.notification.notifications.length));
-        yield put(updateGroupNotifications(data.login.groupNotification.length));
-        yield put(updateGroups(data.login.group));
+          yield put(updateNotifications(data.login.notification.notifications.length));
+          yield put(updateGroupNotifications(data.login.groupNotification.length));
+          yield put(updateGroups(data.login.group));
 
-        let groups=data.login.group;
-        newRoom={};
-        groups.map((group) =>{ 
-            newRoom={
-                id:group.room,
-                room:group.room
-            }
-            addedRooms = addedRooms.concat(newRoom);
-        })
+          let groups=data.login.group;
+          newRoom={};
+          groups.map((group) =>{ 
+              newRoom={
+                  id:group.room,
+                  room:group.room
+              }
+              addedRooms = addedRooms.concat(newRoom);
+          })
    
-        yield put(updateMessages(data.login.messages));
-        yield put(updateRooms(addedRooms));
-        yield put(updatePage('chat'));
-    }
+          yield put(updateMessages(data.login.messages));
+          yield put(updateRooms(addedRooms));
+          yield put(updatePage('chat'));
+      }
   
-    if (errors){
-        if (errors[0].message=='Do not exist'){
-            yield put(updatePage('signIn'));
-            yield put(updateErrorNotification('doesnotexist'));
-        }
-        if (errors[0].message=='Do not match'){
-            yield put(updatePage('signIn'));
-            yield put(updateErrorNotification('doesnotmatch'));
-        }
-    }
+      if (errors){
+          if (errors[0].message=='Do not exist'){
+              yield put(updatePage('signIn'));
+              yield put(updateErrorNotification('doesnotexist'));
+          }
+          if (errors[0].message=='Do not match'){
+              yield put(updatePage('signIn'));
+              yield put(updateErrorNotification('doesnotmatch'));
+          }
+      }
+    }catch(e){
+    }  
 }  
 
 function* queryLogIn(){
@@ -242,6 +294,7 @@ query tokenLogin ($token: String){
           avatar
       }
       token
+      language
       contact {
         identification
         contacts {
@@ -286,12 +339,10 @@ query tokenLogin ($token: String){
         }
         name
         messages {
-          id
           origin
           firstName
           lastName
           message
-          position
           time
         }
       }
@@ -307,21 +358,33 @@ function getTokenLogInFunction (){
 }
 
 function* queryTokenLogInFunction() {
-    const { errors, data } = yield call(getTokenLogInFunction);
+  try{
+    let { errors, data } = yield call(getTokenLogInFunction);
     if (data.tokenLogin){
-        let contactsNew=data.tokenLogin.contact.contacts; 
+        let contactsNew=[];
+        data.tokenLogin.contact.contacts.map((contact) =>{ 
+            contactsNew = contactsNew.concat(contact);
+        })
         let groupNew=data.tokenLogin.group; 
-        data.tokenLogin.messages.forEach(element => {
+        let messages =data.tokenLogin.messages;
+        messages.forEach(element => {
             let contact_alreadyread=element.alreadyread;
+            if (!contact_alreadyread){
+              contact_alreadyread='true';
+            }
             let contact_room=element.room;
             let index=-1;
             index = contactsNew.findIndex(function (el){
                 return el.room == contact_room;
             });
             if (index>=0){
-                if (contactsNew[index].alreadyread==false || contactsNew[index].alreadyread==true){
+                if (contactsNew[index].alreadyread=='false' || contactsNew[index].alreadyread=='true'){
                 }else{
-                    contactsNew[index].alreadyread=contact_alreadyread;
+                    if (!contact_alreadyread){
+                      contactsNew[index].alreadyread='true';
+                    }else{
+                      contactsNew[index].alreadyread=contact_alreadyread;
+                    }
                 }
             }
             index=-1;
@@ -329,18 +392,27 @@ function* queryTokenLogInFunction() {
                 return el.room == contact_room;
             });
             if (index>=0){
-                if (groupNew[index].alreadyread==false || groupNew[index].alreadyread==true){
+                if (groupNew[index].alreadyread=='false' || groupNew[index].alreadyread=='true'){
                 }else{
-                    groupNew[index].alreadyread=contact_alreadyread;
+                  if (!contact_alreadyread){
+                      groupNew[index].alreadyread=='true';
+                  }else{
+                      groupNew[index].alreadyread=contact_alreadyread;
+                  }                  
                 }
             }
         });
-
+        let lan;
+        if (data.tokenLogin.language){
+            lan=data.tokenLogin.language;
+        }else{
+            lan='es';
+        }
+        yield put(updateLanguage(lan));
         yield put(updateUserData(data.tokenLogin.user))
         yield put(updateAvatar(data.tokenLogin.user.avatar));
         yield put(updateToken(data.tokenLogin.token));
         yield put(updateContacts(contactsNew));
-
         let addedRooms=[];
         let newRoom={};
         let contacts=data.tokenLogin.contact.contacts;
@@ -351,11 +423,10 @@ function* queryTokenLogInFunction() {
             }
             addedRooms = addedRooms.concat(newRoom);
         })
-    
+        
         yield put(updateNotifications(data.tokenLogin.notification.notifications.length));
         yield put(updateGroupNotifications(data.tokenLogin.groupNotification.length));
         yield put(updateGroups(groupNew));    
-
         let groups=data.tokenLogin.group;
         newRoom={};
         groups.map((group) =>{ 
@@ -364,17 +435,22 @@ function* queryTokenLogInFunction() {
                 room:group.room
             }
             addedRooms = addedRooms.concat(newRoom);
-        })
-    
-        yield put(updateMessages(data.tokenLogin.messages));
+        })    
+        yield put(updateMessages(messages));
         yield put(updateRooms(addedRooms));
         yield put(updatePage('chat'));
     }
 
     if (errors){
-        yield put(updatePage('signIn'));  
+        let str=errors[0].message;
+        let res=str.includes('Boolean cannot represent a non boolean value');
+        if (res){
+        }else{
+          yield put(updatePage('signIn'));
+        }
     }
-
+  }catch(e){
+  }  
 }
 
 function* queryTokenLogIn(){
@@ -384,7 +460,7 @@ function* queryTokenLogIn(){
 // -----------------------------------------------
 
 const Put_SignUp = gql`
-mutation createaUser ($email: String!, $password: String!, $firstName: String!, $lastName: String!){
+mutation createUser ($email: String!, $password: String!, $firstName: String!, $lastName: String!){
   createUser( input: {
         email: $email,
         password: $password,
@@ -425,7 +501,7 @@ function* mutationSignUpFunction(action) {
 function* mutationSignUp(){
   yield takeEvery('MUTATION_SIGNUP', mutationSignUpFunction)
 }  
-
+ 
 // ----------------------------------------------- 
 
 const Get_Notification = gql`
@@ -502,13 +578,23 @@ function* queryGroupNotification(){
 const Put_CreateNotification = gql`
 mutation createNotification($id: String!){
   createNotification( id: $id) {
-    notifications {
-      id
+    user {
+        identification
+        contacts {
+            id
+            room
+            status
+            email
+            firstName
+            lastName
+            avatar
+        }
     }
+    contactId
+    number
   }
 }
-`
-;
+`;
 
 function putCreateNotificationFunction (id){
   const result = client.mutate({
@@ -519,7 +605,46 @@ function putCreateNotificationFunction (id){
 }
   function* mutationCreateNotificationFunction(action) {
     try{
-      yield call(putCreateNotificationFunction, action.id);
+      const { data } = yield call(putCreateNotificationFunction, action.id);
+      let len=data.createNotification.user.contacts.length;
+      let contactFirstName=data.createNotification.user.contacts[len-1].firstName;
+      let contactLastName=data.createNotification.user.contacts[len-1].lastName;
+      let contactIdentification=data.createNotification.user.contacts[len-1].id;
+      const getUser = (state) => state.userData;
+      const userData = yield select(getUser);
+
+      function addNewChat(contact){
+           let room=contact.room;
+           let users=[{id:userData._id, firstName: userData.firstName, lastName: userData.lastName},{id:contactIdentification, firstName:contactFirstName, lastName: contactLastName}];
+           let messages=[];
+           let contactRoom={
+               new:'true',
+               room:room, 
+               users:users,
+               name:'',
+               messages:messages
+           }
+           return contactRoom;
+      }
+    
+      let contactData=data.createNotification.user.contacts;
+      let contactId=data.createNotification.contactId;
+    
+      let newRoom = contactData.filter(function (el){
+              return el.id == contactId;
+      });
+    
+      let addedRoom={
+               id:newRoom[0].id,
+               room:newRoom[0].room
+      }
+    
+      let chat=[];
+      chat= chat.concat(addNewChat(newRoom[0])); 
+    
+      yield put(addRooms(addedRoom));
+      yield put(updateContacts(contactData));
+      yield put(addNewContactMessage(addNewChat(newRoom[0])));
     }catch(e){
     }
   }  
@@ -571,7 +696,6 @@ function putCreateGroupNotificationFunction (input, name){
       }
 
       yield put(addRooms(newRoom));
-
       function addNewGroupChat(group){
         let room=group.room;
         let users=group.members;
@@ -708,7 +832,7 @@ function* mutationDeleteNotification(){
 
 const Put_DeleteGroupNotification = gql`
 mutation deleteGroupNotification ($room: String!){
-  deleteGroupNotification( room: $room) {
+  deleteGroupNotification(room: $room) {
     number
   } 
 }
@@ -721,9 +845,10 @@ function putDeleteGroupNotificationFunction (room){
   })
   return result
 }
+
 function* mutationDeleteGroupNotificationFunction(action) {
   try{
-    const { data } = yield call(putDeleteGroupNotificationFunction, action.room );
+    const { data } = yield call(putDeleteGroupNotificationFunction, action.room);
     yield put(updateGroupNotifications(data.deleteGroupNotification.number));
   }catch(e){
   }
@@ -736,12 +861,11 @@ function* mutationDeleteGroupNotification(){
 // ----------------------------------------------- 
 
 const Put_CreateGroup = gql`
-mutation createGroup($room: String, $creator: String, $input: [newmember], $name: String ) {
+mutation createGroup($room: String, $input: [newmember], $name: String ) {
   createGroup( input: {
       group:
               {
                  room: $room,
-                 creator: $creator,
                  members: $input,
              }
       name: $name
@@ -759,16 +883,16 @@ mutation createGroup($room: String, $creator: String, $input: [newmember], $name
 }
 `;
 
-function putCreateGroupFunction (room, creator, input, name){
+function putCreateGroupFunction (room, input, name){
   const result = client.mutate({
     mutation: Put_CreateGroup,
-    variables: {room, creator, input, name}
+    variables: {room, input, name}
   })
   return result
 }
 function* mutationCreateGroupFunction(action) {
   try{
-    const { data } = yield call(putCreateGroupFunction, action.room, action.creator, action.input, action.name);
+    const { data } = yield call(putCreateGroupFunction, action.room, action.input, action.name);
     yield put(updateGroups(data.createGroup));
     let len=data.createGroup.length;
   
@@ -798,7 +922,6 @@ function* mutationCreateGroupFunction(action) {
     let group=data.createGroup[len-1];
     yield put(addNewContactMessage(addNewGroupChat(group)));
     yield put(updatePage('chat'));
-
   }catch(e){
   }   
 }  
@@ -874,43 +997,41 @@ function* mutationUpdateUserData(){
 
 // ----------------------------------------------- 
 
-const Put_CreateNewMessage = gql`
-mutation createNewMessage($room: String, $message: String) {
-  createNewMessage( input: {
+const Put_NewMessage = gql`
+mutation newMessage($room: String, $message: String) {
+  newMessage( input: {
             room: $room,
             message: $message,       
      }) {
         id
         room
-        idNumber
         origin
         firstName 
         lastName
-        position 
         message
         time 
        }
    }
 `
 ;
-function putCreateNewMessageFunction (room, message){
+function putNewMessageFunction (room, message){
   const result = client.mutate({
-    mutation: Put_CreateNewMessage,
+    mutation: Put_NewMessage,
     variables: {room, message}
   })
 
   return result
 }
-  function* mutationCreateNewMessageFunction(action) {
+  function* mutationNewMessageFunction(action) {
     try{
-      const { data } = yield call(putCreateNewMessageFunction, action.room, action.inputmessage);   
+      const { data } = yield call(putNewMessageFunction, action.room, action.inputmessage);   
       if (data){
         const getContacts = (state) => state.contacts;
         let contacts = yield select(getContacts);
           
         let index=-1;
         index = contacts.findIndex(function (el){
-            return el.room == data.createNewMessage.room;
+            return el.room == data.newMessage.room;
         });
         if (index>=0){
             let cont=[];
@@ -934,7 +1055,7 @@ function putCreateNewMessageFunction (room, message){
         let groups = yield select(getGroups);
         index=-1;
         index = groups.findIndex(function (el){
-            return el.room == data.createNewMessage.result;
+            return el.room == data.newMessage.result;
         });
         if (index>=0){
             let gro=[];
@@ -955,8 +1076,8 @@ function putCreateNewMessageFunction (room, message){
    }
 }
 
-function* mutationCreateNewMessage(){
-  yield takeEvery('CREATE_NEW_MESSAGE', mutationCreateNewMessageFunction)
+function* mutationNewMessage(){
+  yield takeEvery('NEW_MESSAGE', mutationNewMessageFunction)
 }  
 
 // ----------------------------------------------- 
@@ -983,7 +1104,7 @@ function putCreateNewStatusFunction (id, room, status){
 }
   function* mutationCreateNewStatusFunction(action) {
     try{
-      yield call(putCreateNewStatusFunction, action.id, action.room, action.status);   
+      const {data } = yield call(putCreateNewStatusFunction, action.id, action.room, action.status);    
     }catch(e){
     }
   }  
@@ -994,14 +1115,90 @@ function putCreateNewStatusFunction (id, room, status){
 
 // ----------------------------------------------- 
 
+const Put_NewLanguage = gql`
+mutation newLanguage($language: String!) {
+  newLanguage(language: $language) {
+          language
+       }
+   }
+`
+;
+function putNewLanguageFunction (language){
+  const result = client.mutate({
+    mutation: Put_NewLanguage,
+    variables: {language}
+  })
+
+  return result
+}
+  function* mutationNewLanguageFunction(action) {
+    try{
+      const { data } = yield call(putNewLanguageFunction, action.language);  
+      const lan=data.newLanguage.language;
+      yield put(updateLanguage(lan));  
+   }catch(e){
+   }
+}  
+
+  function* mutationNewLanguage(){
+    yield takeEvery('NEW_LANGUAGE', mutationNewLanguageFunction);
+  }  
+
+// ----------------------------------------------- 
+
+const Put_EditGroup = gql`
+mutation editGroup($room: String, $input: [newmember], $name: String) {
+  editGroup( input: {
+            group:
+                    {
+                      room: $room,
+                      members: $input,
+                   },
+            name: $name       
+     }) {
+           room
+               members{
+               id
+               email
+               firstName
+               lastName
+               avatar
+           }
+           name
+       }
+   }
+`
+;
+
+function putEditGroupFunction (room, input, name){
+  const result = client.mutate({
+    mutation: Put_EditGroup,
+    variables: {room, input, name}
+  })
+  return result
+}
+  function* mutationEditGroupFunction(action) {
+    try{
+      const { data } = yield call(putEditGroupFunction, action.room, action.input, action.name);
+      yield put(updateGroups(data.editGroup));
+   }catch(e){
+   }
+}  
+
+  function* mutationEditGroup(){
+    yield takeEvery('EDIT_GROUP', mutationEditGroupFunction)
+  }  
+
+// ----------------------------------------------- 
 
 export default function* rootSaga() {
     yield all([
       queryUser(),         
-      queryContact(),      
+      queryContact(),  
+      queryGroups(),    
       queryLogIn(),        
       queryTokenLogIn(),   
-      mutationSignUp(),    
+      mutationSignUp(), 
       queryNotification(),               
       queryGroupNotification(),
       mutationCreateNotification(),
@@ -1012,7 +1209,9 @@ export default function* rootSaga() {
       mutationCreateGroup(),
       mutationUpload(), 
       mutationUpdateUserData(),
-      mutationCreateNewMessage(), 
-      mutationCreateNewStatus()
+      mutationNewMessage(), 
+      mutationCreateNewStatus(),
+      mutationEditGroup(),
+      mutationNewLanguage(),
     ])
   }

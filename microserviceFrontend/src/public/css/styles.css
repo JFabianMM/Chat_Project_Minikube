@@ -1,3 +1,8 @@
 .selected { 
     background-color: #2d4059; 
 }
+
+.contactSelected {
+    background-color: #becad9; 
+    /* color: #e9eaed;  */
+}

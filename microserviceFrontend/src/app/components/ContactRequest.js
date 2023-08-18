@@ -54,7 +54,7 @@ BootstrapDialogTitle.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
-let flag=0;
+
 export function ContactRequest(props) {
   const array=[1];
   const Dispatch = useDispatch();
@@ -70,12 +70,8 @@ export function ContactRequest(props) {
 
   const handleClickOpen = () => {
         let email=props.searchmessage;
-        try {
-            if (email!=userData.email){
-                Dispatch({type: 'QUERY_USER', email});
-            }
-        } 
-        catch (error) {
+        if (email!=userData.email){
+            Dispatch({type: 'QUERY_USER', email});
         }
         if (email!=userData.email){
             setOpen(true);
