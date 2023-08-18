@@ -68,8 +68,10 @@ The next part is only for minikube
 # start minikube
 minikube start 
 
-# Add an add-on                	
-minikube addons enable ingress-dns
+# Add an add-on        
+minikube addons enable ingress
+minikube addons enable ingress-dns        	
+
 
 # Apply the next manifests:
 kubectl create -f secret.yaml
