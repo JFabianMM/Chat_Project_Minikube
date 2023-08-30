@@ -49,6 +49,7 @@ router.post('/register', async (req, res)=>{
         res.status(400).send(e)
     }  
 });
+
 router.post('/userInformation', async (req, res)=>{ 
     try{
         const identification = req.body.identification;
@@ -79,37 +80,7 @@ router.post('/login', async (req, res)=>{
     }    
 });
 
-router.get('/notification', async (req, res)=>{ 
-    try{
-        const notification = await findNotification(req.query.identification);
-        if (notification){res.send(notification)}else{res.send()}  
-    }catch(e){
-        logger.log("error", e);
-        res.status(400).send(e)
-    }    
-});
-
-router.get('/groupnotifications', async (req, res)=>{ 
-    try{
-        const groupNotification = await findGroupNotification(req.query.identification);
-        res.send(groupNotification)
-    }catch(e){
-        logger.log("error", e);
-        res.status(400).send(e)
-    }    
-});
-
-router.get('/groups', async (req, res)=>{  
-    try{
-        const group = await findGroup(req.query.identification);
-        res.send(group)
-    }catch(e){
-        logger.log("error", e);
-        res.status(400).send(e)
-    }    
-});
-
-router.post('/newnotification', async (req, res)=>{ 
+router.post('/notification', async (req, res)=>{ 
     try{
         let userId=req.body.userId;                     
         let id=req.body.id;  
@@ -124,7 +95,6 @@ router.post('/newnotification', async (req, res)=>{
         let newContactRequested ={id:userId, room:room , status: 'normal'};
         contactRequested.contacts = contactRequested.contacts.concat(newContactRequested);
         
-        /// For messages
         let newMessageRoom = addNewChat(newContactRequested,newContact, "false");
         messages.messagesInformation=messages.messagesInformation.concat(newMessageRoom);
         messages.save();
@@ -141,46 +111,7 @@ router.post('/newnotification', async (req, res)=>{
     }
 });
 
-router.delete('/notification', async (req, res)=>{
-    const userId=req.query.userId;
-    const contactId=req.query.contactid;
-    try{
-        const [notification, contact,messages] = await Promise.all([findNotification(userId),findContact(contactId), findMessages(contactId)]);
-        let identification=contactId;
-        notification.notifications = notification.notifications.filter((el) => {
-            return el.id !== identification;
-        });
-        notification.save();
-        contact.contacts = contact.contacts.filter((el) => {
-            return el.id !== userId;
-        });
-        contact.save();
-        const room=contactId+userId;
-        messages.messagesInformation = messages.messagesInformation.filter((el) => {
-            return el.room !== room;
-        });
-        messages.save();
-        let DeleteNotificationResponse ={
-            number: notification.notifications.length
-        }
-        res.send({DeleteNotificationResponse});
-    }catch(e){
-        logger.log("error", e);
-        res.status(400).send(e)
-    }
-});
-
-router.get('/contact', async (req, res)=>{    
-    try {
-        const contact = await findContact(req.query.identification);
-        res.send(contact);
-    } catch (e){
-        logger.log("error", e);
-        res.status(400).send(e)
-    }
-});
-
-router.post('/newcontact', async (req, res)=>{
+router.post('/contact', async (req, res)=>{
     let contactid=req.body.contactid;         
     let userid=req.body.userid;                  
     try{
@@ -217,7 +148,7 @@ router.post('/newcontact', async (req, res)=>{
     }
 });
 
-router.post('/newgroup', async (req, res)=>{
+router.post('/group', async (req, res)=>{
     let input = req.body.input;
     try {  
         const [group, groupNotification, messages, contact] = await Promise.all([findGroup(input.id),findGroupNotification(input.id), findMessages(input.id), findContact(input.group.members[0].id)]);
@@ -351,25 +282,6 @@ router.post('/editgroup', async (req, res)=>{
     }
 });
 
-router.delete('/groupnotification', async (req, res)=>{ 
-    const id=req.query.userId;
-    const room=req.query.room;
-    try {  
-        let groupNotification = await findGroupNotification(id);
-        groupNotification.groupNotifications = groupNotification.groupNotifications.filter((el) => {
-            return el.room !== room;
-        });
-        groupNotification.save();
-        let deleteNotificationResponse ={
-            number: groupNotification.groupNotifications.length
-        } 
-        res.send({deleteNotificationResponse});
-    } catch (e){
-        logger.log("error", e);
-        res.status(400).send(e)
-    }
-});
-
 router.post('/groupandnotifications', async (req, res)=>{
     let input = req.body.input;
     try {  
@@ -431,7 +343,7 @@ router.post('/groupandnotifications', async (req, res)=>{
     }
 });
 
-router.post('/newmessage', async (req, res)=>{
+router.post('/message', async (req, res)=>{
     let input = req.body.input;
     try {  
         let date = new Date();
@@ -461,7 +373,7 @@ router.post('/newmessage', async (req, res)=>{
     }
 });
 
-router.post('/newstatus', async (req, res)=>{
+router.post('/status', async (req, res)=>{
     let input = req.body.input;
     try {  
         let messages = await findMessages(input.id);
@@ -494,6 +406,94 @@ router.post('/language', async (req, res)=>{
         settings.language=language;
         settings.save();
         res.send({language});
+    } catch (e){
+        logger.log("error", e);
+        res.status(400).send(e)
+    }
+});
+
+router.get('/notification', async (req, res)=>{ 
+    try{
+        const notification = await findNotification(req.query.identification);
+        if (notification){res.send(notification)}else{res.send()}  
+    }catch(e){
+        logger.log("error", e);
+        res.status(400).send(e)
+    }    
+});
+
+router.get('/groupnotifications', async (req, res)=>{ 
+    try{
+        const groupNotification = await findGroupNotification(req.query.identification);
+        res.send(groupNotification)
+    }catch(e){
+        logger.log("error", e);
+        res.status(400).send(e)
+    }    
+});
+
+router.get('/groups', async (req, res)=>{  
+    try{
+        const group = await findGroup(req.query.identification);
+        res.send(group)
+    }catch(e){
+        logger.log("error", e);
+        res.status(400).send(e)
+    }    
+});
+
+router.get('/contact', async (req, res)=>{    
+    try {
+        const contact = await findContact(req.query.identification);
+        res.send(contact);
+    } catch (e){
+        logger.log("error", e);
+        res.status(400).send(e)
+    }
+});
+
+router.delete('/notification', async (req, res)=>{
+    const userId=req.query.userId;
+    const contactId=req.query.contactid;
+    try{
+        const [notification, contact,messages] = await Promise.all([findNotification(userId),findContact(contactId), findMessages(contactId)]);
+        let identification=contactId;
+        notification.notifications = notification.notifications.filter((el) => {
+            return el.id !== identification;
+        });
+        notification.save();
+        contact.contacts = contact.contacts.filter((el) => {
+            return el.id !== userId;
+        });
+        contact.save();
+        const room=contactId+userId;
+        messages.messagesInformation = messages.messagesInformation.filter((el) => {
+            return el.room !== room;
+        });
+        messages.save();
+        let DeleteNotificationResponse ={
+            number: notification.notifications.length
+        }
+        res.send({DeleteNotificationResponse});
+    }catch(e){
+        logger.log("error", e);
+        res.status(400).send(e)
+    }
+});
+
+router.delete('/groupnotification', async (req, res)=>{ 
+    const id=req.query.userId;
+    const room=req.query.room;
+    try {  
+        let groupNotification = await findGroupNotification(id);
+        groupNotification.groupNotifications = groupNotification.groupNotifications.filter((el) => {
+            return el.room !== room;
+        });
+        groupNotification.save();
+        let deleteNotificationResponse ={
+            number: groupNotification.groupNotifications.length
+        } 
+        res.send({deleteNotificationResponse});
     } catch (e){
         logger.log("error", e);
         res.status(400).send(e)
