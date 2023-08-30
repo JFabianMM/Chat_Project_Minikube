@@ -36,6 +36,7 @@ const login = {
                         group: groupAvatar.groups,
                         messages: data.loginResponse.messages
                     }
+                    console.log('messages: ', messages);
                     return loginResponse;
                 }
                 if (user=='Do not exist'){

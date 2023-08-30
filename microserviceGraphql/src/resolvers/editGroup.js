@@ -23,7 +23,9 @@ const editGroup = {
                 }  
                 const formData={input: dataInput}
                 const group= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'editgroup');
+                console.log('group', group);
                 const groupAvatar = await getGroupAvatars(group);
+                console.log('group');
                 return groupAvatar.groups
             }catch(e){
                 logger.log("error", e);

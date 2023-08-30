@@ -20,7 +20,7 @@ const createContact = {
                     userid:authResponse.identification,
                     contactid:input.contactid
                 }
-                const newcontact= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'newcontact');
+                const newcontact= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'contact');
                 let CreateContactResponse=newcontact.CreateContactResponse;
                 const contactAvatar = await getContactAvatars(CreateContactResponse.user);
                 CreateContactResponse.user=contactAvatar;

@@ -25,7 +25,7 @@ const createGroup = {
                     name: input.name
                 } 
                 const formData={input: dataInput}
-                const group= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'newgroup');
+                const group= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'group');
                 const groupAvatar = await getGroupAvatars(group);
                 return groupAvatar.groups
             }catch(e){

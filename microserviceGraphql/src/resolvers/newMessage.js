@@ -22,7 +22,7 @@ const newMessage = {
                 input.firstName=user.firstName;
                 input.lastName=user.lastName;
                 const formData={input}
-                const NewMessa= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'newmessage');    
+                const NewMessa= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'message');    
                 const NewMessageResponse = {
                     id:authResponse.identification,
                     room: input.room,

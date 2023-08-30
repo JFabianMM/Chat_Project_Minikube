@@ -15,7 +15,7 @@ const createNewStatus = {
                     throw new GraphQLError('Please Authenticate');
                 } 
                 const formData={input}
-                const status= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'newstatus');
+                const status= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'status');
                 const statusResult=  {
                     room: input.room,
                     status: input.status
