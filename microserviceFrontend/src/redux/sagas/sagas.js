@@ -255,7 +255,7 @@ function* queryLogInFunction(action) {
               }
               addedRooms = addedRooms.concat(newRoom);
           })
-   
+
           yield put(updateMessages(data.login.messages));
           yield put(updateRooms(addedRooms));
           yield put(updatePage('chat'));
@@ -367,8 +367,10 @@ function* queryTokenLogInFunction() {
         })
         let groupNew=data.tokenLogin.group; 
         let messages =data.tokenLogin.messages;
+  
         messages.forEach(element => {
             let contact_alreadyread=element.alreadyread;
+
             if (!contact_alreadyread){
               contact_alreadyread='true';
             }
@@ -452,6 +454,7 @@ function* queryTokenLogInFunction() {
   }catch(e){
   }  
 }
+
 
 function* queryTokenLogIn(){
   yield takeEvery('QUERY_TOKEN_LOGIN', queryTokenLogInFunction)
@@ -1022,6 +1025,7 @@ function putNewMessageFunction (room, message){
 
   return result
 }
+
   function* mutationNewMessageFunction(action) {
     try{
       const { data } = yield call(putNewMessageFunction, action.room, action.inputmessage);   
@@ -1033,6 +1037,7 @@ function putNewMessageFunction (room, message){
         index = contacts.findIndex(function (el){
             return el.room == data.newMessage.room;
         });
+
         if (index>=0){
             let cont=[];
             contacts.map((contact) =>{ 
@@ -1050,6 +1055,7 @@ function putNewMessageFunction (room, message){
             cont[index].alreadyread = true;
             yield put(updateContacts(cont));
         }  
+
            
         const getGroups = (state) => state.groups;
         let groups = yield select(getGroups);
@@ -1075,6 +1081,7 @@ function putNewMessageFunction (room, message){
    }catch(e){
    }
 }
+  
 
 function* mutationNewMessage(){
   yield takeEvery('NEW_MESSAGE', mutationNewMessageFunction)
