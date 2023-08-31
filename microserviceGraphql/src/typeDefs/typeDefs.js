@@ -9,13 +9,15 @@ const typeDefs = `
         group: [group]
         messages: [messages]
     }
+
     type messages {
-        alreadyread: Boolean
+        alreadyread: String
         room: String
         users: [messagesUser]
         name: String
         messages: [messagesByUser]
     }
+    
     type messagesUser {
         id: String
         firstName: String
