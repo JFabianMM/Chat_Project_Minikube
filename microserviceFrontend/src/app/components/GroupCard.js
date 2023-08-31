@@ -74,7 +74,7 @@ export function GroupCard(props){
                 }
                 gro= gro.concat(newGroup);
             })
-            gro[index].alreadyread = true;      
+            gro[index].alreadyread = 'true';      
             Dispatch(updateGroups(gro));
             let id= userData._id;
             let room= props.id;
@@ -83,7 +83,7 @@ export function GroupCard(props){
         }
     };
 
-    if (props.alreadyread==false){     
+    if (props.alreadyread=='false'){     
     return (
             <ListItem style={{allign:'center'}} id={props.index} button onClick={handleClickGroupCard} >
                 <ListItemIcon>

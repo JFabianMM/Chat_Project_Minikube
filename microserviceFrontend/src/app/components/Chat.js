@@ -85,13 +85,13 @@ export function Chat (props) {
             }
             tempMessages.push(message);
         });
-        
         let index = tempMessages.findIndex(function (el){
             return el.room == item.room;
         });
-
         let pos='left';
-        if (item.id == userData._id){pos='right';}
+        if (item.id == userData._id){
+            pos='right';
+        }
         let newMessage={
             origin: item.id,
             firstName: item.firstName,
@@ -105,9 +105,8 @@ export function Chat (props) {
             index = messages.findIndex(function (el){
                 return el.room == currentRoom[0].room;
             });
-
             if (currentRoom[0].room== item.room){
-                tempMessages[index].new=true;
+                tempMessages[index].new='true';
                 if (pos=='left'){
                     let room= item.room;
                     let index2=-1;
@@ -128,10 +127,9 @@ export function Chat (props) {
                         return el.room == room;
                     });
                     if (index2>=0){
-                        cont[index2].alreadyread = true;
+                        cont[index2].alreadyread = 'true';
                         Dispatch(updateContacts(cont));
-                    }  
-         
+                    } 
                     index2=-1;
                     let gro=[];
                     groups.map((group) =>{ 
@@ -147,7 +145,7 @@ export function Chat (props) {
                         return el.room == room;
                     });
                     if (index2>=0){
-                        gro[index2].alreadyread = true;
+                        gro[index2].alreadyread = 'true';
                         Dispatch(updateGroups(gro));
                     }
                 }
@@ -172,9 +170,10 @@ export function Chat (props) {
                         return el.room == room;
                     });
                     if (index2>=0){
-                        cont[index2].alreadyread = false;
+                        cont[index2].alreadyread = 'false';
                         Dispatch(updateContacts(cont));
-                    }  
+                    } 
+                    
                     let index3=-1;
                     let gro=[];
                     groups.map((group) =>{ 
@@ -190,10 +189,10 @@ export function Chat (props) {
                         return el.room == room;
                     });
                     if (index3>=0){
-                        gro[index3].alreadyread = false;
+                        gro[index3].alreadyread = 'false';
                         Dispatch(updateGroups(gro));
                     }
-                    tempMessages[index].new=false;
+                    tempMessages[index].new='false';
                 }
             }
             if (index>=0){
@@ -201,7 +200,6 @@ export function Chat (props) {
             }
         }
         Dispatch(updateMessages(tempMessages));  
-
     });
 
     socket.on('sendContact', (item)=>{
@@ -310,6 +308,13 @@ return (
 
 
 
+
+    
+    
+
+    
+    
+    
 
 
 
