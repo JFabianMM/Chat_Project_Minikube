@@ -36,9 +36,9 @@ const login = {
                         group: groupAvatar.groups,
                         messages: data.loginResponse.messages
                     }
-                    console.log('messages: ', messages);
                     return loginResponse;
                 }
+
                 if (user=='Do not exist'){
                     logger.log("error", 'User does not exist');
                     throw new GraphQLError('Do not exist');
