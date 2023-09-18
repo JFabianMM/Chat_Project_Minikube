@@ -9,7 +9,10 @@ const messagesSchema = new Schema({
         trim: true,
     },
     messagesInformation: [{
-        alreadyread: String,
+        alreadyread: { 
+            type: String, 
+            trim: true,
+            },
         room: { 
             type: String, 
             trim: true,

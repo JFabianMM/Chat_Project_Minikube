@@ -5,7 +5,6 @@ const saveNewMessage= async function(input, users) {
     let usersLen=users.length;
    for (let i = 0; i < usersLen; i++) {
         let messages = await findMessages(users[i].id);
-        
         let index=-1; 
         index = messages.messagesInformation.findIndex(function (el){
                 return el.room == input.room;
@@ -20,7 +19,6 @@ const saveNewMessage= async function(input, users) {
             }else{
                 messages.messagesInformation[index].alreadyread='true';
             }
-            // let len= messages.messagesInformation[index].messages.length;
             let newMessage={
                 origin: input.origin,
                 firstName: input.firstName, 

@@ -26,7 +26,7 @@ const groupSchema = new Schema({
         name: { 
             type: String,
             trim: true,
-            maxlength: 20,
+            maxlength: 30,
         }
     }]
 

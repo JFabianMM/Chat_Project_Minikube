@@ -12,6 +12,10 @@ const notificationSchema = new Schema({
         id: { 
             type: String, 
             trim: true
+            },
+        room: { 
+                type: String, 
+                trim: true
             }
     }]
 });

@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const router = express.Router();
 const User = require('../models/user');
 const Notification = require('../models/notification');
@@ -20,6 +21,7 @@ const addNewChat = require('../utilities/addNewChat');
 const addNewGroupChat = require('../utilities/addNewGroupChat');
 const getUniqueListBy = require('../utilities/getUniqueListBy');
 const reviewNotifications = require('../utilities/reviewNotifications');
+const reviewMessages = require('../utilities/reviewMessages');
 
 router.post('/register', async (req, res)=>{ 
     const identification= req.body.identification;
@@ -50,11 +52,58 @@ router.post('/register', async (req, res)=>{
     }  
 });
 
+router.post('/update', async (req, res)=>{ 
+    const identification= req.body.identification;
+    const email= req.body.email;
+    const firstName= req.body.firstName;
+    const lastName= req.body.lastName;
+    const password = req.body.password;
+    const user = await User.findOne({ identification });
+
+    if (firstName!=''){
+        user.firstName=firstName;
+    }
+    if (lastName!=''){
+        user.lastName=lastName;
+    }
+    user.save();
+ 
+    try { 
+        res.send({user});
+    } catch (e){
+        logger.log("error", e);
+        res.status(400).send(e)
+    }  
+});
+
 router.post('/userInformation', async (req, res)=>{ 
     try{
         const identification = req.body.identification;
-        const user = await User.findOne({ identification });
-        res.send(user);
+        const room= req.body.room;
+        //const [contact, group, messages] = await Promise.all([findContact(identification), findGroup(identification), findMessages(identification)]);
+        const messages = await findMessages(identification);
+    //     const contacts1= contact.contacts.filter((el) => {
+    //          return el.room == room;
+    //     });
+    //     const groups1= group.groups.filter((el) => {
+    //         return el.room == room;
+    //    });
+        const messages1= messages.messagesInformation.filter((el) => {
+            return el.room == room;
+        });
+        console.log('messages1: ', messages1);
+        console.log('messages1.length: ', messages1.length);
+        
+        if (messages1.length>0){
+            const user = await User.findOne({ identification });
+            res.send(user);
+        }else{
+            const form={
+                found: true,
+              }
+              
+            res.send(form);
+        }
     }catch(e){
         logger.log("error", e);
         res.status(400).send(e)
@@ -85,20 +134,33 @@ router.post('/notification', async (req, res)=>{
         let userId=req.body.userId;                     
         let id=req.body.id;  
         const [notification, contact,contactRequested, messages] = await Promise.all([findNotification(id),findContact(userId), findContact(id), findMessages(userId)]);                            
-        let newNotification ={id:userId};              
-        notification.notifications = notification.notifications.concat(newNotification);
-        notification.save(); 
-        const room=userId+id;
-        let newContact ={id:id, room:room , status: 'pending'};
-        contact.contacts = contact.contacts.concat(newContact);
-        contact.save(); 
-        let newContactRequested ={id:userId, room:room , status: 'normal'};
-        contactRequested.contacts = contactRequested.contacts.concat(newContactRequested);
         
-        let newMessageRoom = addNewChat(newContactRequested,newContact, "false");
-        messages.messagesInformation=messages.messagesInformation.concat(newMessageRoom);
-        messages.save();
+        let con = contact.contacts.filter((el) => {
+            return el.id == userId;
+        });
 
+        if (con.length==0){
+            let room = mongoose.Types.ObjectId();
+            room = JSON.stringify(room);
+            room = room.replaceAll('"', '');
+            console.log('room: ', room);
+            
+            let newNotification ={id:userId, room:room};              
+            notification.notifications = notification.notifications.concat(newNotification);
+            notification.save(); 
+
+
+            // const room=userId+id;
+            let newContact ={id:id, room:room , status: 'pending'};
+            contact.contacts = contact.contacts.concat(newContact);
+            contact.save(); 
+            let newContactRequested ={id:userId, room:room , status: 'normal'};
+            contactRequested.contacts = contactRequested.contacts.concat(newContactRequested);
+            let newMessageRoom = addNewChat(newContactRequested,newContact, "true");
+            messages.messagesInformation=messages.messagesInformation.concat(newMessageRoom);
+            messages.save();
+        }
+        
         let CreateContactResponse = {
             user: contact,
             contactId: id,
@@ -113,10 +175,11 @@ router.post('/notification', async (req, res)=>{
 
 router.post('/contact', async (req, res)=>{
     let contactid=req.body.contactid;         
-    let userid=req.body.userid;                  
+    let userid=req.body.userid;    
+    const room=req.body.room;              
     try{
         const [contact, contact2, notification] = await Promise.all([findContact(contactid),findContact(userid), findNotification(userid)]);   
-        const room=contactid+userid;
+        // const room=contactid+userid;
         let newContact ={id:userid, room:room , status: 'normal'};
         let newContact2 ={id:contactid, room:room , status: 'normal'};
         let foundContact = contact.contacts.findIndex(element => element.room == room);
@@ -190,7 +253,7 @@ router.post('/group', async (req, res)=>{
     }
 });
      
-router.post('/editgroup', async (req, res)=>{
+router.patch('/group', async (req, res)=>{    
     let input = req.body.input;
     try {  
         const group = await findGroup(input.id);
@@ -202,7 +265,6 @@ router.post('/editgroup', async (req, res)=>{
                 }
                 members=members.concat(member);
         });
-
         const newMembers = getUniqueListBy(members, 'id');
         const name=input.name;
         const room=input.group.room; 
@@ -229,28 +291,36 @@ router.post('/editgroup', async (req, res)=>{
             }
         }
         let eliminatedLen=eliminated.length;
-        await reviewNotifications(eliminated,room);
-        for (let i=0; i<eliminatedLen; i++){
-            let group = await findGroup(eliminated[i].id);
-            group.groups=group.groups.filter((el) => {
-                return el.room != room;
-            });
-            group.save();
-        }
 
-        let stayLen=stay.length;
-        for (let i=0; i<stayLen; i++){
-            let group = await findGroup(stay[i].id);
-            const index = group.groups.findIndex(object => {
-                return object.room == room;
-              });
-            if (index>=0){
-                group.groups[index].members=newMembers;
-                group.groups[index].name=name;
+        if (formerMembers[0].creator==input.id){
+            await reviewNotifications(eliminated,room);
+            await reviewMessages(eliminated, room);
+            for (let i=0; i<eliminatedLen; i++){
+                let group = await findGroup(eliminated[i].id);
+                group.groups=group.groups.filter((el) => {
+                    return el.room != room;
+                });
                 group.save();
             }
-        }   
-        
+            let stayLen=stay.length;
+            for (let i=0; i<stayLen; i++){
+                let group = await findGroup(stay[i].id);
+                const index = group.groups.findIndex(object => {
+                    return object.room == room;
+                });
+                if (index>=0){
+                    group.groups[index].members=newMembers;
+                    group.groups[index].name=name;
+                    if (input.id==stay[i].id){
+                        console.log('input.id', input.id);
+                        console.log('stay[i].id: ', stay[i].id);
+                        await group.save();
+                    }else{
+                        group.save();
+                    }
+                }
+            }  
+        }  
         function saveNotifications(members, room, creator, name) {
             let result = new Array();
             members.forEach(function(member) {
@@ -273,8 +343,62 @@ router.post('/editgroup', async (req, res)=>{
                 });
             });
         }
-        saveNotifications(added,room, creator, name);
+        if (formerMembers[0].creator==input.id){
+            saveNotifications(added,room, creator, name);
+        }
         const newGroup = await findGroup(input.id); 
+        res.send(newGroup);
+    } catch (e){
+        logger.log("error", e);
+        res.status(400).send(e)
+    }
+});
+
+router.patch('/groupnotification', async (req, res)=>{    
+    let input = req.body.input;
+    console.log('input: ', input);
+    try {  
+        const room=input.group.room;
+        console.log('room: ', room); 
+        const creator = input.group.members[0].id;
+        console.log('creator: ', creator);
+        const group = await findGroup(creator);
+        console.log('group: ', group);
+        
+        let formerMembers=group.groups.filter((el) => {
+            return el.room == room;
+        });
+        console.log('formerMembers: ', formerMembers);
+
+        let members=[];
+        formerMembers[0].members.forEach(element => {
+                let member={
+                    id:element.id
+                }
+                if (element.id != input.id){
+                    members=members.concat(member);
+                }               
+        });
+        console.log('formerMembers: ', formerMembers);
+        const newMembers = getUniqueListBy(members, 'id');
+        console.log('newMembers: ', newMembers);
+        let stayLen=newMembers.length;
+        console.log('stayLen: ', stayLen);
+        for (let i=0; i<stayLen; i++){
+            let group = await findGroup(newMembers[i].id);
+            const index = group.groups.findIndex(object => {
+                return object.room == room;
+            });
+            console.log('index: ', index);
+            if (index>=0){
+                group.groups[index].members=newMembers;
+                console.log('group: ', group);
+                group.save();
+            }
+        } 
+        console.log('input.id: ', input.id); 
+        const newGroup = await findGroup(input.id);
+        console.log('newGroup: ', newGroup); 
         res.send(newGroup);
     } catch (e){
         logger.log("error", e);
@@ -455,6 +579,7 @@ router.get('/contact', async (req, res)=>{
 router.delete('/notification', async (req, res)=>{
     const userId=req.query.userId;
     const contactId=req.query.contactid;
+    const room=req.query.room;
     try{
         const [notification, contact,messages] = await Promise.all([findNotification(userId),findContact(contactId), findMessages(contactId)]);
         let identification=contactId;
@@ -466,7 +591,7 @@ router.delete('/notification', async (req, res)=>{
             return el.id !== userId;
         });
         contact.save();
-        const room=contactId+userId;
+        // const room=contactId+userId;
         messages.messagesInformation = messages.messagesInformation.filter((el) => {
             return el.room !== room;
         });
