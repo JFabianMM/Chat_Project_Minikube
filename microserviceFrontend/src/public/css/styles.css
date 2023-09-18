@@ -6,3 +6,49 @@
     background-color: #becad9; 
     /* color: #e9eaed;  */
 }
+
+.textItem{
+    word-wrap: break-word;
+}
+
+.container{
+    background: rgb(201, 198, 198);
+}
+
+.menuLeft{
+    width: 280px;
+}
+.menuRight{
+    width: calc(100% - 280px);
+}
+.menuRightLow{
+    width: calc(100% - 280px);
+}
+
+@media (min-width: 560px) {
+    .menuLeft{
+        width: 50vw;
+    }
+    .menuRight{
+        width: 50vw;
+        
+    }
+    .menuRightLow{
+        width: 50vw;
+        
+    }
+}
+@media (min-width: 650px) {
+    .menuLeft{
+        width: 325px;
+        
+    }
+    .menuRight{
+        width: calc(100% - 325px);
+        
+    }
+    .menuRightLow{
+        width: calc(100% - 325px);
+        
+    }
+}

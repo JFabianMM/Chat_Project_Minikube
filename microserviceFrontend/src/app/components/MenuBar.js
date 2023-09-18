@@ -20,6 +20,8 @@ import { updatePage } from '../../redux/slice/pageSlice';
 import { setCookie } from '../functions/setCookie';
 import { ShowProfileInformation } from './ShowProfileInformation';
 import { ShowProfile2 } from './ShowProfile2';
+import { updateCurrentRoom } from '../../redux/slice/currentRoomSlice';
+import { updateCurrentChat } from '../../redux/slice/currentChatSlice';
 
 export function MenuBar(props) {
 
@@ -94,6 +96,8 @@ export function MenuBar(props) {
         setMobileMoreAnchorEl(event.currentTarget);
     };
     const handleMenuCloseLogout = () => {
+        Dispatch(updateCurrentChat([]));
+        Dispatch(updateCurrentRoom([]));
         setCookie("token", '', -10);
         Dispatch(updatePage('signIn'));
         setAnchorEl(null);

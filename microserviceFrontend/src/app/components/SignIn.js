@@ -86,13 +86,13 @@ export function SignIn(props) {
                                                 </Typography>
                                             );
                                         }
-                                        if (errorNotification=='doesnotexist') {
-                                            return (
-                                                <Typography key={element.indexOf} style={{color:'red'}}>
-                                                    {props.t('signin.error.doesnotexist')}
-                                                </Typography>
-                                            );
-                                        }
+                                        // if (errorNotification=='doesnotexist') {
+                                        //     return (
+                                        //         <Typography key={element.indexOf} style={{color:'red'}}>
+                                        //             {props.t('signin.error.doesnotexist')}
+                                        //         </Typography>
+                                        //     );
+                                        // }
                                     })
                                 }
                         </Grid>
@@ -107,10 +107,10 @@ export function SignIn(props) {
                                                 </Typography>
                                             );
                                         }
-                                        if (errorNotification=='doesnotmatch') {
+                                        if (errorNotification=='doesnotmatch' || errorNotification=='doesnotexist'){
                                             return (
                                                 <Typography key={element.indexOf} style={{color:'red'}}>
-                                                    {props.t('signin.error.doesnotmatch')}
+                                                    {props.t('signin.error.incorrect')}
                                                 </Typography>
                                             );
                                         }
@@ -141,5 +141,3 @@ export function SignIn(props) {
         </ThemeProvider>
     );
 }
-
-

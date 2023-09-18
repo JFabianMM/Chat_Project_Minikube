@@ -30,27 +30,32 @@ function SimpleDialog(props) {
         event.preventDefault();
         Dispatch(updateErrorNotification(''));
         const data = new FormData(event.currentTarget);
-        let email=data.get('email');
+        // let email=data.get('email');
         let password=data.get('password');
         let confirmpassword=data.get('confirmpassword');
         let firstName=data.get('firstName');
         let lastName=data.get('lastName');
 
         let errorflag=0;
-        if (email != ""){
-            if(!validator.isEmail(email)){
-                Dispatch(updateErrorNotification('invalid'));
-                errorflag=1;
-            }
-        }
+        const result = /^(?=.*[0-9])(?=.*[A-Z])(?!.* ).{6,80}$/.test(password);
+        
         if (password != "" || confirmpassword != "")  {
             if (password != confirmpassword){
                 errorflag=1;
                 Dispatch(updateErrorNotification('match'));        
-            }
+            }else{
+                if (result==false){
+                   errorflag=1;
+                   Dispatch(updateErrorNotification('characters'));
+                }
+            }            
         }
+
+        
+        let email='';
         if (errorflag==0){
            Dispatch(updateErrorNotification(''));
+           console.log('email, password, firstName, lastName: ', email, password, firstName, lastName);
            Dispatch({type: 'MUTATION_UPDATE_USER_DATA', email, password, firstName, lastName});
            onClose(selectedValue);
         }          
@@ -77,9 +82,9 @@ function SimpleDialog(props) {
                             <Grid item xs={12} sm={6}>
                                 <TextField fullWidth id="lastName" label={props.t('menu.profile.new.last.name')} name="lastName" autoComplete="family-name"/>
                             </Grid>
-                            <Grid item xs={12}>
+                            {/* <Grid item xs={12}>
                                 <TextField fullWidth id="email" label={props.t('menu.profile.new.email')} name="email" autoComplete="email"/>
-                            </Grid>
+                            </Grid> */}
                             <Grid item xs={12}>
                                 <TextField fullWidth name="password" label={props.t('menu.profile.new.password')} type="password" id="password" autoComplete="new-password"/>
                             </Grid>
@@ -109,6 +114,13 @@ function SimpleDialog(props) {
                                             return (
                                                 <Typography key={element.indexOf} style={{color:'red'}}>
                                                     {props.t('signup.error.invalid')}
+                                                </Typography>
+                                            );
+                                        }
+                                        if (errorNotification=='characters') {
+                                            return (
+                                                <Typography key={element.indexOf} style={{color:'red'}}>
+                                                    {props.t('signup.error.characters')}
                                                 </Typography>
                                             );
                                         }
@@ -159,3 +171,11 @@ export function ShowProfileInformation(props) {
     </div>
   );
 }
+
+
+
+
+
+
+
+

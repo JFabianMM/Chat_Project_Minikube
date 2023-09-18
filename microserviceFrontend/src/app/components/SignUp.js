@@ -17,6 +17,8 @@ import { updatePage } from '../../redux/slice/pageSlice';
 import { updateErrorNotification } from '../../redux/slice/errorNotificationSlice';
 const validator = require('validator');
 
+import {LanguageButtonPrev} from './LanguageButtonPrev'
+
 function Copyright(props) {
     return (
         <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -31,10 +33,14 @@ function Copyright(props) {
 }
 const theme = createTheme();
 
+
+
+
 export function SignUp(props) {
     const errorNotification = useSelector(state => state.errorNotification);
     const Dispatch = useDispatch();
     let array= ['1'];
+
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
@@ -43,6 +49,8 @@ export function SignUp(props) {
         let confirmpassword=data.get('confirmpassword');
         let firstName=data.get('firstName');
         let lastName=data.get('lastName');
+
+
 
         let errorFlag=0;
         const result = /^(?=.*[0-9])(?=.*[A-Z])(?!.* ).{6,80}$/.test(password);
@@ -67,6 +75,14 @@ export function SignUp(props) {
             errorFlag=1;
             Dispatch(updateErrorNotification('fillFirstName'));
         }
+        if (lastName.length > 20){
+            errorFlag=1;
+            Dispatch(updateErrorNotification('lastNameLength'));
+        }
+        if (firstName.length > 20){
+            errorFlag=1;
+            Dispatch(updateErrorNotification('firstNameLength'));
+        }
         if (result===false && password != ""){
             errorFlag=1;
             Dispatch(updateErrorNotification('characters'));
@@ -90,7 +106,7 @@ export function SignUp(props) {
         <ThemeProvider theme={theme}>
             <Container component="main" maxWidth="xs">
                 <CssBaseline />
-                <LanguageButton i18n={props.i18n} t={props.t} />
+                <LanguageButtonPrev i18n={props.i18n} t={props.t} />
                 <Box sx={{marginTop: 8,display: 'flex',flexDirection: 'column',alignItems: 'center'}}>
                     <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
                         <LockOutlinedIcon />
@@ -111,8 +127,16 @@ export function SignUp(props) {
                                                 </Typography>
                                             );
                                         }
+                                        if (errorNotification=='firstNameLength') {
+                                            return (
+                                                <Typography key={element.indexOf} style={{color:'red'}}>
+                                                    {props.t('signup.error.firstNameLength')}
+                                                </Typography>
+                                            );
+                                        }
                                     })
-                                    }
+                                }
+
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField required fullWidth id="lastName" label={props.t('signup.last.name')} name="lastName" autoComplete="family-name"/>
@@ -122,6 +146,13 @@ export function SignUp(props) {
                                             return (
                                                 <Typography key={element.indexOf} style={{color:'red'}}>
                                                     {props.t('signup.error.fillLastName')}
+                                                </Typography>
+                                            );
+                                        }
+                                        if (errorNotification=='lastNameLength') {
+                                            return (
+                                                <Typography key={element.indexOf} style={{color:'red'}}>
+                                                    {props.t('signup.error.lastNameLength')}
                                                 </Typography>
                                             );
                                         }
@@ -225,8 +256,3 @@ export function SignUp(props) {
         </ThemeProvider>
   );
 }
-
-
-
-
-

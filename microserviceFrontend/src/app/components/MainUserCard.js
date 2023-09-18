@@ -7,12 +7,19 @@ import { useSelector } from 'react-redux';
 
 export function MainUserCard(props){
     const avatar = useSelector(state => state.avatar);
+
+    let name = props.name;
+    if (name.length>20){
+        name = name.slice(0, 20)+ ' ...';
+        console.log('name', name);
+    }
+
     return (
             <ListItem style={{allign:'center'}} id={props.index} >
                 <ListItemIcon>
-                    <Avatar id={props.index} alt={props.name} srcSet={avatar} />
+                    <Avatar id={props.index} alt={name} srcSet={avatar} />
                 </ListItemIcon>
-                <ListItemText id={props.index} style={{color:'#FFFFFF'}} primary={props.name}></ListItemText>
+                <ListItemText id={props.index} style={{color:'#FFFFFF'}} primary={name}></ListItemText>
                 <ListItemText id={props.index} style={{color:'#FFFFFF'}} align="right"></ListItemText>
             </ListItem>
     )   

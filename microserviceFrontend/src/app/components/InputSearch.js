@@ -18,6 +18,7 @@ export function InputSearch(props) {
         event.preventDefault();
         let elem = document.getElementById("contactRequest");
         elem.value = '';
+        setSearchmessage('');
     };
 
   return (

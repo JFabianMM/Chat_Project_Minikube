@@ -6,6 +6,8 @@ import { Chat } from "./components/Chat";
 import {useSelector} from 'react-redux';
 import {useDispatch} from 'react-redux';
 import { getCookie } from './functions/getCookie';
+import { updateLanguage } from '../redux/slice/languageSlice';
+import "../public/css/styles.css";
 
 export function App() {
     const { t, i18n } = useTranslation();
@@ -14,7 +16,21 @@ export function App() {
     const Dispatch = useDispatch();
 
     useEffect(() => {
-        i18n.changeLanguage(language);
+        let languageData = sessionStorage.getItem("language");
+        // console.log('languageData', languageData);
+        if (languageData){
+            if (languageData=='en' || languageData=='es' || languageData=='fr'){
+                i18n.changeLanguage(languageData);
+                Dispatch(updateLanguage(languageData));
+            }else{
+                i18n.changeLanguage(language);
+                Dispatch(updateLanguage(language));
+            }
+        }else{
+            i18n.changeLanguage(language);
+            Dispatch(updateLanguage(language));
+        }
+        // i18n.changeLanguage(language);
       }, [language]);
 
     let token = getCookie("token");

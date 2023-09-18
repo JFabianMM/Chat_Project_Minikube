@@ -84,12 +84,16 @@ export function ContactRequest(props) {
   };
 
   const handleRequestAndClose = (ident) => {
-      let contact=[];
-      contact = contacts.filter((el) => {
-        return el.email == props.searchmessage;
+      // let contact=[];
+      // contact = contacts.filter((el) => {
+      //   return el.email == props.searchmessage;
+      // });
+
+      let con = contacts.filter((el) => {
+        return el.id == ident;
       });
       
-      if (contact.length==0){
+      if (con.length==0){
         let id= ident;
         Dispatch({type: 'MUTATION_CREATE_NOTIFICATION', id });
         handleNotification(id);

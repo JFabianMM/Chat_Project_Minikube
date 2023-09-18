@@ -18,6 +18,12 @@ export function UserCard(props){
     const userData = useSelector(state => state.userData);
 
     const Dispatch = useDispatch();
+
+    let name = props.name;
+    if (name.length>20){
+        name = name.slice(0, 20)+ ' ...';
+        console.log('name', name);
+    }
     
     function updateChatRooms(ids) {
         let newCurrentroom = rooms.filter(function (el){
@@ -78,13 +84,13 @@ export function UserCard(props){
                 }
                 cont= cont.concat(newContact);
             })
-
             cont[index].alreadyread = 'true';
             Dispatch(updateContacts(cont));
             let id= userData._id;
             let room= props.index;
             let status='true';
-            Dispatch({type: 'CREATE_NEW_STATUS', id, room, status});
+            //Dispatch({type: 'CREATE_NEW_STATUS', id, room, status});
+            Dispatch({type: 'NEW_STATUS', id, room, status});
         }
     };
     
@@ -92,9 +98,9 @@ export function UserCard(props){
         return (
             <ListItem style={{allign:'center'}} id={props.index}  >
                 <ListItemIcon id={props.index} >
-                    <Avatar  id={props.index}   alt={props.name} srcSet={props.src} />
+                    <Avatar  id={props.index}   alt={name} srcSet={props.src} />
                 </ListItemIcon>
-                <ListItemText id={props.index} style={{color:'#FFFFFF'}} primary={props.name}></ListItemText>
+                <ListItemText id={props.index} style={{color:'#FFFFFF'}} primary={name}></ListItemText>
                 <ListItemText secondary={<Typography variant="caption" style={{ color: 'green' }}>{props.t('chat.pending')}</Typography>} ></ListItemText>
             </ListItem>
         )
@@ -103,9 +109,9 @@ export function UserCard(props){
             return (
                 <ListItem style={{allign:'center'}} id={props.index} button onClick={handleClickUserCard} >
                     <ListItemIcon id={props.index} onClick={handleClickUserCard}>
-                        <Avatar  id={props.index}   alt={props.name} srcSet={props.src} />
+                        <Avatar  id={props.index}   alt={name} srcSet={props.src} />
                     </ListItemIcon>
-                    <ListItemText onClick={handleClickUserCard} id={props.index} style={{color:'#FFFFFF'}} primary={props.name}></ListItemText>
+                    <ListItemText onClick={handleClickUserCard} id={props.index} style={{color:'#FFFFFF'}} primary={name}></ListItemText>
                     <ListItemText secondary={<Typography variant="caption" style={{ color: 'green' }}>{props.t('chat.new')}</Typography>} ></ListItemText>
                 </ListItem>
             )
@@ -113,11 +119,17 @@ export function UserCard(props){
             return (
                 <ListItem style={{allign:'center'}} id={props.index} button onClick={handleClickUserCard} >
                     <ListItemIcon id={props.index} onClick={handleClickUserCard}>
-                        <Avatar  id={props.index}   alt={props.name} srcSet={props.src} />
+                        <Avatar  id={props.index}   alt={name} srcSet={props.src} />
                     </ListItemIcon>
-                    <ListItemText onClick={handleClickUserCard} id={props.index} style={{color:'#FFFFFF'}} primary={props.name}></ListItemText>
+                    <ListItemText onClick={handleClickUserCard} id={props.index} style={{color:'#FFFFFF'}} primary={name}></ListItemText>
                 </ListItem>
             )    
         }
     }
   }
+
+
+
+
+
+

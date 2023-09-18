@@ -34,7 +34,7 @@ export function ShowNotifications(props) {
     }
 
     const handleAcceptedListItem = (value)=>{
-        let [email,id, firstName, lastName]=value;
+        let [email,id, firstName, lastName, room]=value;
 
         const formData={
             id: id,
@@ -48,7 +48,7 @@ export function ShowNotifications(props) {
         let userlastName= userData.lastName;
         let contactid=formData.id;
         
-        Dispatch({type: 'CREATE_CONTACT', contactid});
+        Dispatch({type: 'CREATE_CONTACT', contactid, room});
         let roomToSend={
             room_forNotification:contactid,
             id:userid,
@@ -61,9 +61,9 @@ export function ShowNotifications(props) {
         }, 2000);
     }
 
-    const handleRejectedListItem = (id)=>{
+    const handleRejectedListItem = (id, room)=>{
         let contactid=id;
-        Dispatch({type: 'DELETE_NOTIFICATION', contactid});
+        Dispatch({type: 'DELETE_NOTIFICATION', contactid, room});
         let roomToSend={
           room_forNotification:contactid,
         }
@@ -84,8 +84,8 @@ export function ShowNotifications(props) {
               </Avatar>
             </ListItemAvatar>
             <ListItemText primary={requester.firstName + ' ' + requester.lastName } />
-            <Button style={{marginLeft: '10px'}} onClick={() => handleAcceptedListItem([requester.email,requester.id, requester.firstName, requester.lastName])} variant="contained">{props.t('request.accept')}</Button>
-            <Button style={{marginLeft: '10px'}} onClick={() => handleRejectedListItem(requester.id)} variant="contained">{props.t('request.reject')}</Button>
+            <Button style={{marginLeft: '10px'}} onClick={() => handleAcceptedListItem([requester.email,requester.id, requester.firstName, requester.lastName, requester.room])} variant="contained">{props.t('request.accept')}</Button>
+            <Button style={{marginLeft: '10px'}} onClick={() => handleRejectedListItem(requester.id, requester.room)} variant="contained">{props.t('request.reject')}</Button>
           </ListItem>
         ))}
 

@@ -13,7 +13,7 @@ import { useEffect } from 'react';
 import { Typography } from '@mui/material';
 
 import { EditDialog } from './EditDialog';                  
-import {socket} from '../functions/socket';               
+import {socket} from '../functions/socket';
 
 export function GroupCard(props){
     const rooms = useSelector(state => state.rooms);
@@ -21,7 +21,14 @@ export function GroupCard(props){
     const userData = useSelector(state => state.userData);
     const groups = useSelector(state => state.groups);
 
+
     const Dispatch = useDispatch();
+
+    let name = props.group.name;
+    if (name.length>12){
+        name = name.slice(0, 12)+ '...';
+    }
+
 
     function updateChatRooms(ids) {
         let newCurrentroom = rooms.filter(function (el){
@@ -79,30 +86,34 @@ export function GroupCard(props){
             let id= userData._id;
             let room= props.id;
             let status='true';
-            Dispatch({type: 'CREATE_NEW_STATUS', id, room, status});
+            //Dispatch({type: 'CREATE_NEW_STATUS', id, room, status});
+            Dispatch({type: 'NEW_STATUS', id, room, status});
         }
     };
 
     if (props.alreadyread=='false'){     
     return (
             <ListItem style={{allign:'center'}} id={props.index} button onClick={handleClickGroupCard} >
-                <ListItemIcon>
-                    <GroupAvatars id={props.index} group={props.group} />
-                </ListItemIcon>
-                <ListItemText id={props.index} style={{color:'#FFFFFF', padding: "10px"}} primary={props.group.name}></ListItemText>
-                <ListItemText secondary={<Typography variant="caption" style={{ color: 'green' }}>{props.t('chat.new')}</Typography>} ></ListItemText>
+                <GroupAvatars id={props.index} group={props.group} />
+                <ListItemText id={props.index} style={{color:'#FFFFFF', padding: "2px", left: '6px'}} primary={name}></ListItemText>
+                <ListItemText secondary={<Typography variant="caption" style={{ color: 'green', padding: '6px', display:'flex', justifyContent:'flex-end' }}>{props.t('chat.new')}</Typography>} ></ListItemText>
                 <EditDialog element={props.element} room={props.id} i18n={props.i18n} t={props.t} socket={socket}/>
             </ListItem>
     )
     }else{
         return (
             <ListItem style={{allign:'center'}} id={props.index} button onClick={handleClickGroupCard} >
-                <ListItemIcon>
-                    <GroupAvatars id={props.index} group={props.group} />
-                </ListItemIcon>
-                <ListItemText id={props.index} style={{color:'#FFFFFF', padding: "10px"}} primary={props.group.name}></ListItemText>
+                <GroupAvatars id={props.index} group={props.group} />
+                <ListItemText id={props.index} style={{color:'#FFFFFF', padding: "2px", left: '6px'}} primary={name}></ListItemText>
                 <EditDialog element={props.element} room={props.id} i18n={props.i18n} t={props.t} socket={socket}/>
             </ListItem>
     )
     }   
-  }
+  }       
+
+
+
+
+
+
+

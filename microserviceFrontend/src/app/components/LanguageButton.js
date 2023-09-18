@@ -8,14 +8,17 @@ export function LanguageButton() {
   const Dispatch = useDispatch();  
   const onChangeLanguageES = () =>{
       let language='es';
+      sessionStorage.setItem("language", "es");
       Dispatch({type: 'NEW_LANGUAGE', language});
   }
   const onChangeLanguageEN = () =>{
       let language='en';
+      sessionStorage.setItem("language", "en");
       Dispatch({type: 'NEW_LANGUAGE', language});
   }
   const onChangeLanguageFR = () =>{
     let language='fr';
+    sessionStorage.setItem("language", "fr");
     Dispatch({type: 'NEW_LANGUAGE', language});
 }
 

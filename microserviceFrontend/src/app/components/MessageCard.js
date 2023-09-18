@@ -12,7 +12,7 @@ export function MessageCard(props){
             <ListItem>
                 <Grid container>
                     <Grid item xs={12}>
-                        <ListItemText align={'left'} primary={props.element.message}></ListItemText>
+                        <ListItemText className="textItem" align={'left'} primary={props.element.message}></ListItemText>
                     </Grid>
                     <Grid item xs={12}>
                         <ListItemText align={'left'} secondary={props.element.firstName + ' ' + props.element.lastName + ',   ' + props.element.time}></ListItemText>
@@ -26,7 +26,7 @@ export function MessageCard(props){
             <ListItem>
                 <Grid container>
                     <Grid item xs={12}>
-                        <ListItemText align={'right'} primary={props.element.message}></ListItemText>
+                        <ListItemText className="textItem" align={'right'} primary={props.element.message}></ListItemText>
                     </Grid>
                     <Grid item xs={12}>
                         <ListItemText align={'right'} secondary={props.element.time}></ListItemText>

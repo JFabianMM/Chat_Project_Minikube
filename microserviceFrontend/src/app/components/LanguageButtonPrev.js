@@ -9,12 +9,15 @@ export function LanguageButtonPrev() {
   const Dispatch = useDispatch(); 
    
   const onChangeLanguageES = () =>{
+      sessionStorage.setItem("language", "es");
       Dispatch(updateLanguage('es'));
   }
   const onChangeLanguageEN = () =>{
+      sessionStorage.setItem("language", "en");
       Dispatch(updateLanguage('en'));
   }
   const onChangeLanguageFR = () =>{
+    sessionStorage.setItem("language", "fr");
     Dispatch(updateLanguage('fr'));
     }
 

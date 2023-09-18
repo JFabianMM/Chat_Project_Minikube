@@ -26,6 +26,8 @@ function SimpleDialog(props) {
         return el.room == props.room;
     }); 
     const members=selectedGroup[0].members;
+    const name=selectedGroup[0].name;
+
     let contactLen=contacts.length;
     let newContacts=[];
     for(let i=0; i<contactLen; i++){
@@ -172,7 +174,7 @@ function SimpleDialog(props) {
             });
             setTimeout(() => {
                 handleUpdateNotification(eliminatedMembers);
-            }, 2000); 
+            }, 10000); 
         }
         let stayMembers= [];
         if (stay.length>0){
@@ -184,7 +186,7 @@ function SimpleDialog(props) {
             });
             setTimeout(() => {
                 handleUpdateNotification(stayMembers);
-            }, 2000);
+            }, 10000);
         }
         newGroup=[];
         onClose(selectedValue);
@@ -227,7 +229,7 @@ function SimpleDialog(props) {
             }
             )}
             <Divider sx={{ height: 0, m: 0.5 }} orientation="horizontal" />
-            <UpdateGName i18n={props.i18n} t={props.t}/>
+            <UpdateGName i18n={props.i18n} t={props.t} name={name}/>
             <Divider sx={{ height: 0, m: 0.5 }} orientation="horizontal" />
             <ListItem button onClick={() => handleRequestAndClose(props.room)}>
                 {props.t('update.group.new')}
@@ -258,10 +260,8 @@ export function EditDialog(props) {
     };
     if (props.element.members[0].id == userData._id){
         return (
-            <div key={props.room}>
-                <ListItem style={{width: '80px', height: '20px'}} >
-                    <button onClick={() => handleClickOpen(props.room)} style={{width: '80px', height: '20px', fontSize:8}}>{props.t('update.group.edit')}</button>
-                </ListItem>
+            <div key={props.room} style={{display:'flex', justifyContent:'flex-end'}}>
+                <button style={{width: '40px', height: '20px', right: '0px', fontSize: 8}}  onClick={() => handleClickOpen(props.room)}>{props.t('update.group.edit')}</button>
                 <SimpleDialog room={props.room} i18n={props.i18n} t={props.t} selectedValue={selectedValue} open={open} onClose={handleClose} socket={props.socket}/>
             </div>
         );

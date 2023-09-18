@@ -16,6 +16,8 @@ import Divider from '@mui/material/Divider';
 import {InputGroupName} from './InputGroupName';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
+import { updateErrorNotification } from '../../redux/slice/errorNotificationSlice';
+
 
 let newGroup=[];
 function SimpleDialog(props) {
@@ -23,22 +25,20 @@ function SimpleDialog(props) {
     const userData = useSelector(state => state.userData);
     const contacts = useSelector(state => state.contacts);
     const groupName = useSelector(state => state.groupName); 
-
+    const errorNotification = useSelector(state => state.errorNotification);
+    
+    let array= ['1'];
     const Dispatch = useDispatch();
-
     const handleClose = () => {
         onClose(selectedValue);
     };
-
     const handleGroupNotification= (members)=> {
         props.socket.emit('sendGroupnotification', members);
     }
-
     const handleListItemClick = (value) => {
         let contact=[];
         const element = document.getElementById(value.id);
         let hasClass= element.classList.contains('contactSelected');
-        
         if (hasClass){
             element.classList.remove('contactSelected');
             newGroup= newGroup.filter((el) => {
@@ -61,9 +61,7 @@ function SimpleDialog(props) {
         let data={
              id:userData._id
         }
-
         formattedMembers=formattedMembers.concat(data);
-        
         newGroup.forEach(element => {
         data={
                 id:element.id
@@ -71,15 +69,21 @@ function SimpleDialog(props) {
         formattedMembers=formattedMembers.concat(data);
         notificationMembers=notificationMembers.concat(data);
         });
-       
+
+        let errorFlag=0;
+        if (groupName.length > 30){
+          errorFlag=1;
+          Dispatch(updateErrorNotification('groupNameLength'));
+        }
         let input = formattedMembers;
         let name= groupName; 
-        
-        Dispatch({type: 'CREATE_GROUP_NOTIFICATION', input, name});
-        
-        handleGroupNotification(notificationMembers);
-        newGroup=[];
-        onClose(selectedValue);
+        if (formattedMembers.length>1 && errorFlag==0){
+          Dispatch(updateErrorNotification(''));
+          Dispatch({type: 'CREATE_GROUP_NOTIFICATION', input, name});
+          handleGroupNotification(notificationMembers);
+          newGroup=[];
+          onClose(selectedValue);
+      }  
 }  
 
   return (
@@ -102,6 +106,17 @@ function SimpleDialog(props) {
         ))}
         <Divider sx={{ height: 0, m: 0.5 }} orientation="horizontal" />
         <InputGroupName i18n={props.i18n} t={props.t}/>
+        {
+            array.map((element) =>{
+                if (errorNotification=='groupNameLength') {
+                    return (
+                        <Typography key={element.indexOf} style={{color:'red'}}>
+                              {props.t('add.group.groupNameLength')}
+                        </Typography>
+                    );
+                }                            
+            })
+        }
         <Divider sx={{ height: 0, m: 0.5 }} orientation="horizontal" />
         <ListItem button onClick={handleRequestAndClose}>
             {props.t('add.group.create')}

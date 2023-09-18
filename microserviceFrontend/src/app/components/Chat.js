@@ -76,6 +76,13 @@ export function Chat (props) {
     socket.on('sendMessage', (item)=>{
         const messagesUpdated=messsa;
         let tempMessages=[];
+
+    let foundMessage = messagesUpdated.find(element => element.room == item.room);
+    if (foundMessage){
+        
+        
+    
+
         messagesUpdated.forEach(element => {
             let message ={
                 alreadyread:element.alreadyread,
@@ -85,6 +92,8 @@ export function Chat (props) {
             }
             tempMessages.push(message);
         });
+
+
         let index = tempMessages.findIndex(function (el){
             return el.room == item.room;
         });
@@ -102,9 +111,13 @@ export function Chat (props) {
         tempMessages[index].messages= tempMessages[index].messages.concat(newMessage);
         if (currentRoom.length>0){
             index=-1
-            index = messages.findIndex(function (el){
+            // index = messages.findIndex(function (el){
+            //     return el.room == currentRoom[0].room;
+            // });
+            index = tempMessages.findIndex(function (el){
                 return el.room == currentRoom[0].room;
             });
+
             if (currentRoom[0].room== item.room){
                 tempMessages[index].new='true';
                 if (pos=='left'){
@@ -200,6 +213,9 @@ export function Chat (props) {
             }
         }
         Dispatch(updateMessages(tempMessages));  
+
+
+    }
     });
 
     socket.on('sendContact', (item)=>{
@@ -210,111 +226,91 @@ export function Chat (props) {
     })
     const elem = document.getElementById("chatElement");
 
-return (
-    <>
-    <Grid container>
-        <Grid container style={{backgroundColor:'#8dc6ff', width: '100%', height: '40px', padding: '', position: 'fixed', top: '0'}}>
-            <MenuBar i18n={props.i18n} t={props.t} language={props.language} languageSet={props.languageSet} socket={socket}/>
-        </Grid>
-        <Grid item xs={4} style={{backgroundColor:'#34495e', height: 'auto', width: '35%', borderRight: '1px solid #e0e0e0', position: 'fixed', top: '60px'}}>
-            <List >
-                <MainUserCard i18n={props.i18n} t={props.t} name={username}/>
-            </List>
-            <Divider sx={{ bgcolor: "secondary.light" }}/>
-            <Grid item xs={12} style={{padding: '5px'}}>
-                <InputSearch i18n={props.i18n} t={props.t} socket={socket} style={{background:'#34495e', color:'#FFFFFF'}} fullWidth/>
-            </Grid>
-            <List style={{height: '80vh', overflowY: 'scroll'}}>
-                {
-                    contacts.map((element) =>{
-                        return (
-                            <div key={element.id} id={element.room} >
-                                        <UserCard i18n={props.i18n} element={element} t={props.t} socket={socket} key={element.room} selected= {selected} alreadyread={element.alreadyread} name={element.firstName+' '+element.lastName} src={element.avatar} index={element.room}/>
-                            </div>
-                        );
-                    })
-                }
+    return (
+        <>
+        <div>
+            <div style={{backgroundColor:'#8dc6ff', width: '100%', height: '40px', padding: '', position: 'fixed', top: '0px'}}>
+                <MenuBar i18n={props.i18n} t={props.t} language={props.language} languageSet={props.languageSet} socket={socket}/>
+            </div>
+            <div className="menuLeft" style={{backgroundColor:'#34495e', height: 'auto', borderRight: '1px solid #e0e0e0', position: 'fixed', top: '60px'}}>
+                <List >
+                    <MainUserCard i18n={props.i18n} t={props.t} name={username}/>
+                </List>
                 <Divider sx={{ bgcolor: "secondary.light" }}/>
-                <Grid item xs={12} style={{padding: '0px', height: '50px'}}>
-                    <AddGroupDialog i18n={props.i18n} t={props.t} socket={socket}/>
-                </Grid>
-                {
-                    groups.map((element) =>{
-                        return (
-                            <div key={element.room} id={element.room}>
-                                <GroupCard i18n={props.i18n} t={props.t} key={element.room} element={element} selected= {selected} group={element} alreadyread={element.alreadyread} id={element.room} socket={socket} index={element._id}/>
-                            </div>            
-                        );
-                    })
-                }
-            </List>
-        </Grid>
-        <Grid item xs={8}>
-            <Grid item xs={8} container style={{position: 'fixed', right: '0px'}}>       
-            <List id="chatElement" style={{width:'66%', height:`calc(100vh - 120px)`, overflowY: 'scroll', position: 'fixed', top: '60px', right: '0px'}}>
-                { 
-                    currentChat.map((element, index) =>{
-                        if (index<currentChat.length-1){
+                <div style={{padding: '5px'}}>
+                    <InputSearch i18n={props.i18n} t={props.t} socket={socket} style={{background:'#34495e', color:'#FFFFFF'}} fullWidth/>
+                </div>
+                <List style={{height: `calc(100vh - 200px)`, overflowY: 'scroll'}}>
+                    {
+                        contacts.map((element) =>{
                             return (
-                                <MessageCard key={index} element={element}/>                    
+                                <div key={element.id} id={element.room} >
+                                        <UserCard i18n={props.i18n} element={element} t={props.t} socket={socket} key={element.room} selected= {selected} alreadyread={element.alreadyread} name={element.firstName+' '+element.lastName} src={element.avatar} index={element.room}/>
+                                </div>
                             );
-                        }else{ 
-                            let lev; 
-	                        if (elem){                
-		                        lev= Math.abs(elem.scrollHeight - elem.scrollTop - elem.clientHeight);    
-                            }else{
-                                lev=0;
-                            }
-                            if (element.origin!=userData._id){
-                                if (lev<10){
-                                    return (
-                                        <ul key={index}>
-                                            <MessageCard key={index} element={element}/> 
-                                            <li ref={scrollRef} />
-                                        </ul>              
-                                    );
+                        })
+                    }
+                    <Divider sx={{ bgcolor: "secondary.light" }}/>
+                    <div style={{padding: '0px', height: '50px'}}>
+                        <AddGroupDialog i18n={props.i18n} t={props.t} socket={socket}/>
+                    </div>
+                    {
+                        groups.map((element) =>{
+                            return (
+                                <div key={element.room} id={element.room}>
+                                    <GroupCard i18n={props.i18n} t={props.t} key={element.room} element={element} selected= {selected} group={element} alreadyread={element.alreadyread} id={element.room} socket={socket} index={element._id}/>
+                                </div>
+                            );
+                        })
+                    }
+                </List>
+            </div>
+            <div className="menuRight" id="chatElement" style={{height:`calc(100vh - 120px)`, overflowY: 'scroll', position: 'fixed', top: '60px', right: '0px'}}>
+                    { 
+                        currentChat.map((element, index) =>{
+                            if (index<currentChat.length-1){
+                                return (
+                                    <MessageCard key={index} element={element}/>                    
+                                );
+                            }else{ 
+                                let lev; 
+                                if (elem){
+                                    lev= Math.abs(elem.scrollHeight - elem.scrollTop - elem.clientHeight);    
+                                }else{
+                                    lev=0;
+                                }
+                                // let altura = document.documentElement.clientHeight;
+                                if (element.origin!=userData._id){
+                                    if (lev<10){
+                                        return (
+                                            <ul key={index}>
+                                                <MessageCard key={element.id} element={element}/> 
+                                                <li ref={scrollRef} />
+                                            </ul>              
+                                        );
+                                    }else{
+                                        return (
+                                            <ul key={index}>
+                                                <MessageCard key={element.id} element={element}/> 
+                                            </ul>
+                                        );
+                                    }
                                 }else{
                                     return (
                                         <ul key={index}>
-                                            <MessageCard key={index} element={element}/> 
-                                        </ul>
+                                            <MessageCard key={element.id} element={element}/> 
+                                            <li ref={scrollRef} />
+                                        </ul>              
                                     );
                                 }
-                            }else{
-                                return (
-                                    <ul key={index}>
-                                        <MessageCard key={index} element={element}/> 
-                                        <li ref={scrollRef} />
-                                    </ul>              
-                                );
                             }
-                        }
-                    })
-                }
-            </List>
-            </Grid>
-            <Grid item xs={8} container style={{backgroundColor:'#f4f7f7', position: 'fixed', bottom: '0', right: '0px'}}>
-                <Grid item xs={12} style={{padding: '4px'}}>
-                    <InputMessage i18n={props.i18n} t={props.t} socket={socket} style={{background:'#34495e', color:'#FFFFFF'}} id="outlined-basic-email" fullWidth/>
-                </Grid>
-            </Grid>
-        </Grid>
-    </Grid>
-    </>
-);
+                        })
+                    }
+                </div>
+                <div className="menuRightLow" style={{padding: '4px', backgroundColor:'#f4f7f7', position: 'fixed', bottom: '0px', right: '0px'}}>
+                        <InputMessage i18n={props.i18n} t={props.t} socket={socket} style={{background:'#34495e', color:'#FFFFFF'}} id="outlined-basic-email" fullWidth/>          
+                </div>
+        </div>
+        </>
+    );
 }
-
-
-
-
-
-
-    
-    
-
-    
-    
-    
-
-
-

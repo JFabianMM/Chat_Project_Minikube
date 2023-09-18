@@ -128,6 +128,34 @@ function getGroupsFunction (){
 function* queryGroupsFunction() {
   try{
     const { data } = yield call(getGroupsFunction);
+    const getMessages = (state) => state.messages
+    let messages = yield select(getMessages);
+    const getContacts = (state) => state.contacts
+    let contacts = yield select(getContacts);
+    const getRooms = (state) => state.rooms
+    let rooms = yield select(getRooms);
+   
+    let messagesRooms=[];
+    let messagesLen=messages.length;
+    for (let i=0; i<messagesLen; i++){
+        let foundContact = contacts.find(element => element.room == messages[i].room);
+        let foundGroup = data.groups.find(element => element.room == messages[i].room);
+        if (!foundContact && !foundGroup){
+          messagesRooms=messagesRooms.concat(messages[i].room);
+        }
+    }
+    let messagesRoomsLen=messagesRooms.length;
+    for (let j=0; j<messagesRoomsLen; j++){
+        messages= messages.filter((el) => {
+            return el.room != messagesRooms[j];
+        });
+        rooms= rooms.filter((el) => {
+          return el.room != messagesRooms[j];
+      });
+    }
+  
+    yield put(updateMessages(messages));
+    yield put(updateRooms(messages));
     yield put(updateGroups(data.groups));
   }catch(e){
   }
@@ -158,6 +186,7 @@ query login ($email: String!, $password: String!){
         contacts {
           id
           room
+          status
           email
           firstName
           lastName
@@ -206,6 +235,16 @@ query login ($email: String!, $password: String!){
   }
 }
 `;
+
+// contacts {
+//   id
+//   room
+//   status
+//   email
+//   firstName
+//   lastName
+//   avatar
+// }
 
 function getLogInFunction (email, password){
   const result = client.query({
@@ -300,6 +339,7 @@ query tokenLogin ($token: String){
         contacts {
           id
           room
+          status
           email
           firstName
           lastName
@@ -517,6 +557,7 @@ query notification($id: String){
       firstName
       lastName
       avatar
+      room
     }
   }
 }
@@ -728,9 +769,10 @@ function putCreateGroupNotificationFunction (input, name){
 // ----------------------------------------------- 
 
 const Put_CreateContact = gql`
-mutation createaContact ($contactid: String!){
+mutation createaContact ($contactid: String!, $room: String!){
   createContact( input: {
-      contactid: $contactid
+      contactid: $contactid,
+      room: $room
   }) {
       user {
           identification
@@ -750,17 +792,17 @@ mutation createaContact ($contactid: String!){
 `;
 
 
-function putCreateContactFunction (contactid){
+function putCreateContactFunction (contactid, room){
   const result = client.mutate({
     mutation: Put_CreateContact,
-    variables: {contactid}
+    variables: {contactid, room}
   })
   return result
 }
 
 function* mutationCreateContactFunction(action) {
   try{
-    const { data } = yield call(putCreateContactFunction, action.contactid);  
+    const { data } = yield call(putCreateContactFunction, action.contactid, action.room);  
     const getUser = (state) => state.userData;
     const userData = yield select(getUser);
 
@@ -805,23 +847,26 @@ function* mutationCreateContact(){
 // ----------------------------------------------- 
 
 const Put_DeleteNotification = gql`
-mutation deleteNotification ($contactid: String!){
-  deleteNotification( contactid: $contactid) {
+mutation deleteNotification ($contactid: String!, $room: String!){
+  deleteNotification( input: {
+    contactid: $contactid,
+    room: $room
+}) {
     number
   } 
 }
 `;
 
-function putDeleteNotificationFunction (contactid){
+function putDeleteNotificationFunction (contactid, room){
   const result = client.mutate({
     mutation: Put_DeleteNotification,
-    variables: {contactid}
+    variables: {contactid, room}
   })
   return result
 }
 function* mutationDeleteNotificationFunction(action) {
   try{
-    const { data } = yield call(putDeleteNotificationFunction, action.contactid);
+    const { data } = yield call(putDeleteNotificationFunction, action.contactid, action.room);
     yield put(updateNotifications(data.deleteNotification.number));
   }catch(e){
   }
@@ -834,26 +879,36 @@ function* mutationDeleteNotification(){
 // ----------------------------------------------- 
 
 const Put_DeleteGroupNotification = gql`
-mutation deleteGroupNotification ($room: String!){
-  deleteGroupNotification(room: $room) {
-    number
-  } 
+mutation deleteGroupNotification($room: String, $input: [newmember], $name: String ) {
+  deleteGroupNotification( input: {
+      group:
+              {
+                 room: $room,
+                 members: $input,
+             }
+      name: $name
+}) {
+     number
+ }
 }
 `;
 
-function putDeleteGroupNotificationFunction (room){
+
+function putDeleteGroupNotificationFunction (room, input, name){
   const result = client.mutate({
     mutation: Put_DeleteGroupNotification,
-    variables: {room}
+    variables: {room, input, name}
   })
   return result
 }
 
 function* mutationDeleteGroupNotificationFunction(action) {
   try{
-    const { data } = yield call(putDeleteGroupNotificationFunction, action.room);
+    const { data } = yield call(putDeleteGroupNotificationFunction, action.room, action.input, action.name);
+    console.log('data.deleteGroupNotification: ', data.deleteGroupNotification);
     yield put(updateGroupNotifications(data.deleteGroupNotification.number));
   }catch(e){
+
   }
 }  
 
@@ -989,7 +1044,9 @@ function putUpdateUserDataFunction (email, password, firstName, lastName){
 }
 function* mutationUpdateUserDataFunction(action) {
   try{
-    yield call(putUpdateUserDataFunction, action.email, action.password, action.firstName, action.lastName);
+    const {data} = yield call(putUpdateUserDataFunction, action.email, action.password, action.firstName, action.lastName);
+    console.log('update userData data: ', data.updateUserData);
+    yield put(updateUserData(data.updateUserData));
   }catch(e){
   }
 }  
@@ -1089,9 +1146,9 @@ function* mutationNewMessage(){
 
 // ----------------------------------------------- 
 
-const Put_CreateNewStatus = gql`
-mutation createNewStatus($id: String, $room: String, $status: String) {
-  createNewStatus( input: {
+const Put_NewStatus = gql`
+mutation newStatus($id: String, $room: String, $status: String) {
+  newStatus( input: {
             id: $id,
             room: $room,
             status: $status   
@@ -1102,22 +1159,22 @@ mutation createNewStatus($id: String, $room: String, $status: String) {
    }
 `
 ;
-function putCreateNewStatusFunction (id, room, status){
+function putNewStatusFunction (id, room, status){
   const result = client.mutate({
-    mutation: Put_CreateNewStatus,
+    mutation: Put_NewStatus,
     variables: {id, room, status}
   })
   return result
 }
-  function* mutationCreateNewStatusFunction(action) {
+  function* mutationNewStatusFunction(action) {
     try{
-      const {data } = yield call(putCreateNewStatusFunction, action.id, action.room, action.status);    
+      const {data } = yield call(putNewStatusFunction, action.id, action.room, action.status);    
     }catch(e){
     }
   }  
 
-  function* mutationCreateNewStatus(){
-    yield takeEvery('CREATE_NEW_STATUS', mutationCreateNewStatusFunction)
+  function* mutationNewStatus(){
+    yield takeEvery('NEW_STATUS', mutationNewStatusFunction)
   }  
 
 // ----------------------------------------------- 
@@ -1217,7 +1274,7 @@ export default function* rootSaga() {
       mutationUpload(), 
       mutationUpdateUserData(),
       mutationNewMessage(), 
-      mutationCreateNewStatus(),
+      mutationNewStatus(),
       mutationEditGroup(),
       mutationNewLanguage(),
     ])
