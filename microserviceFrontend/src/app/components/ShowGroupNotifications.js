@@ -23,7 +23,6 @@ export function ShowGroupNotifications(props) {
     };
 
     const handleUpdateNotification= (members)=> {
-      console.log('members: ', members);
         props.socket.emit('sendUpdateNotification', members);
     }
 
@@ -49,9 +48,6 @@ export function ShowGroupNotifications(props) {
     const handleRejectedListItem = (value)=>{
         let newGroup=[];
         let [room, name]=value;
-        // let [room]=value;
-        // Dispatch({type: 'DELETE_GROUP_NOTIFICATION', room});
-
         newGroup = groupRequesters.filter(function (el){
             return el.room == room;
         });
@@ -68,11 +64,10 @@ export function ShowGroupNotifications(props) {
         let input=formattedMembers;
 
         Dispatch({type: 'DELETE_GROUP_NOTIFICATION', room, input, name});
-        console.log('formattedMembers: ', formattedMembers);
         if (formattedMembers.length>0){
             setTimeout(() => {
                 handleUpdateNotification(formattedMembers);
-            }, 5000);
+            }, 2000);
         }
     }
 
@@ -87,7 +82,6 @@ export function ShowGroupNotifications(props) {
             </ListItemAvatar>
             <ListItemText primary={requester.name } />
             <Button style={{marginLeft: '10px'}} onClick={() => handleAcceptedListItem([requester.room, requester.name])} variant="contained">{props.t('request.accept')}</Button>
-            {/* <Button style={{marginLeft: '10px'}} onClick={() => handleRejectedListItem([requester.room])} variant="contained">{props.t('request.reject')}</Button> */}
             <Button style={{marginLeft: '10px'}} onClick={() => handleRejectedListItem([requester.room, requester.name])} variant="contained">{props.t('request.reject')}</Button>
           </ListItem>
         ))}

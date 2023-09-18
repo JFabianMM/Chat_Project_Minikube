@@ -39,10 +39,8 @@ function SimpleDialog(props) {
   return (
     <Dialog style={{width: '100%', height: '100%'}} onClose={handleClose} open={open}>
       <List  sx={{ pt: 0, overflow: 'auto', maxHeight: 470, maxWidth: 300}}> 
-    
       <DialogTitle>{props.t('menu.bar.picture.profile')}</DialogTitle>
       <Divider sx={{ height: 0, m: 0.5 }} orientation="horizontal" />
-      
     <ThemeProvider theme={theme}>
         <Container component="main" maxWidth="xs">
             <CssBaseline />

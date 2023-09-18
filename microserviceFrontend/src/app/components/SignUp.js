@@ -10,7 +10,6 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import {LanguageButton} from './LanguageButton'
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { updatePage } from '../../redux/slice/pageSlice';
@@ -33,9 +32,6 @@ function Copyright(props) {
 }
 const theme = createTheme();
 
-
-
-
 export function SignUp(props) {
     const errorNotification = useSelector(state => state.errorNotification);
     const Dispatch = useDispatch();
@@ -49,8 +45,6 @@ export function SignUp(props) {
         let confirmpassword=data.get('confirmpassword');
         let firstName=data.get('firstName');
         let lastName=data.get('lastName');
-
-
 
         let errorFlag=0;
         const result = /^(?=.*[0-9])(?=.*[A-Z])(?!.* ).{6,80}$/.test(password);
@@ -222,7 +216,6 @@ export function SignUp(props) {
                                         }
                                     })
                                     }
-                              
                             </Grid>
                         </Grid>
                                 {

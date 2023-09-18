@@ -18,13 +18,10 @@ export function UserCard(props){
     const userData = useSelector(state => state.userData);
 
     const Dispatch = useDispatch();
-
     let name = props.name;
     if (name.length>20){
         name = name.slice(0, 20)+ ' ...';
-        console.log('name', name);
     }
-    
     function updateChatRooms(ids) {
         let newCurrentroom = rooms.filter(function (el){
             return el.room == ids;
@@ -61,9 +58,7 @@ export function UserCard(props){
 
         const element = document.getElementById(props.index);
         element.classList.add("selected");
-
         updateChatRooms(e.target.parentNode.id);
-  
         let index=-1;
         index = contacts.findIndex(function (el){
                 return el.room == props.index;
@@ -89,7 +84,6 @@ export function UserCard(props){
             let id= userData._id;
             let room= props.index;
             let status='true';
-            //Dispatch({type: 'CREATE_NEW_STATUS', id, room, status});
             Dispatch({type: 'NEW_STATUS', id, room, status});
         }
     };

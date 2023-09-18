@@ -34,11 +34,6 @@ io.on( 'connection', function( socket ) {
             room:room
         } 
         const user= await fetchFunction(formData, "http://backend:4001/api/users/userInformation");
-        console.log('user: ', user);
-        console.log('room: ', room);
-        // const form={
-        //     found: true,
-        //   }
         if (!user.found){
             let date = new Date();
             let current_time = date.getHours()+':'+date.getMinutes();
@@ -52,7 +47,6 @@ io.on( 'connection', function( socket ) {
               }
             io.to(room).emit('sendMessage', item);
         }
-        
     }catch(e){
         logger.log("error", e);
     } 
@@ -72,7 +66,6 @@ io.on( 'connection', function( socket ) {
             
     socket.on('sendUpdateNotification', (members)=>{
         let message='New Update';
-        console.log('members: ', members);
         members.forEach(element => {
             let room=element.id;
             io.to(room).emit('sendUpdateNotification', message);

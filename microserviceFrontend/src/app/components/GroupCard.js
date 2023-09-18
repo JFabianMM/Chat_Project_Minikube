@@ -1,6 +1,5 @@
 import * as React from 'react';
 import ListItem from '@mui/material/ListItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { GroupAvatars } from './GroupAvatars';
 import { useSelector } from 'react-redux';
@@ -29,12 +28,10 @@ export function GroupCard(props){
         name = name.slice(0, 12)+ '...';
     }
 
-
     function updateChatRooms(ids) {
         let newCurrentroom = rooms.filter(function (el){
             return el.id == ids;
          });
- 
          Dispatch(updateCurrentRoom(newCurrentroom));
          Dispatch(updateMessages(messages));
  
@@ -86,7 +83,6 @@ export function GroupCard(props){
             let id= userData._id;
             let room= props.id;
             let status='true';
-            //Dispatch({type: 'CREATE_NEW_STATUS', id, room, status});
             Dispatch({type: 'NEW_STATUS', id, room, status});
         }
     };

@@ -17,7 +17,6 @@ export function App() {
 
     useEffect(() => {
         let languageData = sessionStorage.getItem("language");
-        // console.log('languageData', languageData);
         if (languageData){
             if (languageData=='en' || languageData=='es' || languageData=='fr'){
                 i18n.changeLanguage(languageData);
@@ -30,7 +29,6 @@ export function App() {
             i18n.changeLanguage(language);
             Dispatch(updateLanguage(language));
         }
-        // i18n.changeLanguage(language);
       }, [language]);
 
     let token = getCookie("token");

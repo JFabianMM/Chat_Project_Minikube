@@ -236,16 +236,6 @@ query login ($email: String!, $password: String!){
 }
 `;
 
-// contacts {
-//   id
-//   room
-//   status
-//   email
-//   firstName
-//   lastName
-//   avatar
-// }
-
 function getLogInFunction (email, password){
   const result = client.query({
     query: Get_LogIn,
@@ -684,8 +674,7 @@ function putCreateNotificationFunction (id){
       }
     
       let chat=[];
-      chat= chat.concat(addNewChat(newRoom[0])); 
-    
+      chat= chat.concat(addNewChat(newRoom[0]));   
       yield put(addRooms(addedRoom));
       yield put(updateContacts(contactData));
       yield put(addNewContactMessage(addNewChat(newRoom[0])));
@@ -757,7 +746,6 @@ function putCreateGroupNotificationFunction (input, name){
 
       let group=data.createGroupAndNotifications[len-1];
       yield put(addNewContactMessage(addNewGroupChat(group)));
-      
    }catch(e){
    }
 }  
@@ -905,10 +893,8 @@ function putDeleteGroupNotificationFunction (room, input, name){
 function* mutationDeleteGroupNotificationFunction(action) {
   try{
     const { data } = yield call(putDeleteGroupNotificationFunction, action.room, action.input, action.name);
-    console.log('data.deleteGroupNotification: ', data.deleteGroupNotification);
     yield put(updateGroupNotifications(data.deleteGroupNotification.number));
   }catch(e){
-
   }
 }  
 
@@ -953,15 +939,12 @@ function* mutationCreateGroupFunction(action) {
     const { data } = yield call(putCreateGroupFunction, action.room, action.input, action.name);
     yield put(updateGroups(data.createGroup));
     let len=data.createGroup.length;
-  
       let newRoom={
           id: data.createGroup[len-1].room,
           room: data.createGroup[len-1].room
       }
-  
       yield put(addRooms(newRoom));
       yield put(eliminateGroupNotification());
-  
       function addNewGroupChat(group){
           let room=group.room;
           let users=group.members;
@@ -1045,7 +1028,6 @@ function putUpdateUserDataFunction (email, password, firstName, lastName){
 function* mutationUpdateUserDataFunction(action) {
   try{
     const {data} = yield call(putUpdateUserDataFunction, action.email, action.password, action.firstName, action.lastName);
-    console.log('update userData data: ', data.updateUserData);
     yield put(updateUserData(data.updateUserData));
   }catch(e){
   }

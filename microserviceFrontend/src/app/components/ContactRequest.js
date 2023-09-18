@@ -84,11 +84,6 @@ export function ContactRequest(props) {
   };
 
   const handleRequestAndClose = (ident) => {
-      // let contact=[];
-      // contact = contacts.filter((el) => {
-      //   return el.email == props.searchmessage;
-      // });
-
       let con = contacts.filter((el) => {
         return el.id == ident;
       });

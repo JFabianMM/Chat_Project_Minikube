@@ -17,11 +17,9 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { updateErrorNotification } from '../../redux/slice/errorNotificationSlice';
-const validator = require('validator');
 
 function SimpleDialog(props) {
     const { onClose, selectedValue, open } = props;
-
     const errorNotification = useSelector(state => state.errorNotification);
     const Dispatch = useDispatch();
 
@@ -30,7 +28,6 @@ function SimpleDialog(props) {
         event.preventDefault();
         Dispatch(updateErrorNotification(''));
         const data = new FormData(event.currentTarget);
-        // let email=data.get('email');
         let password=data.get('password');
         let confirmpassword=data.get('confirmpassword');
         let firstName=data.get('firstName');
@@ -38,7 +35,6 @@ function SimpleDialog(props) {
 
         let errorflag=0;
         const result = /^(?=.*[0-9])(?=.*[A-Z])(?!.* ).{6,80}$/.test(password);
-        
         if (password != "" || confirmpassword != "")  {
             if (password != confirmpassword){
                 errorflag=1;
@@ -50,12 +46,9 @@ function SimpleDialog(props) {
                 }
             }            
         }
-
-        
         let email='';
         if (errorflag==0){
            Dispatch(updateErrorNotification(''));
-           console.log('email, password, firstName, lastName: ', email, password, firstName, lastName);
            Dispatch({type: 'MUTATION_UPDATE_USER_DATA', email, password, firstName, lastName});
            onClose(selectedValue);
         }          
@@ -82,9 +75,6 @@ function SimpleDialog(props) {
                             <Grid item xs={12} sm={6}>
                                 <TextField fullWidth id="lastName" label={props.t('menu.profile.new.last.name')} name="lastName" autoComplete="family-name"/>
                             </Grid>
-                            {/* <Grid item xs={12}>
-                                <TextField fullWidth id="email" label={props.t('menu.profile.new.email')} name="email" autoComplete="email"/>
-                            </Grid> */}
                             <Grid item xs={12}>
                                 <TextField fullWidth name="password" label={props.t('menu.profile.new.password')} type="password" id="password" autoComplete="new-password"/>
                             </Grid>
@@ -162,12 +152,12 @@ export function ShowProfileInformation(props) {
 
   return (
     <div >
-            <ListItemText onClick={handleClickOpen}>
-                <Typography>
-                    {props.t('menu.bar.information.profile')}
-                </Typography>
-            </ListItemText>
-      <SimpleDialog i18n={props.i18n} t={props.t} selectedValue={selectedValue} open={open} onClose={handleClose} socket={props.socket}/>
+        <ListItemText onClick={handleClickOpen}>
+            <Typography>
+                {props.t('menu.bar.information.profile')}
+            </Typography>
+        </ListItemText>
+        <SimpleDialog i18n={props.i18n} t={props.t} selectedValue={selectedValue} open={open} onClose={handleClose} socket={props.socket}/>
     </div>
   );
 }

@@ -30,7 +30,6 @@ function Copyright(props) {
 }
 
 const theme = createTheme();
-
 export function SignIn(props) {
     const errorNotification = useSelector(state => state.errorNotification);
 
@@ -86,13 +85,6 @@ export function SignIn(props) {
                                                 </Typography>
                                             );
                                         }
-                                        // if (errorNotification=='doesnotexist') {
-                                        //     return (
-                                        //         <Typography key={element.indexOf} style={{color:'red'}}>
-                                        //             {props.t('signin.error.doesnotexist')}
-                                        //         </Typography>
-                                        //     );
-                                        // }
                                     })
                                 }
                         </Grid>

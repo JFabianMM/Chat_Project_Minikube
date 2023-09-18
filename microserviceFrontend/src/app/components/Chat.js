@@ -79,10 +79,6 @@ export function Chat (props) {
 
     let foundMessage = messagesUpdated.find(element => element.room == item.room);
     if (foundMessage){
-        
-        
-    
-
         messagesUpdated.forEach(element => {
             let message ={
                 alreadyread:element.alreadyread,
@@ -111,9 +107,6 @@ export function Chat (props) {
         tempMessages[index].messages= tempMessages[index].messages.concat(newMessage);
         if (currentRoom.length>0){
             index=-1
-            // index = messages.findIndex(function (el){
-            //     return el.room == currentRoom[0].room;
-            // });
             index = tempMessages.findIndex(function (el){
                 return el.room == currentRoom[0].room;
             });
@@ -279,7 +272,6 @@ export function Chat (props) {
                                 }else{
                                     lev=0;
                                 }
-                                // let altura = document.documentElement.clientHeight;
                                 if (element.origin!=userData._id){
                                     if (lev<10){
                                         return (

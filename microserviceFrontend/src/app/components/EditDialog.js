@@ -174,7 +174,7 @@ function SimpleDialog(props) {
             });
             setTimeout(() => {
                 handleUpdateNotification(eliminatedMembers);
-            }, 10000); 
+            }, 1000); 
         }
         let stayMembers= [];
         if (stay.length>0){
@@ -186,7 +186,7 @@ function SimpleDialog(props) {
             });
             setTimeout(() => {
                 handleUpdateNotification(stayMembers);
-            }, 10000);
+            }, 1000);
         }
         newGroup=[];
         onClose(selectedValue);
