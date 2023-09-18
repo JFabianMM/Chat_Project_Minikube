@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const { GraphQLError } = require('graphql');
 const fetchFunction = require('../functions/fetchFunction');
+const fetchPatchFunction = require('../functions/fetchPatchFunction');
 const getGroupAvatars = require('../functions/getGroupAvatars');
 const logger = require("../logger");
 
@@ -22,7 +23,8 @@ const editGroup = {
                     name: input.name
                 }  
                 const formData={input: dataInput}
-                const group= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'editgroup');
+                //const group= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'editgroup');
+                const group= await fetchPatchFunction(formData, process.env.BACKEND_MICROSERVICE+'group');
                 const groupAvatar = await getGroupAvatars(group);
                 return groupAvatar.groups
             }catch(e){

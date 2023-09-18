@@ -3,10 +3,11 @@ const { GraphQLError } = require('graphql');
 const fetchFunction = require('../functions/fetchFunction');
 const logger = require("../logger");
 const fetchDeleteFunction= require('../functions/fetchDeleteFunction');
+const fetchPatchFunction = require('../functions/fetchPatchFunction');
 
 const deleteGroupNotification = {
     Mutation: {
-        async deleteGroupNotification(context,args){
+        async deleteGroupNotification(context,{input}){ 
             try{
                 let req=context.headers.cookie;
                 const token = req.replace('token=','');
@@ -16,11 +17,23 @@ const deleteGroupNotification = {
                     logger.log("error", 'Please Authenticate');
                     throw new GraphQLError('Please Authenticate');
                 } 
-
+                const room=input.group.room;
+                console.log('room: ', room);
                 const url = new URL(process.env.BACKEND_MICROSERVICE+'groupnotification');
-                url.searchParams.set('room', args.room);
+                url.searchParams.set('room', room);
                 url.searchParams.set('userId', authResponse.identification);
                 const response= await fetchDeleteFunction(url.href);
+                console.log('response: ', response);
+
+                const dataInput={
+                    id:authResponse.identification,
+                    group: input.group,
+                    name: input.name
+                }  
+                const formData={input: dataInput}
+                const group= await fetchPatchFunction(formData, process.env.BACKEND_MICROSERVICE+'groupnotification');
+                console.log('group: ', group);
+                console.log('response.deleteNotificationResponse: ', response.deleteNotificationResponse);
                 return response.deleteNotificationResponse;
             }catch(e){
                 logger.log("error", e);

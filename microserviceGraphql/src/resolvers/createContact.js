@@ -18,7 +18,8 @@ const createContact = {
                 } 
                 const formData={
                     userid:authResponse.identification,
-                    contactid:input.contactid
+                    contactid:input.contactid,
+                    room:input.room
                 }
                 const newcontact= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'contact');
                 let CreateContactResponse=newcontact.CreateContactResponse;

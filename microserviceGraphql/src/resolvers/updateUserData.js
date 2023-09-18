@@ -16,19 +16,24 @@ const updateUserData = {
                     throw new GraphQLError('Please Authenticate');
                 } 
                 let {email, password, firstName, lastName} = input;
-                if (email!=''){
-                    const findemail = await User.findOne({ email});
-                    if (!findemail){
-                        user.email=email;
-                    }else{
-                        logger.log("error", 'User already exist');
-                        throw new GraphQLError('User already exist'); 
-                    }
-                }
+                console.log('email: ', email);
+                console.log('password: ', password);
+                console.log('firstName: ', firstName);
+                console.log('lastName', lastName);
+                const user = await User.findOne({ _id: authResponse.identification});
                 if (password!=''){user.password=password;}
                 if (firstName!=''){user.firstName=firstName;}
                 if (lastName!=''){user.lastName=lastName;} 
-                user.save();  
+                const formData={
+                    email,
+                    password,
+                    firstName,
+                    lastName,
+                    identification:authResponse.identification
+                }
+                user.save();
+                const authResponse2= fetchFunction(formData, process.env.AUTHORIZATION_MICROSERVICE+'update' );
+                const userResponse2= fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'update'); 
                 return user;
             }catch(e){
                 logger.log("error", e);

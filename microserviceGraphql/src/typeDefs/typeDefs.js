@@ -97,6 +97,7 @@ const typeDefs = `
         firstName: String
         lastName: String
         avatar: String
+        room: String
     }
 
     type userContact {
@@ -129,6 +130,7 @@ const typeDefs = `
     }
     input contactInput {
         contactid: String
+        room: String
     }
     input groupInput {
         group: newGroup
@@ -192,6 +194,11 @@ const typeDefs = `
         members: [newmember]
     }
     
+    input deleteNotificationInput {
+        contactid: String
+        room: String
+    }
+    
     input deleteGroupNotificationInput {
         room: String
     }
@@ -211,15 +218,15 @@ const typeDefs = `
     type Mutation {
         createUser(input: userInput): user
         createNotification(id: String!): createContactResponse
-        deleteNotification(contactid: String!): deleteNotificationResponse
-        deleteGroupNotification(room: String!): deleteNotificationResponse
+        deleteNotification(input: deleteNotificationInput): deleteNotificationResponse
+        deleteGroupNotification(input: createGroupInput): deleteNotificationResponse
         createContact(input: contactInput): createContactResponse 
         createGroup(input: createGroupInput): [group]    
         createGroupAndNotifications(input: groupInput): [group]
         singleUpload(file: String!): result
         updateUserData(input: updateInput): user
         newMessage(input: newMessageInput): NewMessageResponse
-        createNewStatus(input: newStatusInput): statusResult
+        newStatus(input: newStatusInput): statusResult
         editGroup(input: editGroupInput): [group]
         newLanguage(language: String!): languageResult
     }
