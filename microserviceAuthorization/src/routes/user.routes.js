@@ -43,6 +43,19 @@ router.post('/register', async (req, res)=>{
     }  
 });
 
+router.post('/update', async (req, res)=>{ 
+    const identification= req.body.identification;
+    const password = req.body.password;
+    let user = await User.findOne({ identification });
+    user.password = password; 
+    user.save();
+    try { 
+        res.send({user});
+    } catch (e){
+        res.status(400).send(e)
+    }  
+});
+
 router.post('/login', async (req, res)=>{
     const password= req.body.password; 
     const identification= req.body.identification;

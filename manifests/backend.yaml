@@ -15,7 +15,7 @@ spec:
         role: backend
     spec:
       containers:
-      - image: fabianmm34/chatapp:backend91
+      - image: fabianmm34/chatapp:backend135
         name: backend
         ports:
         - containerPort: 4001
