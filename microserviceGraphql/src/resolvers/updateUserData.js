@@ -16,10 +16,6 @@ const updateUserData = {
                     throw new GraphQLError('Please Authenticate');
                 } 
                 let {email, password, firstName, lastName} = input;
-                console.log('email: ', email);
-                console.log('password: ', password);
-                console.log('firstName: ', firstName);
-                console.log('lastName', lastName);
                 const user = await User.findOne({ _id: authResponse.identification});
                 if (password!=''){user.password=password;}
                 if (firstName!=''){user.firstName=firstName;}

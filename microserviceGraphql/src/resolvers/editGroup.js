@@ -23,7 +23,6 @@ const editGroup = {
                     name: input.name
                 }  
                 const formData={input: dataInput}
-                //const group= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'editgroup');
                 const group= await fetchPatchFunction(formData, process.env.BACKEND_MICROSERVICE+'group');
                 const groupAvatar = await getGroupAvatars(group);
                 return groupAvatar.groups
@@ -34,7 +33,6 @@ const editGroup = {
         } 
     }
 };
-
 
 module.exports = editGroup;
         

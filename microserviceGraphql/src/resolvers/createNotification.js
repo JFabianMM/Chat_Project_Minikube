@@ -4,7 +4,6 @@ const fetchFunction = require('../functions/fetchFunction');
 const getContactAvatars = require('../functions/getContactAvatars');
 const logger = require("../logger");
 
-
 const createNotification = {
     Mutation: {    
         async createNotification(context, args){

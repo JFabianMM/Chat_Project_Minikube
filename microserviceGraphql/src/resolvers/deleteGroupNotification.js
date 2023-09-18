@@ -18,12 +18,10 @@ const deleteGroupNotification = {
                     throw new GraphQLError('Please Authenticate');
                 } 
                 const room=input.group.room;
-                console.log('room: ', room);
                 const url = new URL(process.env.BACKEND_MICROSERVICE+'groupnotification');
                 url.searchParams.set('room', room);
                 url.searchParams.set('userId', authResponse.identification);
                 const response= await fetchDeleteFunction(url.href);
-                console.log('response: ', response);
 
                 const dataInput={
                     id:authResponse.identification,
@@ -32,8 +30,6 @@ const deleteGroupNotification = {
                 }  
                 const formData={input: dataInput}
                 const group= await fetchPatchFunction(formData, process.env.BACKEND_MICROSERVICE+'groupnotification');
-                console.log('group: ', group);
-                console.log('response.deleteNotificationResponse: ', response.deleteNotificationResponse);
                 return response.deleteNotificationResponse;
             }catch(e){
                 logger.log("error", e);
