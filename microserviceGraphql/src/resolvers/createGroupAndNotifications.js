@@ -3,21 +3,20 @@ const { GraphQLError } = require('graphql');
 const fetchFunction = require('../functions/fetchFunction');
 const getGroupAvatars = require('../functions/getGroupAvatars');
 const getUniqueListBy = require('../functions/getUniqueListBy');
+const validationFunction = require('../functions/validationFunction');
 const logger = require("../logger");
 
 const createGroupAndNotifications = {
     Mutation: {
         async createGroupAndNotifications(context,{input}){
             try{
-                let req=context.headers.cookie;
-                const token = req.replace('token=',''); 
-                const authFormData={token}
-                const authResponse= await fetchFunction(authFormData, process.env.AUTHORIZATION_MICROSERVICE+'validation' ); 
+                const authResponse = await validationFunction(context.headers.cookie); 
                 if (!authResponse.identification){
                     logger.log("error", 'Please Authenticate');
                     throw new GraphQLError('Please Authenticate');
                 } 
                 let members = getUniqueListBy(input.group.members, 'id');
+
                 const dataInput={
                     id:authResponse.identification, 
                     group: {

@@ -2,64 +2,54 @@
 # in minikube.
 
 # ------------------------------------
-# Enter to folder Authorization-microservice
-cd Microservice-BackEnd
+# Enter to folder microserviceAuthorization
+cd microserviceAuthorization
       
-# Create the backend2 image
-docker build -t authorization290:1 .
+# Create the microservice authorization image
+docker build -t authorization102:1 .
 
 # push the image to a repository, if is dockerhub, then: 
-docker tag authorization290:1 fabianmm34/chatapp:authorization290
-docker push fabianmm34/chatapp:authorization290
-# if is AWS ECR, then 
-create the repository on ECR called authorization2 
-docker tag authorization2:1 121503602521.dkr.ecr.us-east-2.amazonaws.com/authorization2:1
-docker push 121503602521.dkr.ecr.us-east-2.amazonaws.com/authorization2:1
+docker tag authorization102:1 fabianmm34/chatapp:authorization102
+docker push fabianmm34/chatapp:authorization102
+# change the containers image in autorization.yaml file 
+
 
 # ------------------------------------
-# Enter to folder BackEnd-microservice
-cd Microservice-BackEnd
+# Enter to folder microserviceBackend
+cd microserviceBackend
       
-# Create the backend2 image
-docker build -t backend2:1 .
+# Create the microservice backend image
+docker build -t backend102:1 .
 
 # push the image to a repository, if is dockerhub, then: 
-docker tag backend2:1 fabianmm34/chatapp:backend2
-docker push fabianmm34/chatapp:backend2
-# if is AWS ECR, then 
-create the repository on ECR called backend2 
-docker tag backend2:1 121503602521.dkr.ecr.us-east-2.amazonaws.com/backend2:1
-docker push 121503602521.dkr.ecr.us-east-2.amazonaws.com/backend2:1
+docker tag backend102:1 fabianmm34/chatapp:backend102
+docker push fabianmm34/chatapp:backend102
+# change the containers image in backend.yaml file 
 
 # ------------------------------------
-# Enter to folder UI-microservice-back
-cd UI-microservice-back     
+# Enter to folder microserviceGraphql
+cd microserviceGraphql     
 	
-# Create the graphql26 image
-docker build -t graphql2:1 .
+# Create the microservice graphql image
+docker build -t graphql102:1 .
 
 # push the image to a repository, if is dockerhub, then: 
-docker tag graphql2:1 fabianmm34/chatapp:graphql2
-docker push fabianmm34/chatapp:graphql2   
-# if is AWS ECR, then 
-create the repository on ECR called graphql2 
-docker tag graphql2:1 121503602521.dkr.ecr.us-east-2.amazonaws.com/graphql2:1
-docker push 121503602521.dkr.ecr.us-east-2.amazonaws.com/graphql2:1
+docker tag graphql102:1 fabianmm34/chatapp:graphql102
+docker push fabianmm34/chatapp:graphql102
+# change the containers image in graphql.yaml file 
 
 # ------------------------------------
-# Enter to the file UI-microservice-front
-cd UI-microservice-front    
+# Enter to the file microserviceFrontend
+cd microserviceFrontend  
 
-# Create the frontend2 image
-docker build -t frontend2:1 .
+# Create the microserviceFrontend image
+npm run webpack
+docker build -t frontend102:1 .
 
 # push the image to a repository, if is dockerhub, then: 
-docker tag frontend2:1 fabianmm34/chatapp:frontend2
-docker push fabianmm34/chatapp:frontend2  
-# if is AWS ECR, then 
-create the repository on ECR called graphql2 
-docker tag frontend2:1 121503602521.dkr.ecr.us-east-2.amazonaws.com/frontend2:1
-docker push 121503602521.dkr.ecr.us-east-2.amazonaws.com/frontend2:1 
+docker tag frontend102:1 fabianmm34/chatapp:frontend102
+docker push fabianmm34/chatapp:frontend102
+# change the containers image in frontend.yaml file 
 
 # ------------------------------------
 
@@ -74,18 +64,11 @@ minikube addons enable ingress-dns
 
 
 # Apply the next manifests:
-kubectl create -f secret.yaml
-kubectl apply -f service1.yaml
-kubectl apply -f service2.yaml
-kubectl apply -f service3.yaml
-kubectl apply -f mongodb1.yaml
-kubectl apply -f mongodb2.yaml
-kubectl apply -f mongodb3.yaml
+kubectl apply -f general.yaml
 kubectl apply -f authorization.yaml
 kubectl apply -f backend.yaml 
 kubectl apply -f frontend.yaml
 kubectl apply -f graphql.yaml
-kubectl apply -f ingress.yaml
 
 # Add the following line to the bottom of the /etc/hosts file on your computer (you will need administrator access):
 # nano /etc/hosts 
@@ -93,7 +76,6 @@ kubectl apply -f ingress.yaml
 
 # Run a tunnel
 minikube tunnel
-
 
 Access to the app at:
 http://chat-app.fabian/

@@ -1,18 +1,15 @@
 const User = require('../models/user');
 const { GraphQLError } = require('graphql');
-const fetchFunction = require('../functions/fetchFunction');
 const fetchGetFunction = require('../functions/fetchGetFunction');
 const getNotificationsAvatars= require('../functions/getNotificationsAvatars');
 const logger = require("../logger");
+const validationFunction = require('../functions/validationFunction');
 
 const notification = {
     Query: { 
         async notification(context, args){ 
             try{
-                let req=context.headers.cookie;
-                const token = req.replace('token=','');
-                const authFormData={token};
-                const authResponse= await fetchFunction(authFormData, process.env.AUTHORIZATION_MICROSERVICE+'validation' ); 
+                const authResponse = await validationFunction(context.headers.cookie);
                 if (!authResponse.identification){
                     logger.log("error", 'Please Authenticate');
                     throw new GraphQLError('Please Authenticate');

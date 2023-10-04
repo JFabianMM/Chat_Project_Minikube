@@ -44,6 +44,10 @@ const typeDefs = `
         number: Int
     }
 
+    type deleteContactResponse {
+        number: Int
+    }
+
     type user {
         _id: ID
         email:String
@@ -157,7 +161,6 @@ const typeDefs = `
         result: String
     }
     input updateInput {
-        email: String
         password: String
         firstName: String
         lastName: String
@@ -189,6 +192,9 @@ const typeDefs = `
         group: newEditGroup
         name: String
     } 
+    input leaveGroupInput {
+        group: newEditGroup
+    } 
     input newEditGroup {
         room: String
         members: [newmember]
@@ -199,6 +205,11 @@ const typeDefs = `
         room: String
     }
     
+    input deleteContactInput {
+        contactid: String
+        room: String
+    }
+
     input deleteGroupNotificationInput {
         room: String
     }
@@ -219,6 +230,7 @@ const typeDefs = `
         createUser(input: userInput): user
         createNotification(id: String!): createContactResponse
         deleteNotification(input: deleteNotificationInput): deleteNotificationResponse
+        deleteContact(input: deleteContactInput): deleteContactResponse
         deleteGroupNotification(input: createGroupInput): deleteNotificationResponse
         createContact(input: contactInput): createContactResponse 
         createGroup(input: createGroupInput): [group]    
@@ -228,6 +240,7 @@ const typeDefs = `
         newMessage(input: newMessageInput): NewMessageResponse
         newStatus(input: newStatusInput): statusResult
         editGroup(input: editGroupInput): [group]
+        leaveGroup(input: leaveGroupInput): [group]
         newLanguage(language: String!): languageResult
     }
 `;

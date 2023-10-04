@@ -5,9 +5,9 @@ const getGroupAvatars = require('../functions/getGroupAvatars');
 const logger = require("../logger");
 const validationFunction = require('../functions/validationFunction');
 
-const editGroup = {
+const leaveGroup = {
     Mutation: {
-        async editGroup(context,{input}){  
+        async leaveGroup(context,{input}){  
             try{
                 const authResponse = await validationFunction(context.headers.cookie); 
                 if (!authResponse.identification){ 
@@ -16,11 +16,10 @@ const editGroup = {
                 } 
                 const dataInput={
                     id:authResponse.identification,
-                    group: input.group,
-                    name: input.name
+                    group: input.group
                 }  
-                const formData={input: dataInput}
-                const group= await fetchPatchFunction(formData, process.env.BACKEND_MICROSERVICE+'group');
+                const formData={input: dataInput};
+                const group= await fetchPatchFunction(formData, process.env.BACKEND_MICROSERVICE+'leavegroup');
                 const groupAvatar = await getGroupAvatars(group);
                 return groupAvatar.groups
             }catch(e){
@@ -32,5 +31,5 @@ const editGroup = {
 };
 
 
-module.exports = editGroup;
+module.exports = leaveGroup;
         

@@ -4,14 +4,14 @@ const fetchFunction = require('../functions/fetchFunction');
 const getContactAvatars = require('../functions/getContactAvatars');
 const getGroupAvatars = require('../functions/getGroupAvatars');
 const logger = require("../logger");
+const validationFunction = require('../functions/validationFunction');
 
 const tokenLogin = {
-    Query: { 
+    Query: {             
         async tokenLogin(context, args){
+            let authResponse = await validationFunction(context.headers.cookie);
             let req=context.headers.cookie;
-            const token = req.replace('token=','');
-            const authFormData={token}
-            const authResponse= await fetchFunction(authFormData, process.env.AUTHORIZATION_MICROSERVICE+'validation' ); 
+            const token = req.replace('token=',''); 
             if (!authResponse.identification){
                 logger.log("error", 'Please Authenticate');
                 throw new GraphQLError('Please Authenticate');
@@ -52,3 +52,6 @@ const tokenLogin = {
 
 module.exports = tokenLogin;
         
+                    
+                    
+                    

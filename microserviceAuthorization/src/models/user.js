@@ -3,7 +3,6 @@ const { Schema } = mongoose;
 const validator = require('validator');
 const bcrypt = require ('bcryptjs');
 
-
 const userSchema = new Schema({
     identification: { 
         type: String,
