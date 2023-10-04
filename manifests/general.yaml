@@ -1,0 +1,234 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysecret
+type: Opaque
+data:
+  jwtsecret: dGhpc2lzdGhlY2hhdHByb2plY3Q=
+  mongoDB1UserName: ZmFiaWFu
+  mongoDB1Password: MTIzNDU=
+  mongoDB1URI: bW9uZ29kYjovL2ZhYmlhbjoxMjM0NUBtb25nb2RiMToyNzAxNy9teWRhdGFiYXNlP2F1dGhTb3VyY2U9YWRtaW4=
+  mongoDB2UserName: ZmFiaWFu
+  mongoDB2Password: MTIzNDU=
+  mongoDB2URI: bW9uZ29kYjovL2ZhYmlhbjoxMjM0NUBtb25nb2RiMjoyNzAxNy9teWRhdGFiYXNlP2F1dGhTb3VyY2U9YWRtaW4=
+  mongoDB3UserName: ZmFiaWFu
+  mongoDB3Password: MTIzNDU=
+  mongoDB3URI: bW9uZ29kYjovL2ZhYmlhbjoxMjM0NUBtb25nb2RiMzoyNzAxNy9teWRhdGFiYXNlP2F1dGhTb3VyY2U9YWRtaW4=
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb1
+  labels:
+    app: mongodb1
+spec:
+  clusterIP: None
+  ports: 
+  - port: 27017
+    targetPort: 27017
+  selector: 
+    app: mongodb1 
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb2
+  labels:
+    app: mongodb2
+spec:
+  clusterIP: None
+  ports: 
+  - port: 27017
+    targetPort: 27017
+  selector: 
+    app: mongodb2 
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb3
+  labels:
+    app: mongodb3
+spec:
+  clusterIP: None
+  ports: 
+  - port: 27017
+    targetPort: 27017
+  selector: 
+    app: mongodb3 
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongodb1
+spec:
+  serviceName: mongodb1
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb1
+  template:
+    metadata:
+      labels:
+        app: mongodb1
+        selector: mongodb1
+    spec:
+      containers:
+      - name: mongodb1
+        image: mongo
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: pvc1
+          mountPath: /data/db2
+        env:
+        - name: MONGO_INITDB_ROOT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mysecret
+              key: mongoDB1UserName
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysecret
+              key: mongoDB1Password
+  volumeClaimTemplates:
+    - metadata:
+        name: pvc1
+      spec:
+        accessModes: 
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 512Mi
+
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongodb2
+spec:
+  serviceName: mongodb2
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb2
+  template:
+    metadata:
+      labels:
+        app: mongodb2
+        selector: mongodb2
+    spec:
+      containers:
+      - name: mongodb2
+        image: mongo
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: pvc2
+          mountPath: /data/db2
+        env:
+        - name: MONGO_INITDB_ROOT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mysecret
+              key: mongoDB2UserName
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysecret
+              key: mongoDB2Password
+  volumeClaimTemplates:
+    - metadata:
+        name: pvc2
+      spec:
+        accessModes: 
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 512Mi
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongodb3
+spec:
+  serviceName: mongodb3
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb3
+  template:
+    metadata:
+      labels:
+        app: mongodb3
+        selector: mongodb3
+    spec:
+      containers:
+      - name: mongodb3
+        image: mongo
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: pvc3
+          mountPath: /data/db2
+        env:
+        - name: MONGO_INITDB_ROOT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mysecret
+              key: mongoDB3UserName
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysecret
+              key: mongoDB3Password
+  volumeClaimTemplates:
+    - metadata:
+        name: pvc3
+      spec:
+        accessModes: 
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 512Mi
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:   
+  rules:
+    - host: chat-app.fabian
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 3000       
+          - path: /graphql
+            pathType: Prefix
+            backend:
+              service:
+                name: graphql
+                port:
+                  number: 4000
