@@ -67,7 +67,7 @@ export function ShowGroupNotifications(props) {
         if (formattedMembers.length>0){
             setTimeout(() => {
                 handleUpdateNotification(formattedMembers);
-            }, 2000);
+            }, 5000);
         }
     }
 

@@ -22,31 +22,40 @@ app.use(express.static(path.join(__dirname,'public')));
 
 io.on( 'connection', function( socket ) {
     logger.log("info", 'User Connected');
-    socket.on('join', ({username, room})=>{
+
+    socket.on('join', (room)=>{
         socket.join(room);
-    })
+    });
+    socket.on('leave', (room)=>{
+         socket.leave(room);
+    });
 
     socket.on('sendMessage', async (it)=>{
     try{
-        const room=it.room;
-        const formData={
-            identification:it.id,
-            room:room
-        } 
-        const user= await fetchFunction(formData, "http://backend:4001/api/users/userInformation");
-        if (!user.found){
-            let date = new Date();
-            let current_time = date.getHours()+':'+date.getMinutes();
-            let item={
-                room,
-                id:it.id,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                message:it.message,
-                time:current_time
-              }
-            io.to(room).emit('sendMessage', item);
-        }
+        const token=it.token;
+        const authFormData={token}
+        const authResponse= await fetchFunction(authFormData, "http://authorization:4002/api/users/validation");
+        if (authResponse.identification){ 
+            const room=it.room;
+            const formData={
+                identification:authResponse.identification,
+                room:room
+            } 
+            const user= await fetchFunction(formData, "http://backend:4001/api/users/userInformation");
+            if (!user.found){
+                let date = new Date();
+                let current_time = date.getHours()+':'+date.getMinutes();
+                let item={
+                    room,
+                    id:authResponse.identification,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    message:it.message,
+                    time:current_time
+                  }
+                io.to(room).emit('sendMessage', item);
+            }
+        }        
     }catch(e){
         logger.log("error", e);
     } 
@@ -70,11 +79,25 @@ io.on( 'connection', function( socket ) {
             let room=element.id;
             io.to(room).emit('sendUpdateNotification', message);
         });
-    })
+    });
+
+    socket.on('sendUpdateEliminated', (item)=>{
+        let members=item.members;
+        let groupRoom=item.room;
+        members.forEach(element => {
+            let room=element.id;
+            io.to(room).emit('sendUpdateEliminated', groupRoom);
+        });
+    });
 
     socket.on('sendContact', (item)=>{
         let room=item.room_forNotification;
         io.to(room).emit('sendContact', item)
+    })
+
+    socket.on('deleteContact', (item)=>{
+        let room=item.room_forNotification;
+        io.to(room).emit('deleteContact', room)
     })
 
     socket.on( 'disconnect', function() {

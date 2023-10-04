@@ -1,11 +1,11 @@
 import React, { useRef, useEffect } from "react";
-import Grid from '@mui/material/Grid';
 import Divider from '@mui/material/Divider';
 import List from '@mui/material/List';
 import { UserCard } from './UserCard'
 import { GroupCard } from './GroupCard'
 import { MessageCard } from './MessageCard';
-import { MenuBar } from './MenuBar'
+import { MenuBar } from './MenuBar';
+import { ChatBar } from "./ChatBar";
 import { InputSearch } from './InputSearch' 
 import { InputMessage } from './InputMessage' 
 import { AddGroupDialog } from './AddGroupDialog';
@@ -13,12 +13,18 @@ import { MainUserCard } from './MainUserCard';
 import {useSelector} from 'react-redux';
 import {useDispatch} from 'react-redux';
 import { updateNotifications } from '../../redux/slice/notificationsSlice';
-import { updateGroupNotifications } from '../../redux/slice/groupNotificationsSlice';
 import { updateMessages } from '../../redux/slice/messagesSlice';
 import { updateCurrentChat } from '../../redux/slice/currentChatSlice';
 import { updateContacts } from '../../redux/slice/contactsSlice';
 import { updateGroups } from '../../redux/slice/groupsSlice';
 import { socket } from '../functions/socket';
+import { updateCurrentRoom } from '../../redux/slice/currentRoomSlice';
+
+window.onbeforeunload = closingCode;
+function closingCode(){  
+    socket.close();
+    return null;
+}
 
 let messsa;
 export function Chat (props) {
@@ -26,7 +32,6 @@ export function Chat (props) {
     const contacts = useSelector(state => state.contacts);
     const groups = useSelector(state => state.groups);
     const notifications = useSelector(state => state.notifications);
-    const groupNotifications = useSelector(state => state.groupNotifications);
     const rooms = useSelector(state => state.rooms);
     const currentRoom = useSelector(state => state.currentRoom);
     const messages = useSelector(state => state.messages);
@@ -38,12 +43,13 @@ export function Chat (props) {
 
     let username = userData.firstName + ' ' + userData.lastName;
     let room = userData._id;
-
+    let flag=0;
     useEffect(() => {
-        socket.emit('join', {username, room })
+        flag=1;
+        socket.emit('join', room)
         rooms.map((item) =>{
             let room=item.room; 
-            socket.emit('join', {username, room })
+            socket.emit('join', room);
         })
     }, []);
 
@@ -51,7 +57,7 @@ export function Chat (props) {
         let len=rooms.length;
         if (len>0){
             let room=rooms[len-1].room;
-            socket.emit('join', {username, room })
+            socket.emit('join', room)
         }
     }, [rooms]);
 
@@ -69,16 +75,17 @@ export function Chat (props) {
         Dispatch(updateNotifications(notifications+1));
     });
 
-    socket.on('sendGroupnotification', ()=>{
-        Dispatch(updateGroupNotifications(groupNotifications+1));
+    socket.on('sendGroupnotification', (message)=>{
+        Dispatch({type: 'QUERY_GROUP_NOTIFICATION'});
     });
     
     socket.on('sendMessage', (item)=>{
+    if (item.message.trim().length != 0){       
         const messagesUpdated=messsa;
         let tempMessages=[];
 
-    let foundMessage = messagesUpdated.find(element => element.room == item.room);
-    if (foundMessage){
+        let foundMessage = messagesUpdated.find(element => element.room == item.room);
+        if (foundMessage){
         messagesUpdated.forEach(element => {
             let message ={
                 alreadyread:element.alreadyread,
@@ -121,6 +128,7 @@ export function Chat (props) {
                         let newContact={
                             id:contact.id,
                             room:contact.room,
+                            status:contact.status,
                             email:contact.email,
                             firstName:contact.firstName,
                             lastName:contact.lastName,
@@ -206,26 +214,41 @@ export function Chat (props) {
             }
         }
         Dispatch(updateMessages(tempMessages));  
-
-
+    }
     }
     });
 
     socket.on('sendContact', (item)=>{
         Dispatch({type: 'QUERY_CONTACT'});
-    })
+    });
+
+    socket.on('deleteContact', (room)=>{
+        socket.emit('leave', room);
+        Dispatch(updateCurrentRoom([]));
+        Dispatch(updateCurrentChat([]));
+        Dispatch({type: 'QUERY_CONTACT'});
+    });
+
     socket.on('sendUpdateNotification', (item)=>{
         Dispatch({type: 'QUERY_GROUPS'});
-    })
-    const elem = document.getElementById("chatElement");
+    });
 
+    socket.on('sendUpdateEliminated', (room)=>{
+        socket.emit('leave', room);
+        Dispatch({type: 'QUERY_GROUPS'});
+    });
+
+    const elem = document.getElementById("chatElement");
     return (
         <>
         <div>
-            <div style={{backgroundColor:'#8dc6ff', width: '100%', height: '40px', padding: '', position: 'fixed', top: '0px'}}>
+            <div className="menuBar" style={{backgroundColor:'#8dc6ff', width: '100%', height: '40px', padding: '', position: 'fixed', top: '0px'}}>
                 <MenuBar i18n={props.i18n} t={props.t} language={props.language} languageSet={props.languageSet} socket={socket}/>
             </div>
-            <div className="menuLeft" style={{backgroundColor:'#34495e', height: 'auto', borderRight: '1px solid #e0e0e0', position: 'fixed', top: '60px'}}>
+            <div className="chatBar hide" id="chatBarElement" style={{backgroundColor:'#8dc6ff', width: '100%', height: '40px', padding: '', position: 'fixed', top: '0px'}}>
+                <ChatBar i18n={props.i18n} t={props.t} language={props.language} languageSet={props.languageSet} socket={socket}/>
+            </div>
+            <div className="menuLeft" id="menuLeftElement" style={{backgroundColor:'#34495e', height: 'auto', borderRight: '1px solid #e0e0e0', position: 'fixed', top: '60px'}}>
                 <List >
                     <MainUserCard i18n={props.i18n} t={props.t} name={username}/>
                 </List>
@@ -299,7 +322,7 @@ export function Chat (props) {
                         })
                     }
                 </div>
-                <div className="menuRightLow" style={{padding: '4px', backgroundColor:'#f4f7f7', position: 'fixed', bottom: '0px', right: '0px'}}>
+                <div className="menuRightLow close" id="inputElement" style={{padding: '4px', backgroundColor:'#f4f7f7', position: 'fixed', bottom: '0px', right: '0px'}}>
                         <InputMessage i18n={props.i18n} t={props.t} socket={socket} style={{background:'#34495e', color:'#FFFFFF'}} id="outlined-basic-email" fullWidth/>          
                 </div>
         </div>

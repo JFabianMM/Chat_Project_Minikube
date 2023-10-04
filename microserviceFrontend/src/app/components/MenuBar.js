@@ -32,6 +32,8 @@ export function MenuBar(props) {
 
     const notifications = useSelector(state => state.notifications);
     const groupNotifications = useSelector(state => state.groupNotifications);
+    const userData = useSelector(state => state.userData);
+    const rooms = useSelector(state => state.rooms);
 
     const Dispatch= useDispatch();
     const onClose = () => {
@@ -96,6 +98,13 @@ export function MenuBar(props) {
         setMobileMoreAnchorEl(event.currentTarget);
     };
     const handleMenuCloseLogout = () => {
+        let room = userData._id;
+        props.socket.emit('leave', room)
+        rooms.map((item) =>{
+            let room=item.room; 
+            props.socket.emit('leave', room);
+        });
+
         Dispatch(updateCurrentChat([]));
         Dispatch(updateCurrentRoom([]));
         setCookie("token", '', -10);

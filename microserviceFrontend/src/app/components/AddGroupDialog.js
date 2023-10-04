@@ -18,7 +18,6 @@ import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { updateErrorNotification } from '../../redux/slice/errorNotificationSlice';
 
-
 let newGroup=[];
 function SimpleDialog(props) {
     const { onClose, selectedValue, open } = props;
@@ -35,6 +34,7 @@ function SimpleDialog(props) {
     const handleGroupNotification= (members)=> {
         props.socket.emit('sendGroupnotification', members);
     }
+
     const handleListItemClick = (value) => {
         let contact=[];
         const element = document.getElementById(value.id);
@@ -49,10 +49,15 @@ function SimpleDialog(props) {
                 return el.id == value.id;
             });
             if (contact.length==0){
-                newGroup=newGroup.concat(value);     
+                if(value.status!='pending'){
+                    newGroup=newGroup.concat(value);
+                }     
             }  
-            element.classList.add('contactSelected');
+            if(value.status!='pending'){
+                element.classList.add('contactSelected');
+            }
         }
+
     };
 
     const handleRequestAndClose =()=>{
@@ -80,7 +85,9 @@ function SimpleDialog(props) {
         if (formattedMembers.length>1 && errorFlag==0){
           Dispatch(updateErrorNotification(''));
           Dispatch({type: 'CREATE_GROUP_NOTIFICATION', input, name});
-          handleGroupNotification(notificationMembers);
+          setTimeout(() => {
+            handleGroupNotification(notificationMembers);
+        }, 2000); 
           newGroup=[];
           onClose(selectedValue);
       }  

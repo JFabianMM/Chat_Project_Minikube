@@ -1,10 +1,13 @@
+.chatBar{
+    display:none;
+}
+
 .selected { 
     background-color: #2d4059; 
 }
 
 .contactSelected {
     background-color: #becad9; 
-    /* color: #e9eaed;  */
 }
 
 .textItem{
@@ -15,40 +18,56 @@
     background: rgb(201, 198, 198);
 }
 
-.menuLeft{
+.menuLeft{   
     width: 280px;
 }
 .menuRight{
     width: calc(100% - 280px);
 }
 .menuRightLow{
+    display: inline;
     width: calc(100% - 280px);
 }
-
-@media (min-width: 560px) {
-    .menuLeft{
-        width: 50vw;
-    }
-    .menuRight{
-        width: 50vw;
-        
-    }
-    .menuRightLow{
-        width: 50vw;
-        
-    }
+.hide{
+    display:inline;
 }
-@media (min-width: 650px) {
+.appear{
+    display:inline;
+    width: calc(100% - 280px);
+}
+.menuHide{
+    display:inline;
+    width: 280px;
+}
+
+@media (max-width: 560px) {
     .menuLeft{
-        width: 325px;
-        
+        width: 100vw;
+    }
+     .chatBar{
+        display:inline;
+    } 
+    .hide{
+        display:none;
+    }
+    .menuHide{
+        display:none;
     }
     .menuRight{
-        width: calc(100% - 325px);
-        
+        display:none;
     }
     .menuRightLow{
-        width: calc(100% - 325px);
-        
+        width: 50vw; 
+    }
+    .close{
+        display:none;
+    }
+    .open{
+        display:inline;
+        width: 100vw;
+    }
+    .appear{
+        display:inline;
+        width: 100vw;
     }
 }

@@ -10,6 +10,7 @@ import { updateCurrentChat } from '../../redux/slice/currentChatSlice';
 import { updateContacts } from '../../redux/slice/contactsSlice';
 import { useEffect } from 'react';
 import { Typography } from '@mui/material';
+import { RemoveContactDialog } from './RemoveContactDialog';
 
 export function UserCard(props){
     const rooms = useSelector(state => state.rooms); 
@@ -22,6 +23,7 @@ export function UserCard(props){
     if (name.length>20){
         name = name.slice(0, 20)+ ' ...';
     }
+    
     function updateChatRooms(ids) {
         let newCurrentroom = rooms.filter(function (el){
             return el.room == ids;
@@ -51,14 +53,25 @@ export function UserCard(props){
 
     function handleClickUserCard(e) {
         e.preventDefault();   
+        const inputElement = document.getElementById("inputElement");
+        inputElement.classList.add("open");
+        const chatBarElement = document.getElementById("chatBarElement");
+        chatBarElement.classList.remove("hide");
+        const chatElement = document.getElementById("chatElement");
+        chatElement.classList.add("appear");
+        const menuLeftElement = document.getElementById("menuLeftElement");
+        menuLeftElement.classList.add("menuHide");
+
         const elements = document.querySelectorAll(".selected");
         if (elements.length>0) elements.forEach(element => {
                 element.classList.remove("selected");
         });
 
+        localStorage.setItem('elementId', props.index);   // Added
         const element = document.getElementById(props.index);
         element.classList.add("selected");
         updateChatRooms(e.target.parentNode.id);
+    
         let index=-1;
         index = contacts.findIndex(function (el){
                 return el.room == props.index;
@@ -79,6 +92,7 @@ export function UserCard(props){
                 }
                 cont= cont.concat(newContact);
             })
+
             cont[index].alreadyread = 'true';
             Dispatch(updateContacts(cont));
             let id= userData._id;
@@ -96,6 +110,7 @@ export function UserCard(props){
                 </ListItemIcon>
                 <ListItemText id={props.index} style={{color:'#FFFFFF'}} primary={name}></ListItemText>
                 <ListItemText secondary={<Typography variant="caption" style={{ color: 'green' }}>{props.t('chat.pending')}</Typography>} ></ListItemText>
+                <RemoveContactDialog i18n={props.i18n} t={props.t} element={props.element} socket={props.socket}/>
             </ListItem>
         )
     }else{
@@ -107,6 +122,7 @@ export function UserCard(props){
                     </ListItemIcon>
                     <ListItemText onClick={handleClickUserCard} id={props.index} style={{color:'#FFFFFF'}} primary={name}></ListItemText>
                     <ListItemText secondary={<Typography variant="caption" style={{ color: 'green' }}>{props.t('chat.new')}</Typography>} ></ListItemText>
+                    <RemoveContactDialog i18n={props.i18n} t={props.t} element={props.element} socket={props.socket}/>
                 </ListItem>
             )
         }else{
@@ -116,14 +132,9 @@ export function UserCard(props){
                         <Avatar  id={props.index}   alt={name} srcSet={props.src} />
                     </ListItemIcon>
                     <ListItemText onClick={handleClickUserCard} id={props.index} style={{color:'#FFFFFF'}} primary={name}></ListItemText>
+                    <RemoveContactDialog i18n={props.i18n} t={props.t} element={props.element} socket={props.socket}/>
                 </ListItem>
-            )    
+            )       
         }
     }
   }
-
-
-
-
-
-

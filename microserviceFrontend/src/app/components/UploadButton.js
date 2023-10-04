@@ -31,6 +31,7 @@ export function UploadButton(props) {
       if (file2) {
         reader.readAsDataURL(file2);
       }
+
   };
 
   return (

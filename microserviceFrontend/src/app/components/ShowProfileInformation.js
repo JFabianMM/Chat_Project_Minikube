@@ -20,6 +20,7 @@ import { updateErrorNotification } from '../../redux/slice/errorNotificationSlic
 
 function SimpleDialog(props) {
     const { onClose, selectedValue, open } = props;
+
     const errorNotification = useSelector(state => state.errorNotification);
     const Dispatch = useDispatch();
 
@@ -35,6 +36,7 @@ function SimpleDialog(props) {
 
         let errorflag=0;
         const result = /^(?=.*[0-9])(?=.*[A-Z])(?!.* ).{6,80}$/.test(password);
+        
         if (password != "" || confirmpassword != "")  {
             if (password != confirmpassword){
                 errorflag=1;
@@ -46,10 +48,10 @@ function SimpleDialog(props) {
                 }
             }            
         }
-        let email='';
+
         if (errorflag==0){
            Dispatch(updateErrorNotification(''));
-           Dispatch({type: 'MUTATION_UPDATE_USER_DATA', email, password, firstName, lastName});
+           Dispatch({type: 'MUTATION_UPDATE_USER_DATA', password, firstName, lastName});
            onClose(selectedValue);
         }          
     };
@@ -152,12 +154,12 @@ export function ShowProfileInformation(props) {
 
   return (
     <div >
-        <ListItemText onClick={handleClickOpen}>
-            <Typography>
-                {props.t('menu.bar.information.profile')}
-            </Typography>
-        </ListItemText>
-        <SimpleDialog i18n={props.i18n} t={props.t} selectedValue={selectedValue} open={open} onClose={handleClose} socket={props.socket}/>
+            <ListItemText onClick={handleClickOpen}>
+                <Typography>
+                    {props.t('menu.bar.information.profile')}
+                </Typography>
+            </ListItemText>
+      <SimpleDialog i18n={props.i18n} t={props.t} selectedValue={selectedValue} open={open} onClose={handleClose} socket={props.socket}/>
     </div>
   );
 }

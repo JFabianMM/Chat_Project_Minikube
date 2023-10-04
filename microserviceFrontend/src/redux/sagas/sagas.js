@@ -20,6 +20,8 @@ import { updateAvatar } from '../slice/avatarSlice';
 import { updateReceivedStatus } from '../slice/receivedStatusSlice';
 import { select } from 'redux-saga/effects';   
 import { updateLanguage } from '../slice/languageSlice';
+import { updateCurrentRoom } from '../slice/currentRoomSlice';
+import { updateCurrentChat } from '../slice/currentChatSlice';
 
 const Get_User = gql`
   query user($email: String!){
@@ -144,6 +146,7 @@ function* queryGroupsFunction() {
           messagesRooms=messagesRooms.concat(messages[i].room);
         }
     }
+
     let messagesRoomsLen=messagesRooms.length;
     for (let j=0; j<messagesRoomsLen; j++){
         messages= messages.filter((el) => {
@@ -153,10 +156,13 @@ function* queryGroupsFunction() {
           return el.room != messagesRooms[j];
       });
     }
-  
+    
+    yield put(updateCurrentRoom([]));
+    yield put(updateCurrentChat([]));
     yield put(updateMessages(messages));
-    yield put(updateRooms(messages));
+    yield put(updateRooms(rooms));
     yield put(updateGroups(data.groups));
+
   }catch(e){
   }
 }  
@@ -252,7 +258,12 @@ function* queryLogInFunction(action) {
           if (data.login.language){
               lan=data.login.language;
           }else{
-              lan='es';
+              let navLang = navigator.language.substring(0, 2);
+              if (navLang=='es' || navLang=='en' || navLang=='fr'){
+                lan=navLang;
+              }else{
+                lan='en';
+              } 
           }
           yield put(updateLanguage(lan));
           yield put(updateUserData(data.login.user))
@@ -482,6 +493,7 @@ function* queryTokenLogInFunction() {
         }
     }
   }catch(e){
+    console.log('e: ', e);
   }  
 }
 
@@ -599,6 +611,7 @@ function* queryGroupNotificationFunction() {
   try{
     const { data } = yield call(getGroupNotificationFunction);
     yield put(updateGroupRequesters(data.groupNotifications));
+    yield put(updateGroupNotifications(data.groupNotifications.length));
   }catch(e){
   }
 }  
@@ -674,7 +687,8 @@ function putCreateNotificationFunction (id){
       }
     
       let chat=[];
-      chat= chat.concat(addNewChat(newRoom[0]));   
+      chat= chat.concat(addNewChat(newRoom[0])); 
+    
       yield put(addRooms(addedRoom));
       yield put(updateContacts(contactData));
       yield put(addNewContactMessage(addNewChat(newRoom[0])));
@@ -746,6 +760,7 @@ function putCreateGroupNotificationFunction (input, name){
 
       let group=data.createGroupAndNotifications[len-1];
       yield put(addNewContactMessage(addNewGroupChat(group)));
+      
    }catch(e){
    }
 }  
@@ -895,6 +910,7 @@ function* mutationDeleteGroupNotificationFunction(action) {
     const { data } = yield call(putDeleteGroupNotificationFunction, action.room, action.input, action.name);
     yield put(updateGroupNotifications(data.deleteGroupNotification.number));
   }catch(e){
+
   }
 }  
 
@@ -939,12 +955,15 @@ function* mutationCreateGroupFunction(action) {
     const { data } = yield call(putCreateGroupFunction, action.room, action.input, action.name);
     yield put(updateGroups(data.createGroup));
     let len=data.createGroup.length;
+  
       let newRoom={
           id: data.createGroup[len-1].room,
           room: data.createGroup[len-1].room
       }
+  
       yield put(addRooms(newRoom));
       yield put(eliminateGroupNotification());
+  
       function addNewGroupChat(group){
           let room=group.room;
           let users=group.members;
@@ -1002,9 +1021,8 @@ function* mutationUpload(){
 // ----------------------------------------------- 
 
 const Put_UpdateUserData = gql`
-mutation updateUserData($email: String, $password: String, $firstName: String, $lastName: String) {
+mutation updateUserData($password: String, $firstName: String, $lastName: String) {
   updateUserData(input: {
-      email: $email,
       password: $password,
       firstName: $firstName,
       lastName: $lastName
@@ -1018,16 +1036,16 @@ mutation updateUserData($email: String, $password: String, $firstName: String, $
 }
 `;
 
-function putUpdateUserDataFunction (email, password, firstName, lastName){
+function putUpdateUserDataFunction (password, firstName, lastName){
   const result = client.mutate({
     mutation: Put_UpdateUserData,
-    variables: {email, password, firstName, lastName}
+    variables: {password, firstName, lastName}
   })
   return result
 }
 function* mutationUpdateUserDataFunction(action) {
   try{
-    const {data} = yield call(putUpdateUserDataFunction, action.email, action.password, action.firstName, action.lastName);
+    const {data} = yield call(putUpdateUserDataFunction, action.password, action.firstName, action.lastName);
     yield put(updateUserData(data.updateUserData));
   }catch(e){
   }
@@ -1225,7 +1243,7 @@ function putEditGroupFunction (room, input, name){
 }
   function* mutationEditGroupFunction(action) {
     try{
-      const { data } = yield call(putEditGroupFunction, action.room, action.input, action.name);
+      const {data } = yield call(putEditGroupFunction, action.room, action.input, action.name);
       yield put(updateGroups(data.editGroup));
    }catch(e){
    }
@@ -1236,6 +1254,111 @@ function putEditGroupFunction (room, input, name){
   }  
 
 // ----------------------------------------------- 
+
+// ----------------------------------------------- 
+
+const Put_LeaveGroup = gql`
+mutation leaveGroup($room: String, $input: [newmember]) {
+  leaveGroup( input: {
+            group:
+                    {
+                      room: $room,
+                      members: $input,
+                   },   
+     }) {
+           room
+               members{
+               id
+               email
+               firstName
+               lastName
+               avatar
+           }
+           name
+       }
+   }
+`
+;
+
+function putLeaveGroupFunction (room, input){
+  const result = client.mutate({
+    mutation: Put_LeaveGroup,
+    variables: {room, input}
+  })
+  return result
+}
+  function* mutationLeaveGroupFunction(action) {
+    try{
+      const { data } = yield call(putLeaveGroupFunction, action.room, action.input);
+      const getMessages = (state) => state.messages
+      let messages = yield select(getMessages);
+      const getRooms = (state) => state.rooms
+      let rooms = yield select(getRooms);
+      let messagesRooms=[];
+      let dataLen=data.leaveGroup.length;
+      for (let i=0; i<dataLen; i++){
+          let foundGroup = messages.find(element => element.room == data.leaveGroup[i].room);
+          if (!foundGroup){
+            messagesRooms=messagesRooms.concat(data.leaveGroup[i].room);
+          }
+      }
+      let messagesRoomsLen=messagesRooms.length;
+      for (let j=0; j<messagesRoomsLen; j++){
+          messages= messages.filter((el) => {
+              return el.room != messagesRooms[j];
+          });
+          rooms= rooms.filter((el) => {
+            return el.room != messagesRooms[j];
+          });
+      }
+      yield put(updateCurrentRoom([]));
+      yield put(updateCurrentChat([]));
+      yield put(updateMessages(messages));
+      yield put(updateRooms(rooms));
+      yield put(updateGroups(data.leaveGroup));
+    }catch(e){
+    }
+}  
+
+  function* mutationLeaveGroup(){
+    yield takeEvery('LEAVE_GROUP', mutationLeaveGroupFunction)
+  }  
+
+// ----------------------------------------------- 
+
+const Put_DeleteContact = gql`
+mutation deleteContact ($contactid: String!, $room: String!){
+  deleteContact( input: {
+    contactid: $contactid,
+    room: $room
+}) {
+    number
+  } 
+}
+`;
+
+function putDeleteContactFunction (contactid, room){
+  const result = client.mutate({
+    mutation: Put_DeleteContact,
+    variables: {contactid, room}
+  })
+  return result
+}
+function* mutationDeleteContactFunction(action) {
+  try{
+    const { data } = yield call(putDeleteContactFunction, action.contactid, action.room);
+    yield put(updateNotifications(data.deleteContact.number));
+  }catch(e){
+    console.log('Error Entrada');
+  }
+}  
+
+function* mutationDeleteContact(){
+  yield takeEvery('DELETE_CONTACT', mutationDeleteContactFunction)
+}  
+
+// ----------------------------------------------- 
+
 
 export default function* rootSaga() {
     yield all([
@@ -1251,6 +1374,7 @@ export default function* rootSaga() {
       mutationCreateGroupNotification(),
       mutationCreateContact(),
       mutationDeleteNotification(),
+      mutationDeleteContact(),
       mutationDeleteGroupNotification(),
       mutationCreateGroup(),
       mutationUpload(), 
@@ -1258,6 +1382,7 @@ export default function* rootSaga() {
       mutationNewMessage(), 
       mutationNewStatus(),
       mutationEditGroup(),
+      mutationLeaveGroup(),
       mutationNewLanguage(),
     ])
   }

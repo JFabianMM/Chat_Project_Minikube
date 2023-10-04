@@ -65,7 +65,13 @@ function SimpleDialog(props) {
     const handleUpdateNotification= (members)=> {
         props.socket.emit('sendUpdateNotification', members);
     }
-
+    const handleUpdateEliminated= (members, room)=> {
+        let item={
+            members,
+            room
+        }
+        props.socket.emit('sendUpdateEliminated', item);
+    }
     const handleListItemClick = (value) => {      
         let contact=[];
         newGroup=[];
@@ -90,9 +96,13 @@ function SimpleDialog(props) {
                         return el.id == value.id;
                 });
                 if (contact.length==0){
-                        newGroup=newGroup.concat(value);     
-                }   
-                element.classList.add("contactSelected");
+                    if(value.status!='pending'){ 
+                        newGroup=newGroup.concat(value);
+                    }     
+                } 
+                if(value.status!='pending'){  
+                    element.classList.add("contactSelected");
+                }
         }
     };
 
@@ -125,6 +135,7 @@ function SimpleDialog(props) {
         const name= groupName; 
 
         Dispatch({type: 'EDIT_GROUP', room, input, name});
+        
         let group = groups.find(element => element.room == room);
         let formerMembers=group.members.filter((el) => {
             return el.id != userData._id;
@@ -161,7 +172,9 @@ function SimpleDialog(props) {
                 }
             notificationMembers=notificationMembers.concat(data);
             });
-            handleGroupNotification(notificationMembers);
+            setTimeout(() => {
+                handleGroupNotification(notificationMembers);
+            }, 2000); 
         }
         
         let eliminatedMembers= [];
@@ -173,8 +186,9 @@ function SimpleDialog(props) {
                 eliminatedMembers=eliminatedMembers.concat(data);
             });
             setTimeout(() => {
-                handleUpdateNotification(eliminatedMembers);
-            }, 1000); 
+                handleGroupNotification(eliminatedMembers);
+                handleUpdateEliminated(eliminatedMembers, room);
+            }, 2000); 
         }
         let stayMembers= [];
         if (stay.length>0){
@@ -186,7 +200,7 @@ function SimpleDialog(props) {
             });
             setTimeout(() => {
                 handleUpdateNotification(stayMembers);
-            }, 1000);
+            }, 2000);
         }
         newGroup=[];
         onClose(selectedValue);

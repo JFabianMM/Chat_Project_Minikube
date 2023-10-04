@@ -35,7 +35,4 @@ export function MessageCard(props){
             </ListItem>
         )
     }
-       
   }
-
-

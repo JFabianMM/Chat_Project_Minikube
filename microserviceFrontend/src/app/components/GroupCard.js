@@ -1,5 +1,6 @@
 import * as React from 'react';
 import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { GroupAvatars } from './GroupAvatars';
 import { useSelector } from 'react-redux';
@@ -13,13 +14,13 @@ import { Typography } from '@mui/material';
 
 import { EditDialog } from './EditDialog';                  
 import {socket} from '../functions/socket';
+import { RemoveGroupDialog } from './RemoveGroupDialog';
 
 export function GroupCard(props){
     const rooms = useSelector(state => state.rooms);
     const messages = useSelector(state => state.messages);
     const userData = useSelector(state => state.userData);
     const groups = useSelector(state => state.groups);
-
 
     const Dispatch = useDispatch();
 
@@ -32,6 +33,7 @@ export function GroupCard(props){
         let newCurrentroom = rooms.filter(function (el){
             return el.id == ids;
          });
+ 
          Dispatch(updateCurrentRoom(newCurrentroom));
          Dispatch(updateMessages(messages));
  
@@ -53,6 +55,15 @@ export function GroupCard(props){
 
     function handleClickGroupCard(e) {
         e.preventDefault();
+        const inputElement = document.getElementById("inputElement");
+        inputElement.classList.add("open");
+        const chatBarElement = document.getElementById("chatBarElement");
+        chatBarElement.classList.remove("hide");
+        const chatElement = document.getElementById("chatElement");
+        chatElement.classList.add("appear");
+        const menuLeftElement = document.getElementById("menuLeftElement");
+        menuLeftElement.classList.add("menuHide");
+
         const elements = document.querySelectorAll(".selected");
         if (elements.length>0) elements.forEach(element => {
                 element.classList.remove("selected");
@@ -88,28 +99,23 @@ export function GroupCard(props){
     };
 
     if (props.alreadyread=='false'){     
-    return (
+        return (
             <ListItem style={{allign:'center'}} id={props.index} button onClick={handleClickGroupCard} >
                 <GroupAvatars id={props.index} group={props.group} />
                 <ListItemText id={props.index} style={{color:'#FFFFFF', padding: "2px", left: '6px'}} primary={name}></ListItemText>
                 <ListItemText secondary={<Typography variant="caption" style={{ color: 'green', padding: '6px', display:'flex', justifyContent:'flex-end' }}>{props.t('chat.new')}</Typography>} ></ListItemText>
                 <EditDialog element={props.element} room={props.id} i18n={props.i18n} t={props.t} socket={socket}/>
+                <RemoveGroupDialog element={props.element} room={props.id} i18n={props.i18n} t={props.t} socket={socket}/>
             </ListItem>
-    )
+        )
     }else{
         return (
             <ListItem style={{allign:'center'}} id={props.index} button onClick={handleClickGroupCard} >
                 <GroupAvatars id={props.index} group={props.group} />
                 <ListItemText id={props.index} style={{color:'#FFFFFF', padding: "2px", left: '6px'}} primary={name}></ListItemText>
                 <EditDialog element={props.element} room={props.id} i18n={props.i18n} t={props.t} socket={socket}/>
+                <RemoveGroupDialog element={props.element} room={props.id} i18n={props.i18n} t={props.t} socket={socket}/>
             </ListItem>
-    )
+        )
     }   
   }       
-
-
-
-
-
-
-

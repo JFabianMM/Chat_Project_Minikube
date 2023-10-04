@@ -19,7 +19,7 @@ export function LanguageButtonPrev() {
   const onChangeLanguageFR = () =>{
     sessionStorage.setItem("language", "fr");
     Dispatch(updateLanguage('fr'));
-    }
+    }  
 
 return (
   <Box

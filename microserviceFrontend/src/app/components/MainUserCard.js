@@ -11,7 +11,6 @@ export function MainUserCard(props){
     let name = props.name;
     if (name.length>20){
         name = name.slice(0, 20)+ ' ...';
-        console.log('name', name);
     }
 
     return (

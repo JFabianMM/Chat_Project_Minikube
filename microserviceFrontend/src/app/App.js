@@ -15,6 +15,8 @@ export function App() {
     const language = useSelector(state => state.language);
     const Dispatch = useDispatch();
 
+    let  navLang = navigator.language.substring(0, 2);
+
     useEffect(() => {
         let languageData = sessionStorage.getItem("language");
         if (languageData){
@@ -26,10 +28,15 @@ export function App() {
                 Dispatch(updateLanguage(language));
             }
         }else{
-            i18n.changeLanguage(language);
-            Dispatch(updateLanguage(language));
+            if (navLang=='es' || navLang=='en' || navLang=='fr'){
+                i18n.changeLanguage(navLang);
+                Dispatch(updateLanguage(navLang));
+            }else{
+                i18n.changeLanguage(language);
+                Dispatch(updateLanguage(language));
+            }
         }
-      }, [language]);
+      }, [language]); 
 
     let token = getCookie("token");
     let flag=0;

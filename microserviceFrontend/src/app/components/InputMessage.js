@@ -7,6 +7,7 @@ import IconButton from '@mui/material/IconButton';
 import SendIcon from '@mui/icons-material/Send';
 import {useSelector} from 'react-redux';
 import {useDispatch} from 'react-redux';
+import { getCookie } from '../functions/getCookie';
 
 export function InputMessage(props) {
   const [inputmessage, setInputmessage] = useState('');
@@ -28,9 +29,10 @@ export function InputMessage(props) {
       if (currentRoom.length>0){
           element.value = '';
           let room=currentRoom[0].room;
+          let token = getCookie("token");
           let item={
+            token:token,
             room:room,
-            id:userData._id,
             message:inputmessage
           }
           if (inputmessage.trim().length != 0){
@@ -67,14 +69,4 @@ export function InputMessage(props) {
         </Paper>
       );
     }
-} 
-
-
-
-
-
-
-
-
-  
-  
+}

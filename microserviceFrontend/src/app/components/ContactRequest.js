@@ -71,10 +71,14 @@ export function ContactRequest(props) {
   const handleClickOpen = () => {
         let email=props.searchmessage;
         if (email!=userData.email){
-            Dispatch({type: 'QUERY_USER', email});
+            if (email.trim().length != 0){
+                Dispatch({type: 'QUERY_USER', email});
+            }
         }
         if (email!=userData.email){
-            setOpen(true);
+            if (email.trim().length != 0){
+                setOpen(true);
+            } 
         }
   };
 
@@ -107,7 +111,7 @@ export function ContactRequest(props) {
                           if (receivedStatus=='Loaded'){
                               return (
                                 <BootstrapDialogTitle key={array.indexOf(element)} onClose={handleClose} id="customized-dialog-title" >
-                                      {`${getUser.firstName} `}{`${getUser.lastName }`}{`${receivedStatus}`}
+                                      {`${getUser.firstName} `}{`${getUser.lastName }`}
                                 </BootstrapDialogTitle>
                               )
                           }

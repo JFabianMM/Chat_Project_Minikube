@@ -30,6 +30,7 @@ function Copyright(props) {
 }
 
 const theme = createTheme();
+
 export function SignIn(props) {
     const errorNotification = useSelector(state => state.errorNotification);
 

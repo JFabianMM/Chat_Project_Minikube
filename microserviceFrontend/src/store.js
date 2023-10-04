@@ -19,6 +19,7 @@ import groupNameReducer from "./redux/slice/groupNameSlice";
 import languageReducer from "./redux/slice/languageSlice";
 import fileReducer from "./redux/slice/fileSlice";
 import avatarReducer from "./redux/slice/avatarSlice";
+import searchMessageReducer from "./redux/slice/searchMessageSlice";
 
 import createSagaMiddleware from "redux-saga";
 import rootSaga from './redux/sagas/sagas';
@@ -49,7 +50,8 @@ export const store =configureStore({
          language: languageReducer,
          file: fileReducer,
          avatar: avatarReducer,
-         receivedStatus: receivedStatusSlice
+         receivedStatus: receivedStatusSlice,
+         searchMessage: searchMessageReducer
      },
         middleware: (getDefaultMiddleware) => {
             const middleware = [
