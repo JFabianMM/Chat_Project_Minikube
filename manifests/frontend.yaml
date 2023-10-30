@@ -15,7 +15,7 @@ spec:
         role: frontend
     spec:
       containers:
-      - image: fabianmm34/chatapp:frontend102
+      - image: fabianmm34/chatapp:frontend141
         name: frontend
         ports:
         - containerPort: 3000
