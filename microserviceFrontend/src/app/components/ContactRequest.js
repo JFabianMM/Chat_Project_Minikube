@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import PropTypes from 'prop-types';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
@@ -12,9 +12,9 @@ import Typography from '@mui/material/Typography';
 import SearchIcon from '@mui/icons-material/Search';
 import Avatar from '@mui/material/Avatar';
 import Grid from '@mui/material/Grid';
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
-import { updateReceivedStatus } from "../../redux/slice/receivedStatusSlice";
+import { useDispatch, useSelector} from 'react-redux';
+import { updateReceivedStatus } from "../../redux/slice";
+import { userRequest, createNotification } from "../actions/actions";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -72,7 +72,7 @@ export function ContactRequest(props) {
         let email=props.searchmessage;
         if (email!=userData.email){
             if (email.trim().length != 0){
-                Dispatch({type: 'QUERY_USER', email});
+                Dispatch(userRequest(email));
             }
         }
         if (email!=userData.email){
@@ -94,7 +94,7 @@ export function ContactRequest(props) {
       
       if (con.length==0){
         let id= ident;
-        Dispatch({type: 'MUTATION_CREATE_NOTIFICATION', id });
+        Dispatch(createNotification(id));
         handleNotification(id);
       }
       setOpen(false);

@@ -10,5 +10,5 @@ export const languageSlice = createSlice({
     }
 })
 
+export const languageReducer = languageSlice.reducer
 export const {updateLanguage} = languageSlice.actions
-export default languageSlice.reducer

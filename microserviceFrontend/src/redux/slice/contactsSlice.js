@@ -10,5 +10,5 @@ export const contactsSlice = createSlice({
     }
 })
 
+export const contactsReducer = contactsSlice.reducer
 export const {updateContacts} = contactsSlice.actions
-export default contactsSlice.reducer

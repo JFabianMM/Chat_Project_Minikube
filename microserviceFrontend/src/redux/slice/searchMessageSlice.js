@@ -10,5 +10,5 @@ export const searchMessageSlice = createSlice({
     }
 })
 
-export const {updateSearchMessage} = searchMessageSlice.actions
-export default searchMessageSlice.reducer
+export const searchMessageReducer =  searchMessageSlice.reducer;
+export const {updateSearchMessage} = searchMessageSlice.actions;

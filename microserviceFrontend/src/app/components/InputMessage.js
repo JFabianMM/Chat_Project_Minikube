@@ -1,17 +1,15 @@
-import * as React from 'react';
-import { useState } from 'react';
+import React, {useState} from 'react';
 import Paper from '@mui/material/Paper';
 import InputBase from '@mui/material/InputBase';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import SendIcon from '@mui/icons-material/Send';
-import {useSelector} from 'react-redux';
-import {useDispatch} from 'react-redux';
+import { useDispatch, useSelector} from 'react-redux';
 import { getCookie } from '../functions/getCookie';
+import { newMessage } from '../actions/actions';
 
 export function InputMessage(props) {
   const [inputmessage, setInputmessage] = useState('');
-  const userData = useSelector(state => state.userData);
   const currentRoom = useSelector(state => state.currentRoom);
   const element = document.getElementById("inputMessage");
 
@@ -36,7 +34,7 @@ export function InputMessage(props) {
             message:inputmessage
           }
           if (inputmessage.trim().length != 0){
-            Dispatch({type: 'NEW_MESSAGE', room, inputmessage});
+            Dispatch(newMessage(room, inputmessage))
             props.socket.emit('sendMessage', item);
           }
           setInputmessage('');

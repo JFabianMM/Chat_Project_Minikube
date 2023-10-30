@@ -1,10 +1,8 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import {useDispatch} from 'react-redux';                             
-import { updateGroupName } from '../../redux/slice/groupNameSlice'; 
-import { useState } from 'react'; 
-import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';                             
+import { updateGroupName } from '../../redux/slice'; 
 
 export function UpdateGName(props) {
     const Dispatch = useDispatch();   

@@ -7,16 +7,14 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { StandardImage } from './StandardImage';
-import { UploadButton } from './UploadButton';
-import { updateAvatar } from '../../redux/slice/avatarSlice';
-import { updateFile } from '../../redux/slice/fileSlice';
+import { StandardImage, UploadButton } from '../components';
+import { updateAvatar, updateFile } from '../../redux/slice';
+import { uploadFile } from '../actions/actions';
 
 function SimpleDialog(props) {
     const { onClose, selectedValue, open } = props;
@@ -30,7 +28,7 @@ function SimpleDialog(props) {
 
     const handleSaveAndClose =(e)=>{
         e.preventDefault();
-        Dispatch({type: 'UPLOAD', file});
+        Dispatch(uploadFile(file));
         Dispatch(updateAvatar(file));
         Dispatch(updateFile({}));
         onClose(selectedValue);

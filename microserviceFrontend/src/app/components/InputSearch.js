@@ -1,10 +1,9 @@
-import * as React from 'react';
+import React, {useState} from 'react';
 import Paper from '@mui/material/Paper';
 import InputBase from '@mui/material/InputBase';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
-import { useState } from 'react';
-import { ContactRequest } from './ContactRequest'; 
+import { ContactRequest } from '../components'; 
 
 export function InputSearch(props) {
     const [searchmessage, setSearchmessage] = useState('');

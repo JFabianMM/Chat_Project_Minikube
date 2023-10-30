@@ -10,5 +10,5 @@ export const fileSlice = createSlice({
     }
 })
 
+export const fileReducer = fileSlice.reducer
 export const {updateFile} = fileSlice.actions
-export default fileSlice.reducer

@@ -2,8 +2,8 @@ import React, {useState} from 'react';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { updateFile } from '../../redux/slice/fileSlice';
-import {useDispatch} from 'react-redux';
+import { updateFile } from '../../redux/slice';
+import { useDispatch } from 'react-redux';
 
 export function UploadButton(props) {
   let array= ['1'];
@@ -31,7 +31,6 @@ export function UploadButton(props) {
       if (file2) {
         reader.readAsDataURL(file2);
       }
-
   };
 
   return (

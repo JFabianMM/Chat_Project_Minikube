@@ -10,5 +10,5 @@ export const avatarSlice = createSlice({
     }
 })
 
+export const avatarReducer = avatarSlice.reducer
 export const {updateAvatar} = avatarSlice.actions
-export default avatarSlice.reducer

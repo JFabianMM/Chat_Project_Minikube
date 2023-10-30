@@ -10,5 +10,5 @@ export const currentChatSlice = createSlice({
     }
 })
 
+export const currentChatReducer = currentChatSlice.reducer
 export const {updateCurrentChat} = currentChatSlice.actions
-export default currentChatSlice.reducer

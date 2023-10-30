@@ -9,4 +9,4 @@ function getUserSlice(state = '', action) {
     }
   }
 
-export default getUserSlice
+export const getUserReducer = getUserSlice  

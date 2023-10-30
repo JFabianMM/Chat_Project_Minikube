@@ -10,9 +10,9 @@ import Dialog from '@mui/material/Dialog';
 import PersonIcon from '@mui/icons-material/Person';
 import { blue } from '@mui/material/colors';
 import Divider from '@mui/material/Divider';
-import {UpdateGName} from './UpdateGName';
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
+import {UpdateGName} from '../components';
+import { useDispatch, useSelector} from 'react-redux';
+import { editGroup } from '../actions/actions';
 
 let newGroup=[];
 function SimpleDialog(props) {
@@ -133,8 +133,7 @@ function SimpleDialog(props) {
         const room=groupRoom;
         const input = formattedMembers;
         const name= groupName; 
-
-        Dispatch({type: 'EDIT_GROUP', room, input, name});
+        Dispatch(editGroup(room, input, name));
         
         let group = groups.find(element => element.room == room);
         let formerMembers=group.members.filter((el) => {

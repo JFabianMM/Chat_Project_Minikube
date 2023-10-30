@@ -10,5 +10,5 @@ export const groupNameSlice = createSlice({
     }
 })
 
+export const groupNameReducer = groupNameSlice.reducer
 export const {updateGroupName} = groupNameSlice.actions
-export default groupNameSlice.reducer

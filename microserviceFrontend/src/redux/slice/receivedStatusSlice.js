@@ -10,5 +10,5 @@ export const receivedStatusSlice = createSlice({
     }
 })
 
+export const receivedStatusReducer = receivedStatusSlice.reducer
 export const {updateReceivedStatus} = receivedStatusSlice.actions
-export default receivedStatusSlice.reducer

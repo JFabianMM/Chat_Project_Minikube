@@ -10,11 +10,10 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import PersonIcon from '@mui/icons-material/Person';
 import { blue } from '@mui/material/colors';
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { createContact, deleteNotification } from '../actions/actions';
 
 export function ShowNotifications(props) {
-    const userData = useSelector(state => state.userData);
     const requesters = useSelector(state => state.requesters);
 
     const Dispatch = useDispatch();
@@ -43,8 +42,7 @@ export function ShowNotifications(props) {
             lastName: lastName
         }
         let contactid=formData.id;
-        
-        Dispatch({type: 'CREATE_CONTACT', contactid, room});
+        Dispatch(createContact(contactid, room));
         let roomToSend={
             room_forNotification:contactid,
         }
@@ -55,7 +53,7 @@ export function ShowNotifications(props) {
 
     const handleRejectedListItem = (id, room)=>{
         let contactid=id;
-        Dispatch({type: 'DELETE_NOTIFICATION', contactid, room});
+        Dispatch(deleteNotification(contactid, room))
         let roomToSend={
           room_forNotification:contactid,
         }

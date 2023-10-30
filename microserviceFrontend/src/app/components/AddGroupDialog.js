@@ -13,10 +13,10 @@ import Typography from '@mui/material/Typography';
 import { blue } from '@mui/material/colors';
 import Fab from '@mui/material/Fab';
 import Divider from '@mui/material/Divider';
-import {InputGroupName} from './InputGroupName';
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
-import { updateErrorNotification } from '../../redux/slice/errorNotificationSlice';
+import {InputGroupName} from '../components';
+import { useDispatch, useSelector} from 'react-redux';
+import { updateErrorNotification } from '../../redux/slice';
+import { createGroupNotification } from '../actions/actions';
 
 let newGroup=[];
 function SimpleDialog(props) {
@@ -84,7 +84,7 @@ function SimpleDialog(props) {
         let name= groupName; 
         if (formattedMembers.length>1 && errorFlag==0){
           Dispatch(updateErrorNotification(''));
-          Dispatch({type: 'CREATE_GROUP_NOTIFICATION', input, name});
+          Dispatch(createGroupNotification(input,name));
           setTimeout(() => {
             handleGroupNotification(notificationMembers);
         }, 2000); 

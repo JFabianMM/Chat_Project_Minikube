@@ -1,10 +1,9 @@
-import * as React from 'react';
+import React from 'react';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Box from '@mui/material/Box';
-import { updateCurrentChat } from '../../redux/slice/currentChatSlice';
-import { updateCurrentRoom } from '../../redux/slice/currentRoomSlice';
-import { useSelector, useDispatch } from 'react-redux';
+import { updateCurrentChat, updateCurrentRoom } from '../../redux/slice';
+import { useDispatch } from 'react-redux';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 export function ReturnButton() {

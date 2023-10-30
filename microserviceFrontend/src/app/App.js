@@ -1,13 +1,11 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SignIn } from "./components/SignIn";
-import { SignUp } from "./components/SignUp";
-import { Chat } from "./components/Chat";
-import {useSelector} from 'react-redux';
-import {useDispatch} from 'react-redux';
+import { SignIn, SignUp, Chat } from "./components";
+import {useSelector, useDispatch} from 'react-redux';
 import { getCookie } from './functions/getCookie';
 import { updateLanguage } from '../redux/slice/languageSlice';
 import "../public/css/styles.css";
+import { queryTokenLogin } from './actions/actions';
 
 export function App() {
     const { t, i18n } = useTranslation();
@@ -41,7 +39,7 @@ export function App() {
     let token = getCookie("token");
     let flag=0;
     if (token != '' && page ==''){
-         Dispatch({type: 'QUERY_TOKEN_LOGIN'});
+         Dispatch(queryTokenLogin());
          flag=1;
     }
     if (page=='signIn' || page=='' && flag==0){

@@ -1,20 +1,12 @@
-import * as React from 'react';
+import React, {useEffect} from 'react';
 import ListItem from '@mui/material/ListItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import { GroupAvatars } from './GroupAvatars';
-import { useSelector } from 'react-redux';
-import { updateCurrentRoom } from '../../redux/slice/currentRoomSlice';
-import { useDispatch } from 'react-redux';
-import { updateCurrentChat } from '../../redux/slice/currentChatSlice';
-import { updateMessages } from '../../redux/slice/messagesSlice';
-import { updateGroups } from '../../redux/slice/groupsSlice';
-import { useEffect } from 'react';
+import { useDispatch, useSelector} from 'react-redux';
+import { updateCurrentRoom, updateCurrentChat, updateMessages, updateGroups} from '../../redux/slice';
 import { Typography } from '@mui/material';
-
-import { EditDialog } from './EditDialog';                  
+import { GroupAvatars, EditDialog, RemoveGroupDialog } from '../components';
 import {socket} from '../functions/socket';
-import { RemoveGroupDialog } from './RemoveGroupDialog';
+import { newStatus } from '../actions/actions';
 
 export function GroupCard(props){
     const rooms = useSelector(state => state.rooms);
@@ -94,7 +86,7 @@ export function GroupCard(props){
             let id= userData._id;
             let room= props.id;
             let status='true';
-            Dispatch({type: 'NEW_STATUS', id, room, status});
+            Dispatch(newStatus(id,room,status));
         }
     };
 

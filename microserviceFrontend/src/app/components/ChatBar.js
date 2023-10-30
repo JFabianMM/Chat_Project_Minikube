@@ -2,11 +2,10 @@ import React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
-import { GroupAvatars } from './GroupAvatars';
+import { GroupAvatars, ReturnButton } from '../components';
 import ListItemText from '@mui/material/ListItemText';
 import Toolbar from '@mui/material/Toolbar';
 import Divider from '@mui/material/Divider';
-import { ReturnButton } from './ReturnButton';
 import { useSelector} from 'react-redux';
 
 export function ChatBar(props) {

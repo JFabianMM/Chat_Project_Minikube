@@ -9,4 +9,4 @@ function getContactSlice(state = '', action) {
     }
   }
 
-export default getContactSlice
+export const getContactReducer = getContactSlice  

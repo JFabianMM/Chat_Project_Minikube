@@ -10,5 +10,5 @@ export const currentRoomSlice = createSlice({
     }
 })
 
+export const currentRoomReducer = currentRoomSlice.reducer
 export const {updateCurrentRoom} = currentRoomSlice.actions
-export default currentRoomSlice.reducer

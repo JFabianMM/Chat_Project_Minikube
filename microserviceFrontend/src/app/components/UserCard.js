@@ -1,16 +1,13 @@
-import * as React from 'react';
+import React, {useEffect} from 'react';
 import Avatar from '@mui/material/Avatar';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import { useDispatch } from 'react-redux';
-import { useSelector } from 'react-redux';
-import { updateCurrentRoom } from '../../redux/slice/currentRoomSlice';
-import { updateCurrentChat } from '../../redux/slice/currentChatSlice';
-import { updateContacts } from '../../redux/slice/contactsSlice';
-import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { updateCurrentRoom, updateCurrentChat, updateContacts } from '../../redux/slice';
 import { Typography } from '@mui/material';
-import { RemoveContactDialog } from './RemoveContactDialog';
+import { RemoveContactDialog } from '../components';
+import { newStatus } from '../actions/actions';
 
 export function UserCard(props){
     const rooms = useSelector(state => state.rooms); 
@@ -67,7 +64,7 @@ export function UserCard(props){
                 element.classList.remove("selected");
         });
 
-        localStorage.setItem('elementId', props.index);   // Added
+        localStorage.setItem('elementId', props.index);   
         const element = document.getElementById(props.index);
         element.classList.add("selected");
         updateChatRooms(e.target.parentNode.id);
@@ -98,7 +95,8 @@ export function UserCard(props){
             let id= userData._id;
             let room= props.index;
             let status='true';
-            Dispatch({type: 'NEW_STATUS', id, room, status});
+            Dispatch(newStatus(id, room, status))
+            
         }
     };
     

@@ -21,5 +21,5 @@ export const messagesSlice = createSlice({
     }
 })
 
+export const messagesReducer = messagesSlice.reducer
 export const {updateMessages, addMessage, addNewContactMessage} = messagesSlice.actions
-export default messagesSlice.reducer

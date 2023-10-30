@@ -10,5 +10,5 @@ export const groupRequestersSlice = createSlice({
     }
 })
 
+export const groupRequestersReducer = groupRequestersSlice.reducer
 export const {updateGroupRequesters} = groupRequestersSlice.actions
-export default groupRequestersSlice.reducer

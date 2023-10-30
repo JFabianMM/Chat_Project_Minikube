@@ -13,5 +13,5 @@ export const roomsSlice = createSlice({
     }
 })
 
+export const roomsReducer =  roomsSlice.reducer;
 export const {updateRooms,addRooms} = roomsSlice.actions
-export default roomsSlice.reducer

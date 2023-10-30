@@ -7,9 +7,9 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemText from '@mui/material/ListItemText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
-import { GroupNotificationAvatars } from './GroupNotificationAvatars';
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
+import { GroupNotificationAvatars } from '../components';
+import { useSelector, useDispatch } from 'react-redux';
+import { createGroup, deleteGroupNotification } from '../actions/actions';
 
 export function ShowGroupNotifications(props) {
     const {requesters, setOpen, onClose, selectedValue} = props;
@@ -42,7 +42,7 @@ export function ShowGroupNotifications(props) {
             formattedMembers = formattedMembers.concat(member);
         });     
         let input=formattedMembers;
-        Dispatch({type: 'CREATE_GROUP', room, input, name}); 
+        Dispatch(createGroup(room, input, name));
     }
     
     const handleRejectedListItem = (value)=>{
@@ -62,12 +62,11 @@ export function ShowGroupNotifications(props) {
             }
         });     
         let input=formattedMembers;
-
-        Dispatch({type: 'DELETE_GROUP_NOTIFICATION', room, input, name});
+        Dispatch(deleteGroupNotification(room, input, name));
         if (formattedMembers.length>0){
             setTimeout(() => {
                 handleUpdateNotification(formattedMembers);
-            }, 5000);
+            }, 2000);
         }
     }
 

@@ -6,9 +6,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import { useDispatch } from 'react-redux';
-import { useSelector } from 'react-redux';
-
+import { useSelector, useDispatch } from 'react-redux';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -16,7 +14,8 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { updateErrorNotification } from '../../redux/slice/errorNotificationSlice';
+import { updateErrorNotification } from '../../redux/slice';
+import { updateUserData } from '../actions/actions';
 
 function SimpleDialog(props) {
     const { onClose, selectedValue, open } = props;
@@ -51,7 +50,7 @@ function SimpleDialog(props) {
 
         if (errorflag==0){
            Dispatch(updateErrorNotification(''));
-           Dispatch({type: 'MUTATION_UPDATE_USER_DATA', password, firstName, lastName});
+           Dispatch(updateUserData(password, firstName, lastName));
            onClose(selectedValue);
         }          
     };

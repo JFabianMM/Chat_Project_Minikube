@@ -1,29 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
-import tokenReducer from "./redux/slice/tokenSlice";
-import userDataReducer from "./redux/slice/userDataSlice";
-import contactsReducer from "./redux/slice/contactsSlice";
-import groupsReducer from "./redux/slice/groupsSlice";
-import notificationsReducer from "./redux/slice/notificationsSlice";
-import groupNotificationsReducer from "./redux/slice/groupNotificationsSlice";
-import roomsReducer from "./redux/slice/roomsSlice";
-import messagesReducer from "./redux/slice/messagesSlice";
-import currentRoomReducer from "./redux/slice/currentRoomSlice";
-import currentChatReducer from "./redux/slice/currentChatSlice";
-import pageReducer from "./redux/slice/pageSlice";
-import getUserReducer from "./redux/slice/getUserSlice";
-import getContactReducer from "./redux/slice/getContactSlice";
-import requestersReducer from "./redux/slice/requestersSlice";
-import groupRequestersReducer from "./redux/slice/groupRequestersSlice";
-import errorNotificationReducer from "./redux/slice/errorNotificationSlice";
-import groupNameReducer from "./redux/slice/groupNameSlice";    
-import languageReducer from "./redux/slice/languageSlice";
-import fileReducer from "./redux/slice/fileSlice";
-import avatarReducer from "./redux/slice/avatarSlice";
-import searchMessageReducer from "./redux/slice/searchMessageSlice";
-
+import { tokenReducer, userDataReducer, searchMessageReducer, roomsReducer, requestersReducer, receivedStatusReducer, pageReducer, notificationsReducer, messagesReducer, languageReducer, groupsReducer, groupRequestersReducer, groupNotificationsReducer, groupNameReducer, fileReducer, errorNotificationReducer, currentRoomReducer, currentChatReducer, contactsReducer, avatarReducer, getContactReducer, getUserReducer } from "./redux/slice";
 import createSagaMiddleware from "redux-saga";
 import rootSaga from './redux/sagas/sagas';
-import receivedStatusSlice from "./redux/slice/receivedStatusSlice";
 
 const sagaMiddleware = createSagaMiddleware();
 const middlewares = [sagaMiddleware];
@@ -50,7 +28,7 @@ export const store =configureStore({
          language: languageReducer,
          file: fileReducer,
          avatar: avatarReducer,
-         receivedStatus: receivedStatusSlice,
+         receivedStatus: receivedStatusReducer,
          searchMessage: searchMessageReducer
      },
         middleware: (getDefaultMiddleware) => {

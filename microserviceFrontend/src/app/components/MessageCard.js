@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Grid from '@mui/material/Grid';

@@ -12,16 +12,12 @@ import GroupsIcon from '@mui/icons-material/Groups';
 import PersonIcon from '@mui/icons-material/Person';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import Divider from '@mui/material/Divider';
-import { ShowNotifications} from './ShowNotifications';
-import { ShowGroupNotifications} from './ShowGroupNotifications';
-import {LanguageButton} from './LanguageButton';
+import { ShowNotifications, ShowGroupNotifications, LanguageButton, ShowProfileInformation, ShowProfile2} from '../components';
 import { useSelector, useDispatch } from 'react-redux';
-import { updatePage } from '../../redux/slice/pageSlice';
 import { setCookie } from '../functions/setCookie';
-import { ShowProfileInformation } from './ShowProfileInformation';
-import { ShowProfile2 } from './ShowProfile2';
-import { updateCurrentRoom } from '../../redux/slice/currentRoomSlice';
-import { updateCurrentChat } from '../../redux/slice/currentChatSlice';
+
+import { updatePage, updateCurrentRoom, updateCurrentChat } from '../../redux/slice';
+import { queryGroupNotification, queryNotification } from '../actions/actions';
 
 export function MenuBar(props) {
 
@@ -58,12 +54,12 @@ export function MenuBar(props) {
             ban=1;  
         }
         if (ban==0){
-            Dispatch({type: 'QUERY_GROUP_NOTIFICATION'});
+            Dispatch(queryGroupNotification());
             setSelectedValueGroup(true);
         }
     }
     const showNotifications= (event) => {
-        Dispatch({type: 'QUERY_NOTIFICATION'});
+        Dispatch(queryNotification());
 
         if (!event.target.id){
             setSelectedValue('1');

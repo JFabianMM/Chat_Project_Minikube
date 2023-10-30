@@ -10,11 +10,9 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import {LanguageButton} from './LanguageButton'
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
-import { updatePage } from '../../redux/slice/pageSlice';
-import { updateErrorNotification } from '../../redux/slice/errorNotificationSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { updatePage, updateErrorNotification } from '../../redux/slice';
+import { mutationSignUp } from '../actions/actions';
 const validator = require('validator');
 
 import {LanguageButtonPrev} from './LanguageButtonPrev'
@@ -94,7 +92,7 @@ export function SignUp(props) {
         }
         if (errorFlag==0){
             Dispatch(updateErrorNotification(''));
-            Dispatch({type: 'MUTATION_SIGNUP', email, password, firstName, lastName});
+            Dispatch(mutationSignUp(email, password, firstName, lastName));
         }
     };  
     return (

@@ -10,5 +10,5 @@ export const requestersSlice = createSlice({
     }
 })
 
+export const requestersReducer =  requestersSlice.reducer;
 export const {updateRequesters} = requestersSlice.actions
-export default requestersSlice.reducer

@@ -10,11 +10,10 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import {LanguageButtonPrev} from './LanguageButtonPrev';
-import { useDispatch } from 'react-redux';
-import { useSelector } from 'react-redux';
-import { updatePage } from '../../redux/slice/pageSlice';
-import { updateErrorNotification } from '../../redux/slice/errorNotificationSlice';
+import {LanguageButtonPrev} from '../components';
+import { useSelector, useDispatch } from 'react-redux';
+import { updatePage, updateErrorNotification} from '../../redux/slice';
+import { queryLogin } from '../actions/actions';
 
 function Copyright(props) {
   return (
@@ -56,7 +55,7 @@ export function SignIn(props) {
  
         if (email != "" && password != "")  {
             Dispatch(updateErrorNotification(''));
-            Dispatch({type: 'QUERY_LOGIN', email, password});
+            Dispatch(queryLogin(email, password));
         }
     };  
 

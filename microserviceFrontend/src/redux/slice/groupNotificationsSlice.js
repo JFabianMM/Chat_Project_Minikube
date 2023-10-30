@@ -13,5 +13,5 @@ export const groupNotificationsSlice = createSlice({
     }
 })
 
+export const groupNotificationsReducer = groupNotificationsSlice.reducer
 export const {updateGroupNotifications, eliminateGroupNotification} = groupNotificationsSlice.actions
-export default groupNotificationsSlice.reducer

@@ -1,24 +1,11 @@
 import React, { useRef, useEffect } from "react";
 import Divider from '@mui/material/Divider';
 import List from '@mui/material/List';
-import { UserCard } from './UserCard'
-import { GroupCard } from './GroupCard'
-import { MessageCard } from './MessageCard';
-import { MenuBar } from './MenuBar';
-import { ChatBar } from "./ChatBar";
-import { InputSearch } from './InputSearch' 
-import { InputMessage } from './InputMessage' 
-import { AddGroupDialog } from './AddGroupDialog';
-import { MainUserCard } from './MainUserCard';
-import {useSelector} from 'react-redux';
-import {useDispatch} from 'react-redux';
-import { updateNotifications } from '../../redux/slice/notificationsSlice';
-import { updateMessages } from '../../redux/slice/messagesSlice';
-import { updateCurrentChat } from '../../redux/slice/currentChatSlice';
-import { updateContacts } from '../../redux/slice/contactsSlice';
-import { updateGroups } from '../../redux/slice/groupsSlice';
+import { UserCard, GroupCard, MessageCard, MenuBar, ChatBar, InputSearch, InputMessage, AddGroupDialog, MainUserCard} from '../components';
+import { useDispatch, useSelector} from 'react-redux';
+import { updateNotifications, updateMessages, updateCurrentChat, updateContacts, updateGroups, updateCurrentRoom } from '../../redux/slice';
 import { socket } from '../functions/socket';
-import { updateCurrentRoom } from '../../redux/slice/currentRoomSlice';
+import { queryGroupNotification, queryContact, queryGroups } from "../actions/actions";
 
 window.onbeforeunload = closingCode;
 function closingCode(){  
@@ -75,8 +62,8 @@ export function Chat (props) {
         Dispatch(updateNotifications(notifications+1));
     });
 
-    socket.on('sendGroupnotification', (message)=>{
-        Dispatch({type: 'QUERY_GROUP_NOTIFICATION'});
+    socket.on('sendGroupnotification', ()=>{
+        Dispatch(queryGroupNotification());
     });
     
     socket.on('sendMessage', (item)=>{
@@ -104,13 +91,23 @@ export function Chat (props) {
         if (item.id == userData._id){
             pos='right';
         }
+
+        const utcDate = new Date(item.time);
+        let local=utcDate.toLocaleString();
+        const localTime = new Date(local);
+        let hours = localTime.getHours();
+        let minutes = localTime.getMinutes();
+        const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+        let current_time = hours+':'+formattedMinutes;
+
         let newMessage={
             origin: item.id,
             firstName: item.firstName,
             lastName: item.lastName,
             message:item.message,
-            time:item.time
+            time:current_time
         }
+
         tempMessages[index].messages= tempMessages[index].messages.concat(newMessage);
         if (currentRoom.length>0){
             index=-1
@@ -218,24 +215,24 @@ export function Chat (props) {
     }
     });
 
-    socket.on('sendContact', (item)=>{
-        Dispatch({type: 'QUERY_CONTACT'});
+    socket.on('sendContact', ()=>{
+        Dispatch(queryContact());
     });
 
     socket.on('deleteContact', (room)=>{
         socket.emit('leave', room);
         Dispatch(updateCurrentRoom([]));
         Dispatch(updateCurrentChat([]));
-        Dispatch({type: 'QUERY_CONTACT'});
+        Dispatch(queryContact());
     });
 
     socket.on('sendUpdateNotification', (item)=>{
-        Dispatch({type: 'QUERY_GROUPS'});
+        Dispatch(queryGroups());
     });
 
     socket.on('sendUpdateEliminated', (room)=>{
         socket.emit('leave', room);
-        Dispatch({type: 'QUERY_GROUPS'});
+        Dispatch(queryGroups());
     });
 
     const elem = document.getElementById("chatElement");

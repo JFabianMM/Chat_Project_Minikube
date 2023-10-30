@@ -12,5 +12,5 @@ export const tokenSlice = createSlice({
     }
 })
 
-export const {updateToken} = tokenSlice.actions
-export default tokenSlice.reducer
+export const tokenReducer = tokenSlice.reducer;
+export const {updateToken} = tokenSlice.actions;

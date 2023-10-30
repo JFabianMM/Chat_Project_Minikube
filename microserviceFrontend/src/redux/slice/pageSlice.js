@@ -10,5 +10,5 @@ export const pageSlice = createSlice({
     }
 })
 
+export const pageReducer = pageSlice.reducer
 export const {updatePage} = pageSlice.actions
-export default pageSlice.reducer

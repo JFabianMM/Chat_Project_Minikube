@@ -10,5 +10,5 @@ export const userDataSlice = createSlice({
     }
 })
 
+export const userDataReducer =  userDataSlice.reducer
 export const {updateUserData} = userDataSlice.actions
-export default userDataSlice.reducer

@@ -1,29 +1,13 @@
 import { put, call, takeEvery, all } from 'redux-saga/effects';
 import {gql} from '@apollo/client';
 import client from '../../app';
-import { updateUserData } from '../slice/userDataSlice';
-import { updateToken } from '../slice/tokenSlice';
-import { updateContacts } from '../slice/contactsSlice';
-import { updateGroups } from '../slice/groupsSlice';
-import { updateNotifications } from '../slice/notificationsSlice';
-import { updateGroupNotifications } from '../slice/groupNotificationsSlice';
-import {eliminateGroupNotification} from '../slice/groupNotificationsSlice';
-import { updateRooms } from '../slice/roomsSlice';
-import { updateMessages } from '../slice/messagesSlice';
-import { updatePage } from '../slice/pageSlice';
-import {updateRequesters} from '../slice/requestersSlice';
-import { updateGroupRequesters } from '../slice/groupRequestersSlice';
-import {addRooms} from '../slice/roomsSlice';
-import {addNewContactMessage} from '../slice/messagesSlice';
-import { updateErrorNotification } from '../slice/errorNotificationSlice';
-import { updateAvatar } from '../slice/avatarSlice';
-import { updateReceivedStatus } from '../slice/receivedStatusSlice';
+import { updateUserData, updateToken, updateContacts, updateGroups, updateNotifications, updateGroupNotifications, updateRooms, updateMessages, updatePage, updateRequesters, updateGroupRequesters, addRooms, addNewContactMessage, updateErrorNotification, updateAvatar, updateReceivedStatus, updateLanguage, updateCurrentRoom, updateCurrentChat } from '../slice';
 import { select } from 'redux-saga/effects';   
-import { updateLanguage } from '../slice/languageSlice';
-import { updateCurrentRoom } from '../slice/currentRoomSlice';
-import { updateCurrentChat } from '../slice/currentChatSlice';
+import { getUserUpdate } from '../../app/actions/actions';
 
-const Get_User = gql`
+import { QUERY_USER, QUERY_CONTACT, QUERY_GROUPS, QUERY_LOGIN, QUERY_TOKEN_LOGIN, MUTATION_SIGNUP, QUERY_NOTIFICATION, QUERY_GROUP_NOTIFICATION, MUTATION_CREATE_NOTIFICATION, CREATE_GROUP_NOTIFICATION, CREATE_CONTACT, DELETE_NOTIFICATION, DELETE_GROUP_NOTIFICATION, CREATE_GROUP, MUTATION_UPDATE_USER_DATA, NEW_MESSAGE, NEW_STATUS, NEW_LANGUAGE, EDIT_GROUP, LEAVE_GROUP, DELETE_CONTACT } from '../../app/actionTypes/actionTypes';
+
+  const Get_User = gql`
   query user($email: String!){
     user(email: $email) {
       _id
@@ -48,12 +32,12 @@ function* queryUserFunction(action) {
   try{
     let { errors, data } = yield call(getUserFunction, action.email);
     if (data.user){
-      yield put({ type: 'GET_USER_UPDATE', data })
+      yield put(getUserUpdate(data));
       yield put(updateReceivedStatus('Loaded'));
     }
     if (errors){
       let data={user:{email:''}};
-      yield put({ type: 'GET_USER_UPDATE', data })
+      yield put(getUserUpdate(data));
       yield put(updateReceivedStatus('Loaded'));
     }
   }catch(e){
@@ -61,7 +45,7 @@ function* queryUserFunction(action) {
 }  
 
 function* queryUser(){
-  yield takeEvery('QUERY_USER', queryUserFunction)
+  yield takeEvery(QUERY_USER, queryUserFunction)
 }  
 
 // -----------------------------------------------
@@ -99,7 +83,7 @@ function* queryContactFunction() {
 }  
 
 function* queryContact(){
-  yield takeEvery('QUERY_CONTACT', queryContactFunction)
+  yield takeEvery(QUERY_CONTACT, queryContactFunction)
 }  
 
 // -----------------------------------------------
@@ -167,8 +151,8 @@ function* queryGroupsFunction() {
   }
 }  
 
-function* queryGroups(action){
-  yield takeEvery('QUERY_GROUPS', queryGroupsFunction)
+function* queryGroups(){
+  yield takeEvery(QUERY_GROUPS, queryGroupsFunction)
 }  
 // ----------------------------------------------- 
 
@@ -296,9 +280,42 @@ function* queryLogInFunction(action) {
               addedRooms = addedRooms.concat(newRoom);
           })
 
-          yield put(updateMessages(data.login.messages));
-          yield put(updateRooms(addedRooms));
-          yield put(updatePage('chat'));
+
+          let lenMessages=data.login.messages.length;
+          let formatedMessages=[];
+          for(let i=0; i<lenMessages; i++){
+              let formatedTimeMessages=[];
+              let numberMessages=data.login.messages[i].messages.length;
+              for(let j=0;j<numberMessages; j++){ 
+                  let time=data.login.messages[i].messages[j].time;               
+                  let date = new Date(time)
+                  let local=date.toLocaleString();
+                  let d = new Date(local);
+                  let hours = d.getHours();
+                  let minutes = d.getMinutes();
+                  let formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+                  let formatedTime=hours+':'+formattedMinutes;
+                  let messageObj={
+                      origin: data.login.messages[i].messages[j].origin, 
+                      firstName: data.login.messages[i].messages[j].firstName,
+                      lastName: data.login.messages[i].messages[j].lastName,
+                      message: data.login.messages[i].messages[j].message,
+                      time: formatedTime
+                  }
+                  formatedTimeMessages.push(messageObj);
+          } 
+          let obj={
+              alreadyread:data.login.messages[i].alreadyread,
+              room:data.login.messages[i].room,
+              users:data.login.messages[i].users,
+              name:data.login.messages[i].name,
+              messages:formatedTimeMessages
+          }
+          formatedMessages.push(obj);
+        }
+        yield put(updateMessages(formatedMessages));
+        yield put(updateRooms(addedRooms));
+        yield put(updatePage('chat'));
       }
   
       if (errors){
@@ -316,7 +333,7 @@ function* queryLogInFunction(action) {
 }  
 
 function* queryLogIn(){
-  yield takeEvery('QUERY_LOGIN', queryLogInFunction)
+  yield takeEvery(QUERY_LOGIN, queryLogInFunction)
 }  
 
 // ----------------------------------------------- 
@@ -466,7 +483,6 @@ function* queryTokenLogInFunction() {
             }
             addedRooms = addedRooms.concat(newRoom);
         })
-        
         yield put(updateNotifications(data.tokenLogin.notification.notifications.length));
         yield put(updateGroupNotifications(data.tokenLogin.groupNotification.length));
         yield put(updateGroups(groupNew));    
@@ -479,7 +495,40 @@ function* queryTokenLogInFunction() {
             }
             addedRooms = addedRooms.concat(newRoom);
         })    
-        yield put(updateMessages(messages));
+
+        let lenMessages=messages.length;
+          let formatedMessages=[];
+          for(let i=0; i<lenMessages; i++){
+              let formatedTimeMessages=[];
+              let numberMessages=messages[i].messages.length;
+              for(let j=0;j<numberMessages; j++){ 
+                  let time=messages[i].messages[j].time;               
+                  let date = new Date(time)
+                  let local=date.toLocaleString();
+                  let d = new Date(local);
+                  let hours = d.getHours();
+                  let minutes = d.getMinutes();
+                  let formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+                  let formatedTime=hours+':'+formattedMinutes;
+                  let messageObj={
+                      origin: messages[i].messages[j].origin, 
+                      firstName: messages[i].messages[j].firstName,
+                      lastName: messages[i].messages[j].lastName,
+                      message: messages[i].messages[j].message,
+                      time: formatedTime
+                  }
+                  formatedTimeMessages.push(messageObj);
+          } 
+          let obj={
+              alreadyread:messages[i].alreadyread,
+              room:messages[i].room,
+              users:messages[i].users,
+              name:messages[i].name,
+              messages:formatedTimeMessages
+          }
+          formatedMessages.push(obj);
+        }
+        yield put(updateMessages(formatedMessages));
         yield put(updateRooms(addedRooms));
         yield put(updatePage('chat'));
     }
@@ -493,13 +542,11 @@ function* queryTokenLogInFunction() {
         }
     }
   }catch(e){
-    console.log('e: ', e);
   }  
 }
 
-
 function* queryTokenLogIn(){
-  yield takeEvery('QUERY_TOKEN_LOGIN', queryTokenLogInFunction)
+  yield takeEvery(QUERY_TOKEN_LOGIN, queryTokenLogInFunction)
 }  
 
 // -----------------------------------------------
@@ -544,7 +591,7 @@ function* mutationSignUpFunction(action) {
 }  
 
 function* mutationSignUp(){
-  yield takeEvery('MUTATION_SIGNUP', mutationSignUpFunction)
+  yield takeEvery(MUTATION_SIGNUP, mutationSignUpFunction)
 }  
  
 // ----------------------------------------------- 
@@ -580,7 +627,7 @@ function getNotificationFunction (){
 }  
 
 function* queryNotification(){
-  yield takeEvery('QUERY_NOTIFICATION', queryNotificationFunction)
+  yield takeEvery(QUERY_NOTIFICATION, queryNotificationFunction)
 }  
 // -----------------------------------------------
 
@@ -617,7 +664,7 @@ function* queryGroupNotificationFunction() {
 }  
 
 function* queryGroupNotification(){
-  yield takeEvery('QUERY_GROUP_NOTIFICATION', queryGroupNotificationFunction)
+  yield takeEvery(QUERY_GROUP_NOTIFICATION, queryGroupNotificationFunction)
 }  
 
 // ----------------------------------------------- 
@@ -688,7 +735,6 @@ function putCreateNotificationFunction (id){
     
       let chat=[];
       chat= chat.concat(addNewChat(newRoom[0])); 
-    
       yield put(addRooms(addedRoom));
       yield put(updateContacts(contactData));
       yield put(addNewContactMessage(addNewChat(newRoom[0])));
@@ -697,7 +743,7 @@ function putCreateNotificationFunction (id){
   }  
 
   function* mutationCreateNotification(){
-    yield takeEvery('MUTATION_CREATE_NOTIFICATION', mutationCreateNotificationFunction)
+    yield takeEvery(MUTATION_CREATE_NOTIFICATION, mutationCreateNotificationFunction)
   }  
 
 // ----------------------------------------------- 
@@ -766,7 +812,7 @@ function putCreateGroupNotificationFunction (input, name){
 }  
 
   function* mutationCreateGroupNotification(){
-    yield takeEvery('CREATE_GROUP_NOTIFICATION', mutationCreateGroupNotificationFunction)
+    yield takeEvery(CREATE_GROUP_NOTIFICATION, mutationCreateGroupNotificationFunction)
   }  
 
 // ----------------------------------------------- 
@@ -793,7 +839,6 @@ mutation createaContact ($contactid: String!, $room: String!){
   }
 }
 `;
-
 
 function putCreateContactFunction (contactid, room){
   const result = client.mutate({
@@ -844,7 +889,7 @@ function* mutationCreateContactFunction(action) {
 }  
 
 function* mutationCreateContact(){
-  yield takeEvery('CREATE_CONTACT', mutationCreateContactFunction)
+  yield takeEvery(CREATE_CONTACT, mutationCreateContactFunction)
 }  
 
 // ----------------------------------------------- 
@@ -876,7 +921,7 @@ function* mutationDeleteNotificationFunction(action) {
 }  
 
 function* mutationDeleteNotification(){
-  yield takeEvery('DELETE_NOTIFICATION', mutationDeleteNotificationFunction)
+  yield takeEvery(DELETE_NOTIFICATION, mutationDeleteNotificationFunction)
 }  
 
 // ----------------------------------------------- 
@@ -915,7 +960,7 @@ function* mutationDeleteGroupNotificationFunction(action) {
 }  
 
 function* mutationDeleteGroupNotification(){
-  yield takeEvery('DELETE_GROUP_NOTIFICATION', mutationDeleteGroupNotificationFunction)
+  yield takeEvery(DELETE_GROUP_NOTIFICATION, mutationDeleteGroupNotificationFunction)
 }  
 
 // ----------------------------------------------- 
@@ -930,15 +975,18 @@ mutation createGroup($room: String, $input: [newmember], $name: String ) {
              }
       name: $name
 }) {
-     room
-         members{
-         id
-         email
-         firstName
-         lastName
-         avatar
-     }
-     name
+    group {
+      room
+      members {
+        id
+        email
+        firstName
+        lastName
+        avatar
+      }
+      name
+    }
+    len
  }
 }
 `;
@@ -953,33 +1001,30 @@ function putCreateGroupFunction (room, input, name){
 function* mutationCreateGroupFunction(action) {
   try{
     const { data } = yield call(putCreateGroupFunction, action.room, action.input, action.name);
-    yield put(updateGroups(data.createGroup));
-    let len=data.createGroup.length;
+    yield put(updateGroups(data.createGroup.group));
+    let len=data.createGroup.group.length;
+    let newRoom={
+        id: data.createGroup.group[len-1].room,
+        room: data.createGroup.group[len-1].room
+    }
+    yield put(addRooms(newRoom));
+    yield put(updateGroupNotifications(data.createGroup.len));
   
-      let newRoom={
-          id: data.createGroup[len-1].room,
-          room: data.createGroup[len-1].room
+    function addNewGroupChat(group){
+        let room=group.room;
+        let users=group.members;
+        let name=group.name;
+        let messages=[];
+        let contactRoom={
+            new:true,
+            room, 
+            users,
+            name,
+            messages
+        }
+        return contactRoom;
       }
-  
-      yield put(addRooms(newRoom));
-      yield put(eliminateGroupNotification());
-  
-      function addNewGroupChat(group){
-          let room=group.room;
-          let users=group.members;
-          let name=group.name;
-          let messages=[];
-          let contactRoom={
-              new:true,
-              room, 
-              users,
-              name,
-              messages
-          }
-          return contactRoom;
-      }
-  
-    let group=data.createGroup[len-1];
+    let group=data.createGroup.group[len-1];
     yield put(addNewContactMessage(addNewGroupChat(group)));
     yield put(updatePage('chat'));
   }catch(e){
@@ -987,7 +1032,7 @@ function* mutationCreateGroupFunction(action) {
 }  
 
 function* mutationCreateGroup(){
-  yield takeEvery('CREATE_GROUP', mutationCreateGroupFunction)
+  yield takeEvery(CREATE_GROUP, mutationCreateGroupFunction)
 }  
 
 // ----------------------------------------------- 
@@ -1052,7 +1097,7 @@ function* mutationUpdateUserDataFunction(action) {
 }  
 
 function* mutationUpdateUserData(){
-  yield takeEvery('MUTATION_UPDATE_USER_DATA', mutationUpdateUserDataFunction)
+  yield takeEvery(MUTATION_UPDATE_USER_DATA, mutationUpdateUserDataFunction)
 }  
 
 // ----------------------------------------------- 
@@ -1139,9 +1184,8 @@ function putNewMessageFunction (room, message){
    }
 }
   
-
 function* mutationNewMessage(){
-  yield takeEvery('NEW_MESSAGE', mutationNewMessageFunction)
+  yield takeEvery(NEW_MESSAGE, mutationNewMessageFunction)
 }  
 
 // ----------------------------------------------- 
@@ -1174,7 +1218,7 @@ function putNewStatusFunction (id, room, status){
   }  
 
   function* mutationNewStatus(){
-    yield takeEvery('NEW_STATUS', mutationNewStatusFunction)
+    yield takeEvery(NEW_STATUS, mutationNewStatusFunction)
   }  
 
 // ----------------------------------------------- 
@@ -1205,7 +1249,7 @@ function putNewLanguageFunction (language){
 }  
 
   function* mutationNewLanguage(){
-    yield takeEvery('NEW_LANGUAGE', mutationNewLanguageFunction);
+    yield takeEvery(NEW_LANGUAGE, mutationNewLanguageFunction);
   }  
 
 // ----------------------------------------------- 
@@ -1250,10 +1294,8 @@ function putEditGroupFunction (room, input, name){
 }  
 
   function* mutationEditGroup(){
-    yield takeEvery('EDIT_GROUP', mutationEditGroupFunction)
+    yield takeEvery(EDIT_GROUP, mutationEditGroupFunction)
   }  
-
-// ----------------------------------------------- 
 
 // ----------------------------------------------- 
 
@@ -1321,7 +1363,7 @@ function putLeaveGroupFunction (room, input){
 }  
 
   function* mutationLeaveGroup(){
-    yield takeEvery('LEAVE_GROUP', mutationLeaveGroupFunction)
+    yield takeEvery(LEAVE_GROUP, mutationLeaveGroupFunction)
   }  
 
 // ----------------------------------------------- 
@@ -1349,16 +1391,14 @@ function* mutationDeleteContactFunction(action) {
     const { data } = yield call(putDeleteContactFunction, action.contactid, action.room);
     yield put(updateNotifications(data.deleteContact.number));
   }catch(e){
-    console.log('Error Entrada');
   }
 }  
 
 function* mutationDeleteContact(){
-  yield takeEvery('DELETE_CONTACT', mutationDeleteContactFunction)
+  yield takeEvery(DELETE_CONTACT, mutationDeleteContactFunction)
 }  
 
 // ----------------------------------------------- 
-
 
 export default function* rootSaga() {
     yield all([

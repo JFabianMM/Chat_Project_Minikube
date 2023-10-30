@@ -5,8 +5,8 @@ import ListItem from '@mui/material/ListItem';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Divider from '@mui/material/Divider';
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { leaveGroup } from '../actions/actions';
 
 function SimpleDialog(props) {
     const { onClose, selectedValue, open } = props;
@@ -46,7 +46,7 @@ function SimpleDialog(props) {
         } 
         const room=groupRoom;
         const input = formattedMembers; 
-        Dispatch({type: 'LEAVE_GROUP', room, input});
+        Dispatch(leaveGroup(room, input))
         props.socket.emit('leave', room);
         setTimeout(() => {
             handleUpdateNotification(formattedMembers);

@@ -43,15 +43,14 @@ io.on( 'connection', function( socket ) {
             } 
             const user= await fetchFunction(formData, "http://backend:4001/api/users/userInformation");
             if (!user.found){
-                let date = new Date();
-                let current_time = date.getHours()+':'+date.getMinutes();
+                const utcTime = new Date().toISOString(); 
                 let item={
                     room,
                     id:authResponse.identification,
                     firstName: user.firstName,
                     lastName: user.lastName,
                     message:it.message,
-                    time:current_time
+                    time:utcTime
                   }
                 io.to(room).emit('sendMessage', item);
             }

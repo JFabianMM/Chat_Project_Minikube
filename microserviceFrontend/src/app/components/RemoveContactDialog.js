@@ -6,6 +6,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Divider from '@mui/material/Divider';
 import { useDispatch } from 'react-redux';
+import { deleteContact } from '../actions/actions';
 
 function SimpleDialog(props) {
     const { onClose, open } = props;
@@ -22,7 +23,7 @@ function SimpleDialog(props) {
     const handleRequestAndClose =()=>{  
         let room=props.element.room;
         let contactid=props.element.id;
-        Dispatch({type: 'DELETE_CONTACT', contactid, room});
+        Dispatch(deleteContact(contactid, room));
         let roomToSend={
             room_forNotification:room,
         }

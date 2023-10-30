@@ -10,5 +10,5 @@ export const errorNotificationSlice = createSlice({
     }
 })
 
+export const errorNotificationReducer = errorNotificationSlice.reducer
 export const {updateErrorNotification} = errorNotificationSlice.actions
-export default errorNotificationSlice.reducer

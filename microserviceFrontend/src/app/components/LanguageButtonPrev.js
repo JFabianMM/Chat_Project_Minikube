@@ -1,9 +1,10 @@
-import * as React from 'react';
+import React from 'react';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Box from '@mui/material/Box';
 import { useDispatch } from 'react-redux';
-import { updateLanguage } from '../../redux/slice/languageSlice';
+
+import { updateLanguage } from '../../redux/slice';
 
 export function LanguageButtonPrev() {
   const Dispatch = useDispatch(); 
