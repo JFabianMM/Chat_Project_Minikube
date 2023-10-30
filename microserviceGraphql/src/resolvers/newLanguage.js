@@ -1,8 +1,6 @@
-const User = require('../models/user');
 const { GraphQLError } = require('graphql');
-const fetchFunction = require('../functions/fetchFunction');
+const {fetchFunction, validationFunction} = require('../functions');
 const logger = require("../logger");
-const validationFunction = require('../functions/validationFunction');
 
 const newLanguage = {
     Mutation: {

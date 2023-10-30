@@ -1,9 +1,6 @@
-const User = require('../models/user');
 const { GraphQLError } = require('graphql');
-const fetchPatchFunction = require('../functions/fetchPatchFunction');
-const getGroupAvatars = require('../functions/getGroupAvatars');
+const {fetchPatchFunction, getGroupAvatars, validationFunction} = require('../functions');
 const logger = require("../logger");
-const validationFunction = require('../functions/validationFunction');
 
 const editGroup = {
     Mutation: {

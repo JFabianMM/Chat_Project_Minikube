@@ -1,10 +1,6 @@
-const User = require('../models/user');
 const { GraphQLError } = require('graphql');
-const fetchFunction = require('../functions/fetchFunction');
-const getContactAvatars = require('../functions/getContactAvatars');
-const validationFunction = require('../functions/validationFunction');
+const {fetchFunction, getContactAvatars, validationFunction} = require('../functions');
 const logger = require("../logger");
-
 
 const createNotification = {
     Mutation: {    

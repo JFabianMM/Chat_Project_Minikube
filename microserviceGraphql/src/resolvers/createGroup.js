@@ -1,9 +1,5 @@
-const User = require('../models/user');
 const { GraphQLError } = require('graphql');
-const fetchFunction = require('../functions/fetchFunction');
-const getGroupAvatars = require('../functions/getGroupAvatars');
-const getUniqueListBy = require('../functions/getUniqueListBy');
-const validationFunction = require('../functions/validationFunction')
+const {fetchFunction, getGroupAvatars, getUniqueListBy, validationFunction} = require('../functions');
 const logger = require("../logger");
 
 const createGroup = {
@@ -23,9 +19,14 @@ const createGroup = {
                     name: input.name
                 } 
                 const formData={input: dataInput}
-                const group= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'group');
-                const groupAvatar = await getGroupAvatars(group);
-                return groupAvatar.groups
+                const data= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'group');
+                let len=data.response.len;                
+                const groupAvatar = await getGroupAvatars(data.response.group);
+                let createGroupResponse = {
+                    group: groupAvatar.groups,
+                    len: len
+                }
+                return createGroupResponse
             }catch(e){
                 logger.log("error", e);
                 throw new GraphQLError(e); 

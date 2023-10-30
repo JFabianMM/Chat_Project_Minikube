@@ -1,9 +1,5 @@
-const User = require('../models/user');
 const { GraphQLError } = require('graphql');
-const findByCredentials = require('../functions/findByCredentials');
-const fetchFunction = require('../functions/fetchFunction');
-const getContactAvatars = require('../functions/getContactAvatars');
-const getGroupAvatars = require('../functions/getGroupAvatars');
+const {findByCredentials, fetchFunction, getContactAvatars, getGroupAvatars} = require('../functions');
 const logger = require("../logger");
 
 const login = {

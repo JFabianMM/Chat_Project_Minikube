@@ -1,9 +1,6 @@
 const User = require('../models/user');
 const { GraphQLError } = require('graphql');
-const fetchFunction = require('../functions/fetchFunction');
-const fetchGetFunction = require('../functions/fetchGetFunction');
-const getContactAvatars = require('../functions/getContactAvatars');
-const validationFunction = require('../functions/validationFunction');
+const {fetchGetFunction, getContactAvatars, validationFunction} = require('../functions');
 const logger = require("../logger");
 
 const contacts = {

@@ -1,9 +1,6 @@
-const User = require('../models/user');
 const { GraphQLError } = require('graphql');
-const fetchGetFunction = require('../functions/fetchGetFunction');
-const getGroupNotificationsAvatars=require('../functions/getGroupNotificationsAvatars');
+const {fetchGetFunction, getGroupNotificationsAvatars, validationFunction} = require('../functions');
 const logger = require("../logger");
-const validationFunction = require('../functions/validationFunction');
 
 const groupNotifications = {
     Query: { 

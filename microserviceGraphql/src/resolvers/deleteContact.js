@@ -1,8 +1,6 @@
-const User = require('../models/user');
 const { GraphQLError } = require('graphql');
-const fetchDeleteFunction= require('../functions/fetchDeleteFunction');
+const {fetchDeleteFunction, validationFunction} = require('../functions');
 const logger = require("../logger");
-const validationFunction = require('../functions/validationFunction');
 
 const deleteContact = {
     Mutation: {
@@ -13,7 +11,6 @@ const deleteContact = {
                     logger.log("error", 'Please Authenticate');
                     throw new GraphQLError('Please Authenticate');
                 } 
-
                 const url = new URL(process.env.BACKEND_MICROSERVICE+'contact');
                 url.searchParams.set('contactid', input.contactid);
                 url.searchParams.set('userId', authResponse.identification);

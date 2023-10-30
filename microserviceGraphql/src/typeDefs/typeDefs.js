@@ -10,6 +10,11 @@ const typeDefs = `
         messages: [messages]
     }
 
+    type createGroupResponse {
+        group: [group]
+        len: Int
+    }
+
     type messages {
         alreadyread: String
         room: String
@@ -82,6 +87,7 @@ const typeDefs = `
         members: [member]
         name: String
     }
+    
     type userNotification {
         _id: ID
         notifications: [notification]
@@ -233,7 +239,7 @@ const typeDefs = `
         deleteContact(input: deleteContactInput): deleteContactResponse
         deleteGroupNotification(input: createGroupInput): deleteNotificationResponse
         createContact(input: contactInput): createContactResponse 
-        createGroup(input: createGroupInput): [group]    
+        createGroup(input: createGroupInput): createGroupResponse    
         createGroupAndNotifications(input: groupInput): [group]
         singleUpload(file: String!): result
         updateUserData(input: updateInput): user

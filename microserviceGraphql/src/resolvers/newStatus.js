@@ -1,7 +1,6 @@
 const { GraphQLError } = require('graphql');
-const fetchFunction = require('../functions/fetchFunction');
+const {fetchFunction, validationFunction} = require('../functions');
 const logger = require("../logger");
-const validationFunction = require('../functions/validationFunction');
 
 const newStatus = {
     Mutation: {   

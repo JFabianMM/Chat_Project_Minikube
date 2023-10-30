@@ -1,9 +1,6 @@
-const User = require('../models/user');
 const { GraphQLError } = require('graphql');
 const logger = require("../logger");
-const fetchDeleteFunction= require('../functions/fetchDeleteFunction');
-const fetchPatchFunction = require('../functions/fetchPatchFunction');
-const validationFunction = require('../functions/validationFunction');
+const {fetchDeleteFunction, fetchPatchFunction, validationFunction} = require('../functions');
 
 const deleteGroupNotification = {
     Mutation: {

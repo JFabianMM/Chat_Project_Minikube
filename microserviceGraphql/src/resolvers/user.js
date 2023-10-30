@@ -1,7 +1,7 @@
 const User = require('../models/user');
 const { GraphQLError } = require('graphql');
 const logger = require("../logger");
-const validationFunction = require('../functions/validationFunction');
+const {validationFunction} = require('../functions');
 
 const user = {
     Query: {

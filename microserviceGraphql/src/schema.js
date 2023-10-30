@@ -3,28 +3,7 @@ const { merge } =require('lodash');
 
 const typeDefs = require('./typeDefs/typeDefs');
 
-const contacts = require('./resolvers/contacts');
-const createContact = require('./resolvers/createContact');
-const createGroup = require('./resolvers/createGroup');
-const editGroup = require('./resolvers/editGroup');
-const leaveGroup = require('./resolvers/leaveGroup');
-const createGroupAndNotifications = require('./resolvers/createGroupAndNotifications');
-const newMessage = require('./resolvers/newMessage');
-const newLanguage = require('./resolvers/newLanguage');
-const newStatus = require('./resolvers/newStatus');
-const createNotification = require('./resolvers/createNotification');
-const createUser = require('./resolvers/createUser');
-const deleteGroupNotification = require('./resolvers/deleteGroupNotification');
-const deleteNotification = require('./resolvers/deleteNotification');
-const deleteContact = require('./resolvers/deleteContact');
-const groupNotifications = require('./resolvers/groupNotifications');
-const groups = require('./resolvers/groups');
-const login = require('./resolvers/login');
-const notification = require('./resolvers/notification');
-const singleUpload = require('./resolvers/singleUpload');
-const tokenLogin = require('./resolvers/tokenLogin');
-const updateUserData = require('./resolvers/updateUserData');
-const user = require('./resolvers/user');
+const { contacts,  createContact, createGroup,createGroupAndNotifications,createNotification,createUser,deleteContact,deleteGroupNotification,deleteNotification,editGroup,groupNotifications,groups,leaveGroup,login,newLanguage,newMessage,newStatus,notification,singleUpload,tokenLogin,updateUserData,user} = require('./resolvers'); 
 
 const schema= makeExecutableSchema({
     typeDefs: [typeDefs],

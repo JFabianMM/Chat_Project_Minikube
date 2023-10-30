@@ -1,9 +1,6 @@
-const User = require('../models/user');
 const { GraphQLError } = require('graphql');
-const fetchGetFunction = require('../functions/fetchGetFunction');
-const getNotificationsAvatars= require('../functions/getNotificationsAvatars');
+const {fetchGetFunction, getNotificationsAvatars, validationFunction} = require('../functions');
 const logger = require("../logger");
-const validationFunction = require('../functions/validationFunction');
 
 const notification = {
     Query: { 
@@ -14,7 +11,6 @@ const notification = {
                     logger.log("error", 'Please Authenticate');
                     throw new GraphQLError('Please Authenticate');
                 } 
-
                 const url = new URL(process.env.BACKEND_MICROSERVICE+'notification');
                 url.searchParams.set('identification', authResponse.identification);
                 const notification= await fetchGetFunction(url.href);
