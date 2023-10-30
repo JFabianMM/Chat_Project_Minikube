@@ -1,27 +1,10 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const router = express.Router();
-const User = require('../models/user');
-const Notification = require('../models/notification');
-const GroupNotification = require('../models/groupNotification');
-const Contact = require('../models/contact');
-const Group = require('../models/group');
-const Messages = require('../models/messages');
-const Settings = require('../models/settings');
+const {User, Notification, GroupNotification, Contact, Group, Messages, Settings} = require('../models');
 const logger = require("../logger");
 
-const findContact = require('../utilities/findContact');
-const findNotification = require('../utilities/findNotification') 
-const findGroupNotification = require('../utilities/findGroupNotification');
-const findGroup = require('../utilities/findGroup');
-const findSettings = require('../utilities/findSettings');
-const findMessages = require('../utilities/findMessages');
-const saveNewMessage = require('../utilities/saveNewMessage');
-const addNewChat = require('../utilities/addNewChat');
-const addNewGroupChat = require('../utilities/addNewGroupChat');
-const getUniqueListBy = require('../utilities/getUniqueListBy');
-const reviewNotifications = require('../utilities/reviewNotifications');
-const reviewMessages = require('../utilities/reviewMessages');
+const {findContact, findNotification, findGroupNotification, findGroup, findSettings, findMessages, saveNewMessage, addNewChat, addNewGroupChat, getUniqueListBy, reviewNotifications, reviewMessages} = require('../utilities');
 
 router.post('/register', async (req, res)=>{ 
     const identification= req.body.identification;
@@ -258,7 +241,11 @@ router.post('/group', async (req, res)=>{
         }
         group.save();         
         messages.save();
-        res.send(group);
+        let response = {
+            len: groupNotification.groupNotifications.length,      
+            group: group
+        } 
+        res.send({response});
     } catch (e){
         logger.log("error", e);
         res.status(400).send(e)
@@ -277,7 +264,7 @@ router.patch('/group', async (req, res)=>{
                 }
                 members=members.concat(member);
         });
-
+        
         const contact=await findContact(input.id);
         let newMembers=[];
         newMembers=newMembers.concat(members[0]);
@@ -369,7 +356,14 @@ router.patch('/group', async (req, res)=>{
         if (formerMembers[0].creator==input.id){
             saveNotifications(added,room, creator, name);
         }
+
         const newGroup = await findGroup(input.id); 
+        if (input.group.members.length==1){
+            newGroup.groups=newGroup.groups.filter((el) => {
+                return el.room != room;
+            });
+            newGroup.save();
+        }
         res.send(newGroup);
     } catch (e){
         logger.log("error", e);
@@ -461,7 +455,6 @@ router.post('/groupandnotifications', async (req, res)=>{
         const [group, contact, messages] = await Promise.all([findGroup(creator),findContact(creator), findMessages(input.id)]);
         let members = getUniqueListBy(input.group.members, 'id');
 
-        // Validation
         let newMembers=[];
         newMembers=newMembers.concat(members[0]);
         for(let i=0; i<members.length; i++){
@@ -532,8 +525,8 @@ router.post('/groupandnotifications', async (req, res)=>{
 router.post('/message', async (req, res)=>{
     let input = req.body.input;
     try {  
-            let date = new Date();
-            let current_time = date.getHours()+':'+date.getMinutes();    
+
+            const utcTime = new Date().toISOString(); 
             let messages = await findMessages(input.id);
             let index=-1; 
             index = messages.messagesInformation.findIndex(function (el){
@@ -546,8 +539,9 @@ router.post('/message', async (req, res)=>{
                 firstName: input.firstName, 
                 lastName:  input.lastName,
                 message: input.message,
-                time: current_time 
+                time: utcTime 
             };
+
             if (index>=0){
                 let users=messages.messagesInformation[index].users;
                 const saveMessage = saveNewMessage(NewMessageResponse, users);

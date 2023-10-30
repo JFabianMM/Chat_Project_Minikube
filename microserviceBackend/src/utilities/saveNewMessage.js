@@ -1,4 +1,3 @@
-const Messages = require('../models/messages');
 const findMessages = require('./findMessages');
 
 const saveNewMessage= async function(input, users) {
