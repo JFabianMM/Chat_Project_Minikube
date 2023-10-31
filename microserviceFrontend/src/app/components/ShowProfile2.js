@@ -14,7 +14,7 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { StandardImage, UploadButton } from '../components';
 import { updateAvatar, updateFile } from '../../redux/slice';
-import { uploadFile } from '../actions/actions';
+import { uploadFile, queryGroups} from '../actions/actions';
 
 function SimpleDialog(props) {
     const { onClose, selectedValue, open } = props;
@@ -31,6 +31,10 @@ function SimpleDialog(props) {
         Dispatch(uploadFile(file));
         Dispatch(updateAvatar(file));
         Dispatch(updateFile({}));
+        setTimeout(() => {
+          Dispatch(queryGroups());
+        }, 2000);
+        
         onClose(selectedValue);
     }
 
