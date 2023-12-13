@@ -11,7 +11,7 @@ const fetchFunction = require('./app/functions/fetchFunction');
 const logger = require("./logger");
 
 // Settings
-app.set('port', process.env.SERVER_PORT);
+app.set('port', 3000);
 
 // Middlewares
 app.use(morgan('dev'));
