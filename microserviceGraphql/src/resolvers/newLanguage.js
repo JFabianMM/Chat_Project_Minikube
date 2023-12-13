@@ -15,7 +15,7 @@ const newLanguage = {
                     language: args.language,
                     identification: authResponse.identification
                 }    
-                const result= fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'language');
+                const result= fetchFunction(formData, 'http://backend:4001/api/users/language');
                 let languageResult=  {
                     language: args.language
                 }

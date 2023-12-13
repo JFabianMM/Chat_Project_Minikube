@@ -1,0 +1,137 @@
+version: '3.9'
+
+services:
+  mongodb1:
+    image: mongo
+    container_name: mongodb1
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - data-volume-chatapp:/data/db1
+    networks:
+      - network1
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=fabian
+      - MONGO_INITDB_ROOT_PASSWORD=12345
+
+  mongodb2:
+    image: mongo
+    container_name: mongodb2
+    restart: always
+    ports:
+      - 27018:27018
+    volumes:
+      - data-volume-chatapp:/data/db2
+    networks:
+      - network1
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=fabian
+      - MONGO_INITDB_ROOT_PASSWORD=12345  
+
+  mongodb3:
+    image: mongo
+    container_name: mongodb3
+    restart: always
+    ports:
+      - 27019:27019
+    volumes:
+      - data-volume-chatapp:/data/db3
+    networks:
+      - network1
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=fabian
+      - MONGO_INITDB_ROOT_PASSWORD=12345  
+
+  authorization:
+    container_name: authorization
+    build:
+      dockerfile: Dockerfile
+      context: './microserviceAuthorization'
+    ports:
+      - 4002:4002
+    links:
+      - mongodb1
+    networks:
+      - network1
+    environment:
+      - JWT_SECRET=thisisthechatproject
+      - SERVER_PORT=4002
+      - MONGODB3_URI=mongodb://fabian:12345@mongodb1:27017/mydatabase3?authSource=admin
+  
+  backend:
+    container_name: backend
+    build:
+      dockerfile: Dockerfile
+      context: './microserviceBackend'
+    ports:
+      - 4001:4001
+    links:
+      - mongodb1
+    networks:
+      - network1
+    environment:
+      - SERVER_PORT=4001
+      - MONGODB2_URI=mongodb://fabian:12345@mongodb1:27017/mydatabase2?authSource=admin 
+
+  graphql:
+    container_name: graphql
+    build:
+      dockerfile: Dockerfile
+      context: './microserviceGraphql'
+    ports:
+      - 4000:4000
+    links:
+      - mongodb1
+      - authorization
+      - backend
+    depends_on:
+      - authorization
+      - backend
+    networks:
+      - network1
+    environment:
+      - JWT_SECRET=thisisthechatproject
+      - SERVER_PORT=4000
+      - MONGODB1_URI=mongodb://fabian:12345@mongodb1:27017/mydatabase?authSource=admin  
+      - BACKEND_MICROSERVICE=http://backend:4001/api/users/
+      - AUTHORIZATION_MICROSERVICE=http://authorization:4002/api/users/
+
+  frontend:
+    container_name: frontend
+    stdin_open: true
+    build:
+      dockerfile: Dockerfile
+      context: './microserviceFrontend'
+    ports:
+      - 3000:3000
+    networks:
+      - network1
+    environment:
+      - SERVER_PORT=3000
+      - BACKEND_MICROSERVICE=http://backend:4001/api/users/
+
+
+  nginx:
+    container_name: nginx
+    depends_on:
+      - graphql
+      - frontend
+    restart: always
+    build:
+      dockerfile: Dockerfile
+      context: ./microserviceNginx
+    ports:
+      - '80:80'
+    links:
+      - graphql
+      - frontend
+    networks:
+      - network1
+
+volumes: 
+  data-volume-chatapp: {}
+
+networks:
+  network1:
+    driver: bridge

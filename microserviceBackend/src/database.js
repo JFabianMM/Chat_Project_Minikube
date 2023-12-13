@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const logger = require("./logger");
 
-mongoose.connect(process.env.MONGODB2_URI)
+mongoose.connect('mongodb://fabian:12345@mongodb1:27017/mydatabase2?authSource=admin')
     .then(db => logger.log("info", 'DB is connected'))
     .catch(err => logger.log("error", err));
 

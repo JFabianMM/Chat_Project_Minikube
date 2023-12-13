@@ -11,7 +11,7 @@ const groups = {
                     logger.log("error", 'Please Authenticate');
                     throw new GraphQLError('Please Authenticate');
                 }         
-                const url = new URL(process.env.BACKEND_MICROSERVICE+'groups');
+                const url = new URL('http://backend:4001/api/users/groups');
                 url.searchParams.set('identification', authResponse.identification);
                 const group= await fetchGetFunction(url.href);
                 const groupAvatar = await getGroupAvatars(group);

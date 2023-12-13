@@ -17,7 +17,7 @@ const editGroup = {
                     name: input.name
                 }  
                 const formData={input: dataInput}
-                const group= await fetchPatchFunction(formData, process.env.BACKEND_MICROSERVICE+'group');
+                const group= await fetchPatchFunction(formData, 'http://backend:4001/api/users/group');
                 const groupAvatar = await getGroupAvatars(group);
                 return groupAvatar.groups
             }catch(e){

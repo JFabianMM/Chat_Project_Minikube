@@ -16,7 +16,8 @@ const createContact = {
                     contactid:input.contactid,
                     room:input.room
                 }
-                const newcontact= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'contact');
+
+                const newcontact= await fetchFunction(formData, 'http://backend:4001/api/users/contact');
                 let CreateContactResponse=newcontact.CreateContactResponse;
                 const contactAvatar = await getContactAvatars(CreateContactResponse.user);
                 CreateContactResponse.user=contactAvatar;

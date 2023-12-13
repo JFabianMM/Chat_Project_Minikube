@@ -12,7 +12,7 @@ const newStatus = {
                     throw new GraphQLError('Please Authenticate');
                 } 
                 const formData={input}
-                const status= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'status');
+                const status= await fetchFunction(formData, 'http://backend:4001/api/users/status');
                 const statusResult=  {
                     room: input.room,
                     status: input.status

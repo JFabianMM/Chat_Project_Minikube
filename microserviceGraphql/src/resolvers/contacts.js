@@ -14,7 +14,7 @@ const contacts = {
                 } 
                 const user = await User.findOne({ _id: authResponse.identification});
 
-                const url = new URL(process.env.BACKEND_MICROSERVICE+'contact');
+                const url = new URL('http://backend:4001/api/users/contact');
                 url.searchParams.set('identification', user._id);
                 const contact= await fetchGetFunction(url.href); 
                 if (contact){

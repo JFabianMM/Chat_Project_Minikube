@@ -20,7 +20,7 @@ const newMessage = {
                     input.firstName=user.firstName;
                     input.lastName=user.lastName;
                     const formData={input}
-                    const NewMessa= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'message');    
+                    const NewMessa= await fetchFunction(formData, 'http://backend:4001/api/users/message');    
                     const NewMessageResponse = {
                         id:authResponse.identification,
                         room: input.room,

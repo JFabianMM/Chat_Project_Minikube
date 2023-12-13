@@ -31,8 +31,8 @@ const updateUserData = {
                     identification:authResponse.identification
                 }
                 user.save();
-                const authResponse2= fetchFunction(formData, process.env.AUTHORIZATION_MICROSERVICE+'update' );
-                const userResponse2= fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'update'); 
+                const authResponse2= fetchFunction(formData, 'http://authorization:4002/api/users/update' );
+                const userResponse2= fetchFunction(formData, 'http://backend:4001/api/users/update'); 
                 return user;
             }catch(e){
                 logger.log("error", e);

@@ -16,7 +16,7 @@ const leaveGroup = {
                     group: input.group
                 }  
                 const formData={input: dataInput};
-                const group= await fetchPatchFunction(formData, process.env.BACKEND_MICROSERVICE+'leavegroup');
+                const group= await fetchPatchFunction(formData, 'http://backend:4001/api/users/leavegroup');
                 const groupAvatar = await getGroupAvatars(group);
                 return groupAvatar.groups
             }catch(e){

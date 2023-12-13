@@ -22,7 +22,7 @@ const createGroupAndNotifications = {
                     name: input.name
                 }
                 const formData={input: dataInput }
-                const group= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'groupandnotifications');
+                const group= await fetchFunction(formData, 'http://backend:4001/api/users/groupandnotifications');
                 const groupAvatar = await getGroupAvatars(group);
                 return groupAvatar.groups
             }catch(e){

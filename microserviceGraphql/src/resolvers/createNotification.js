@@ -15,7 +15,7 @@ const createNotification = {
                     id: args.id,
                     userId: authResponse.identification
                 }
-                const newcontact= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'notification');
+                const newcontact= await fetchFunction(formData, 'http://backend:4001/api/users/notification');
                 let CreateContactResponse=newcontact.CreateContactResponse;
                 const contactAvatar = await getContactAvatars(CreateContactResponse.user);
                 CreateContactResponse.user=contactAvatar;

@@ -25,7 +25,7 @@ app.use("/", bodyParser.json({ limit: '50mb' }), (request, response)=>{
 });
 
 // Settings
-app.set('port', process.env.SERVER_PORT);
+app.set('port', 4000);
 
 // Middlewares
 app.use(morgan('dev'));

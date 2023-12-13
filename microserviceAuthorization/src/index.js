@@ -8,7 +8,7 @@ const app = express();
 const server = http.createServer(app);
 const logger = require("./logger");
 
-app.set('port', process.env.SERVER_PORT);
+app.set('port', 4002);
 
 app.use(morgan('dev'));
 app.use(express.json());

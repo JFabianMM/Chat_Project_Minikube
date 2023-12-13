@@ -32,8 +32,8 @@ const createUser = {
                         logger.log("error", 'Format Error');
                         throw new GraphQLError('Format Error');
                     }
-                    const authResponse= fetchFunction(formData, process.env.AUTHORIZATION_MICROSERVICE+'register' );
-                    const userResponse= fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'register');
+                    const authResponse= fetchFunction(formData, 'http://authorization:4002/api/users/register' );
+                    const userResponse= fetchFunction(formData, 'http://backend:4001/api/users/register');
                     return user;  
                 }else{
                     logger.log("error", 'User already exist');

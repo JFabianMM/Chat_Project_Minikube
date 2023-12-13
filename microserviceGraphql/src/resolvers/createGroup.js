@@ -18,8 +18,9 @@ const createGroup = {
                     group: inputGroup,
                     name: input.name
                 } 
+                
                 const formData={input: dataInput}
-                const data= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'group');
+                const data= await fetchFunction(formData, 'http://backend:4001/api/users/group');
                 let len=data.response.len;                
                 const groupAvatar = await getGroupAvatars(data.response.group);
                 let createGroupResponse = {

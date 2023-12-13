@@ -11,7 +11,7 @@ const notification = {
                     logger.log("error", 'Please Authenticate');
                     throw new GraphQLError('Please Authenticate');
                 } 
-                const url = new URL(process.env.BACKEND_MICROSERVICE+'notification');
+                const url = new URL('http://backend:4001/api/users/notification');
                 url.searchParams.set('identification', authResponse.identification);
                 const notification= await fetchGetFunction(url.href);
                 const notificationAvatar = await getNotificationsAvatars(notification);

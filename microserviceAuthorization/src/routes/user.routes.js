@@ -19,14 +19,14 @@ const findByCredentials = async function (identification, password) {
 };
 
 const generateAuthToken = async function (user){
-    const token =jwt.sign({_id: user.identification }, process.env.JWT_SECRET);
+    const token =jwt.sign({_id: user.identification }, 'thisisthechatproject');
     user.tokens = user.tokens.concat({ token });
     user.save(); 
     return token;
 }
 
 const tokenValidation = async function (token) {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, 'thisisthechatproject');
     const user = await User.findOne({ identification: decoded._id, 'tokens.token': token });
     return user
 }

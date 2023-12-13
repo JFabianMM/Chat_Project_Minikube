@@ -5,7 +5,7 @@ const logger = require("../logger");
 const login = {
     Query: {
             async login(_, {input}){
-            let { email, password} = input;    
+            let { email, password} = input;  
             try {
                 let user = await findByCredentials(email, password);
                 if (user!='Do not exist' && user!='Do not match'){
@@ -16,8 +16,8 @@ const login = {
                         password,
                         identification
                     }
-                    const authToken= await fetchFunction(formData, process.env.AUTHORIZATION_MICROSERVICE+'login');
-                    const data= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'login');
+                    const authToken= await fetchFunction(formData, 'http://authorization:4002/api/users/login');
+                    const data= await fetchFunction(formData, 'http://backend:4001/api/users/login');
                     const token=authToken.token;
                     user.tokens = user.tokens.concat({ token });
                     const contactAvatar = await getContactAvatars(data.loginResponse.contact);

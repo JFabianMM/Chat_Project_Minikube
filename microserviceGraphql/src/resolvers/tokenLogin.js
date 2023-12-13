@@ -21,7 +21,7 @@ const tokenLogin = {
                         password: 'password',
                         identification: user._id
                     }
-                    const data= await fetchFunction(formData, process.env.BACKEND_MICROSERVICE+'login');
+                    const data= await fetchFunction(formData, 'http://backend:4001/api/users/login');
                     const [contactAvatar, groupAvatar] = await Promise.all([getContactAvatars(data.loginResponse.contact),getGroupAvatars(data.loginResponse.group)]);
                     let loginResponse = {
                         user,

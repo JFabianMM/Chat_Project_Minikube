@@ -11,7 +11,7 @@ const groupNotifications = {
                     logger.log("error", 'Please Authenticate');
                     throw new GraphQLError('Please Authenticate');
                 } 
-                const url = new URL(process.env.BACKEND_MICROSERVICE+'groupnotifications');
+                const url = new URL('http://backend:4001/api/users/groupnotifications');
                 url.searchParams.set('identification', authResponse.identification);
                 const groupNotification= await fetchGetFunction(url.href);
                 const groupNotificationAvatar = await getGroupNotificationsAvatars(groupNotification);
