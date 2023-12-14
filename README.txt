@@ -4,9 +4,6 @@
 # nano /etc/hosts 
 # 127.0.0.1       chat-app.fabian
 
-# Install all the dependencies of each microservice
-npm install 
-
 # Buid and run the app 
 docker-compose up
 
