@@ -19,7 +19,7 @@ const userSchema = new Schema({
     password: { 
         type: String, 
         required: true,
-        minlength: 8,
+        minlength: 6,
         trim: true,
         validate(value){
             if (value.toLowerCase().includes('password')){
