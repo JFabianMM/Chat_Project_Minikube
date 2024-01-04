@@ -20,7 +20,6 @@ router.post('/register', async (req, res)=>{
     const messages = new Messages({identification});
     const settings = new Settings({identification}); 
     const logger = require("../logger");
- 
     try {
         notification.save();
         contact.save(); 
@@ -209,9 +208,20 @@ router.post('/contact', async (req, res)=>{
 router.post('/group', async (req, res)=>{
     let input = req.body.input;
     try {  
-        const [group, groupNotification, messages, contact] = await Promise.all([findGroup(input.id),findGroupNotification(input.id), findMessages(input.id), findContact(input.group.members[0].id)]);
-        const creator= input.group.members[0].id;
+        const [group, groupNotification, messages] = await Promise.all([findGroup(input.id),findGroupNotification(input.id), findMessages(input.id)]);
         const room= input.group.room;
+
+        const notificationFound = groupNotification.groupNotifications.find(element => element.room == input.group.room);
+        const groupNotificationsFound = groupNotification.groupNotifications.filter((el) => {
+            return el.room == room;
+        });
+        const creator = groupNotificationsFound[0].creator;
+        groupNotification.groupNotifications = groupNotification.groupNotifications.filter((el) => {
+            return el.room !== room;
+        });
+
+        const [contact] = await Promise.all([findContact(creator)]);
+
         const contactFound = contact.contacts.find(element => element.id == input.id);  
         let members=[];
         input.group.members.forEach(element => {
@@ -221,16 +231,14 @@ router.post('/group', async (req, res)=>{
                 members=members.concat(member);
         });
         let membersUnique = getUniqueListBy(members, 'id');
-        const notificationFound = groupNotification.groupNotifications.find(element => element.room == input.group.room); 
+         
         let newgroup={
             room:room,
             creator:creator,
             members:membersUnique,
             name:input.name
         }
-        groupNotification.groupNotifications = groupNotification.groupNotifications.filter((el) => {
-            return el.room !== room;
-        });
+        
         groupNotification.save();
         if (notificationFound && contactFound){
             group.groups = group.groups.concat(newgroup);
@@ -268,21 +276,32 @@ router.patch('/group', async (req, res)=>{
         const contact=await findContact(input.id);
         let newMembers=[];
         newMembers=newMembers.concat(members[0]);
+        
+        const name=input.name;
+        const room=input.group.room; 
+        let formerMembers=group.groups.filter((el) => {
+            return el.room == room;
+        });
+
         for(let i=0; i<members.length; i++){
             let contactFound= contact.contacts.filter((el) => {
                 return el.id == members[i].id;
             });
+            
+            let memberFound= formerMembers[0].members.filter((el) => {
+                return el.id == members[i].id;
+            });
+            
+            if(contactFound.length==0 && memberFound.length>0){
+                newMembers=newMembers.concat(members[i]);
+            }
             if(contactFound.length>0 && contactFound[0].status!='pending'){
                 newMembers=newMembers.concat(members[i]);
             }
         }
         members=newMembers;
         newMembers = getUniqueListBy(members, 'id');
-        const name=input.name;
-        const room=input.group.room; 
-        let formerMembers=group.groups.filter((el) => {
-            return el.room == room;
-        });
+        
         let formerLen= formerMembers[0].members.length;
         let newLen=newMembers.length;
         let eliminated=[];
@@ -358,12 +377,6 @@ router.patch('/group', async (req, res)=>{
         }
 
         const newGroup = await findGroup(input.id); 
-        if (input.group.members.length==1){
-            newGroup.groups=newGroup.groups.filter((el) => {
-                return el.room != room;
-            });
-            newGroup.save();
-        }
         res.send(newGroup);
     } catch (e){
         logger.log("error", e);
@@ -375,11 +388,19 @@ router.patch('/leavegroup', async (req, res)=>{
     let input = req.body.input;
     try {  
         const group = await findGroup(input.id);
-        const room=input.group.room; 
+        const room=input.group.room;
+        const groupFound=group.groups.filter((el) => {
+            return el.room == room;
+        }); 
+        const groupCreator= groupFound[0].creator;
+        let creatorDeleted=0;
+        if (groupCreator == input.id){
+            creatorDeleted=1;
+        }
         group.groups=group.groups.filter((el) => {
             return el.room != room;
         });
-        group.save();
+        group.save();    
 
         let members=[];
         input.group.members.forEach(element => {
@@ -389,20 +410,48 @@ router.patch('/leavegroup', async (req, res)=>{
                 if(element.id != input.id){
                     members=members.concat(member);
                 }
-                
         });
         const newMembers = getUniqueListBy(members, 'id');
+
         let stayLen=newMembers.length;
-        for (let i=0; i<stayLen; i++){
+        let foundNewCreator=0;
+        let newCreator;
+        for (let i=0; i<stayLen; i++){    
             let group = await findGroup(newMembers[i].id);
             const index = group.groups.findIndex(object => {
                 return object.room == room;
             });
             if (index>=0){
+                if (foundNewCreator==0 && creatorDeleted==1){
+                    foundNewCreator=1;
+                    newCreator=newMembers[i].id;
+                }
                 group.groups[index].members=newMembers;
+                if (foundNewCreator==1 && creatorDeleted==1){
+                    group.groups[index].creator=newCreator;
+                }
                 group.save();
             }
-        }   
+        } 
+        for (let i=0; i<stayLen; i++){ 
+                const groupNotification = await findGroupNotification(newMembers[i].id);
+                const groupIndex = groupNotification.groupNotifications.findIndex(el => {
+                    return el.room == room;
+                });
+                if (groupIndex>=0){
+                    if (creatorDeleted==1 && foundNewCreator==1){
+                        groupNotification.groupNotifications[groupIndex].creator=newCreator;
+                    }
+                    groupNotification.groupNotifications[groupIndex].members=newMembers;
+                
+                    if (creatorDeleted==1 && foundNewCreator==0){
+                        groupNotification.groupNotifications = groupNotification.groupNotifications.filter((el) => {
+                             return el.room !== room;
+                        });
+                    }
+                    groupNotification.save();
+                }
+        }
         res.send(group);
     } catch (e){
         logger.log("error", e);
@@ -452,7 +501,7 @@ router.post('/groupandnotifications', async (req, res)=>{
     let input = req.body.input;
     try {  
         let creator= input.id;
-        const [group, contact, messages] = await Promise.all([findGroup(creator),findContact(creator), findMessages(input.id)]);
+        const [group, contact, messages] = await Promise.all([findGroup(creator),findContact(creator), findMessages(creator)]);
         let members = getUniqueListBy(input.group.members, 'id');
 
         let newMembers=[];
@@ -525,7 +574,6 @@ router.post('/groupandnotifications', async (req, res)=>{
 router.post('/message', async (req, res)=>{
     let input = req.body.input;
     try {  
-
             const utcTime = new Date().toISOString(); 
             let messages = await findMessages(input.id);
             let index=-1; 
