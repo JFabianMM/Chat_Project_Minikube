@@ -25,6 +25,7 @@ function SimpleDialog(props) {
     const selectedGroup= groups.filter((el) => {
         return el.room == props.room;
     }); 
+
     const members=selectedGroup[0].members;
     const name=selectedGroup[0].name;
 
@@ -44,6 +45,32 @@ function SimpleDialog(props) {
         }
         newContacts=newContacts.concat(cont);
     }
+    let membersLen=members.length;
+    if (membersLen>0){
+        for (let j=0; j<membersLen; j++){
+            let elementFound=0;
+            for (let i=0; i<contactLen; i++){
+                if (members[j].id==contacts[i].id){
+                    elementFound=1;
+                }
+            }
+            if (elementFound==0 && members[j].id != userData._id){
+                let cont={
+                    id:members[j].id,
+                    room:props.room,
+                    status:'normal',
+                    email:members[j].email,
+                    firstName:members[j].firstName,
+                    lastName:members[j].lastName,
+                    alreadyread:'true',
+                    avatar:members[j].avatar,
+                    marked: 'yes'
+                }
+                newContacts=newContacts.concat(cont);
+            }
+        }
+        
+    }
     let len = members.length;
     if (len>0){
         for (let i=0; i<len; i++){
@@ -53,6 +80,7 @@ function SimpleDialog(props) {
             }
         }
     }
+    
     
     const Dispatch = useDispatch();
     const handleClose = () => {
@@ -129,11 +157,14 @@ function SimpleDialog(props) {
             }
         formattedMembers=formattedMembers.concat(data);
         });
-
         const room=groupRoom;
         const input = formattedMembers;
         const name= groupName; 
         Dispatch(editGroup(room, input, name));
+
+        if (formattedMembers.length==1){
+            handleUpdateEliminated(formattedMembers, room);
+        }
         
         let group = groups.find(element => element.room == room);
         let formerMembers=group.members.filter((el) => {
@@ -271,7 +302,8 @@ export function EditDialog(props) {
         setOpen(false);
         setSelectedValue(value);
     };
-    if (props.element.members[0].id == userData._id){
+    // if (props.element.members[0].id == userData._id){
+    if (props.element.creator == userData._id){    
         return (
             <div key={props.room} style={{display:'flex', justifyContent:'flex-end'}}>
                 <button style={{width: '40px', height: '20px', right: '0px', fontSize: 8}}  onClick={() => handleClickOpen(props.room)}>{props.t('update.group.edit')}</button>

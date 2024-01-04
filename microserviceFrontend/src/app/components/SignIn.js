@@ -102,7 +102,7 @@ export function SignIn(props) {
                                         if (errorNotification=='doesnotmatch' || errorNotification=='doesnotexist'){
                                             return (
                                                 <Typography key={element.indexOf} style={{color:'red'}}>
-                                                    {props.t('signin.error.incorrect')}
+                                                    {props.t('signin.error.unabletologin')}
                                                 </Typography>
                                             );
                                         }

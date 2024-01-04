@@ -92,6 +92,7 @@ const Get_Groups = gql`
   query groups ($id: String){
     groups( id: $id) {
       room
+      creator
       members{
           id
           email
@@ -198,6 +199,7 @@ query login ($email: String!, $password: String!){
       }
       group {
         room
+        creator
         members {
           id
           email
@@ -319,13 +321,9 @@ function* queryLogInFunction(action) {
       }
   
       if (errors){
-          if (errors[0].message=='Do not exist'){
-              yield put(updatePage('signIn'));
-              yield put(updateErrorNotification('doesnotexist'));
-          }
-          if (errors[0].message=='Do not match'){
-              yield put(updatePage('signIn'));
-              yield put(updateErrorNotification('doesnotmatch'));
+          if (errors[0].message=='Do not exist' || errors[0].message=='Do not match'){
+            yield put(updatePage('signIn'));
+            yield put(updateErrorNotification('doesnotexist'));
           }
       }
     }catch(e){
@@ -380,6 +378,7 @@ query tokenLogin ($token: String){
       }
       group {
         room
+        creator
         members {
           id
           email
@@ -757,15 +756,16 @@ mutation createGroupAndNotifications($input: [newmember], $name: String) {
                    },
             name: $name       
      }) {
-           room
-               members{
+            room
+            creator
+            members{
                id
                email
                firstName
                lastName
                avatar
-           }
-           name
+            }
+            name
        }
    }
 `
@@ -791,12 +791,14 @@ function putCreateGroupNotificationFunction (input, name){
       yield put(addRooms(newRoom));
       function addNewGroupChat(group){
         let room=group.room;
+        let creator=group.creator;
         let users=group.members;
         let messages=[];
         let name=group.name;        
         let contactRoom={
             new:true,
-            room:room, 
+            room:room,
+            creator:creator, 
             users:users,
             name:name,
             messages:messages
@@ -977,6 +979,7 @@ mutation createGroup($room: String, $input: [newmember], $name: String ) {
 }) {
     group {
       room
+      creator
       members {
         id
         email
@@ -1012,12 +1015,14 @@ function* mutationCreateGroupFunction(action) {
   
     function addNewGroupChat(group){
         let room=group.room;
+        let creator=group.creator;
         let users=group.members;
         let name=group.name;
         let messages=[];
         let contactRoom={
             new:true,
             room, 
+            creator,
             users,
             name,
             messages
@@ -1170,6 +1175,7 @@ function putNewMessageFunction (room, message){
             groups.map((group) =>{ 
                 let newGroup={
                     room:group.room,
+                    creator:group.creator,
                     members:group.members,
                     name:group.name,
                     alreadyread:group.alreadyread
@@ -1264,15 +1270,16 @@ mutation editGroup($room: String, $input: [newmember], $name: String) {
                    },
             name: $name       
      }) {
-           room
-               members{
+          room
+          creator
+          members{
                id
                email
                firstName
                lastName
                avatar
-           }
-           name
+          }
+          name
        }
    }
 `
@@ -1308,15 +1315,16 @@ mutation leaveGroup($room: String, $input: [newmember]) {
                       members: $input,
                    },   
      }) {
-           room
-               members{
+          room
+          creator
+          members{
                id
                email
                firstName
                lastName
                avatar
-           }
-           name
+          }
+          name
        }
    }
 `

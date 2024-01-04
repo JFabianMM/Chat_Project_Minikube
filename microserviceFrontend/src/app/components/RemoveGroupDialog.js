@@ -85,12 +85,12 @@ export function RemoveGroupDialog(props) {
         setOpen(false);
         setSelectedValue(value);
     };
-    if (props.element.members[0].id != userData._id){
+    // if (props.element.members[0].id != userData._id){
         return (
             <div key={props.room} style={{display:'flex', justifyContent:'flex-end'}}>
-                    <button style={{width: '40px', height: '20px', right: '0px', fontSize: 8}} onClick={() => handleClickOpen(props.room)}>{props.t('contact.delete')}</button>
+                    <button style={{width: '40px', height: '20px', right: '0px', fontSize: 8}} onClick={() => handleClickOpen(props.room)}>{props.t('group.leave')}</button>
                     <SimpleDialog element={props.element} room={props.room} i18n={props.i18n} t={props.t} selectedValue={selectedValue} open={open} onClose={handleClose} socket={props.socket}/>
             </div>
         );
-    }
+    // }
 }

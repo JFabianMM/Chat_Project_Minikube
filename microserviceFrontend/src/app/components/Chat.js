@@ -146,6 +146,7 @@ export function Chat (props) {
                     groups.map((group) =>{ 
                         let newGroup={
                         room:group.room,
+                        creator:group.creator,
                         members:group.members,
                         name:group.name,
                         alreadyread:group.alreadyread
@@ -190,6 +191,7 @@ export function Chat (props) {
                     groups.map((group) =>{ 
                         let newGroup={
                         room:group.room,
+                        creator:group.creator,
                         members:group.members,
                         name:group.name,
                         alreadyread:group.alreadyread
